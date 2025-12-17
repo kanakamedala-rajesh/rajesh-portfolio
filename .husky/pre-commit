@@ -1,1 +1,7 @@
+echo "Running pre-commit hooks..."
+
+echo "Running lint-staged..."
 npx lint-staged
+
+echo "Running build..."
+pnpm build

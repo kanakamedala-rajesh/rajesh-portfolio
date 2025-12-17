@@ -2,18 +2,18 @@
 
 **Feature**: `001-cinematic-portfolio`
 **Status**: Pending
-**Progress**: 0/33
+**Progress**: 5/33
 
 ## Phase 1: Setup
 
 **Goal**: Initialize project dependencies, global styles, and data layer.
 **Independent Test Criteria**: Project builds without errors; global styles (fonts, colors) are visible.
 
-- [ ] T001 Install dependencies (framer-motion, gsap, @gsap/react, lenis, lucide-react, three, @types/three, @react-three/fiber, @react-three/drei, d3-force, @types/d3-force)
-- [ ] T002 Configure Tailwind v4 colors and fonts in `src/app/globals.css`
-- [ ] T003 Create `cn` utility in `src/lib/utils.ts`
-- [ ] T004 Create typed data layer in `src/data/resume.ts`
-- [ ] T005 Setup Playwright for E2E testing with `npx playwright install`
+- [x] T001 Install dependencies (framer-motion, gsap, @gsap/react, lenis, lucide-react, three, @types/three, @react-three/fiber, @react-three/drei, d3-force, @types/d3-force)
+- [x] T002 Configure Tailwind v4 colors and fonts in `src/app/globals.css`
+- [x] T003 Create `cn` utility in `src/lib/utils.ts`
+- [x] T004 Create typed data layer in `src/data/resume.ts`
+- [x] T005 Setup Playwright for E2E testing with `npx playwright install`
 
 ## Phase 2: Foundational
 
