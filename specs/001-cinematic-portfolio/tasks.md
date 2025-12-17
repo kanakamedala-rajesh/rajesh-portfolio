@@ -5,6 +5,7 @@
 **Progress**: 0/33
 
 ## Phase 1: Setup
+
 **Goal**: Initialize project dependencies, global styles, and data layer.
 **Independent Test Criteria**: Project builds without errors; global styles (fonts, colors) are visible.
 
@@ -15,6 +16,7 @@
 - [ ] T005 Setup Playwright for E2E testing with `npx playwright install`
 
 ## Phase 2: Foundational
+
 **Goal**: Establish the core layout and scrolling infrastructure.
 **Independent Test Criteria**: Page scrolls smoothly; Layout wraps content correctly.
 
@@ -23,6 +25,7 @@
 - [ ] T007a Implement global "Noise/Scanline" SVG overlay in `src/app/layout.tsx` (pointer-events-none)
 
 ## Phase 3: User Story 1 - System Boot & Navigation (P1)
+
 **Goal**: Implement the "System Boot" preloader and morphing navigation bar.
 **Independent Test Criteria**: Boot sequence plays on first visit only; Navbar morphs on scroll; Mobile menu works.
 
@@ -34,6 +37,7 @@
 - [ ] T013 [US1] Add E2E test for Boot sequence and Navbar behavior in `tests/boot-nav.spec.ts`
 
 ## Phase 4: User Story 2 - The Convergence (Hero) (P1)
+
 **Goal**: Build the split-screen Hero section with "Hardware to Cloud" visualization.
 **Independent Test Criteria**: Split screen separates on scroll; Spline connects halves.
 
@@ -43,6 +47,7 @@
 - [ ] T017 [US2] Add E2E test for Hero scroll interaction in `tests/hero.spec.ts`
 
 ## Phase 5: User Story 3 - Experience Tunnel (P2)
+
 **Goal**: Create the horizontal scrolling timeline with mobile fallback.
 **Independent Test Criteria**: Desktop scrolls horizontally; Mobile lists vertically; VR cards tilt.
 
@@ -53,6 +58,7 @@
 - [ ] T022 [US3] Add E2E test for Experience section (horizontal vs vertical) in `tests/experience.spec.ts`
 
 ## Phase 6: User Story 4 - Skills & Architecture (P2)
+
 **Goal**: Visualize the tech stack (Isometric) and skills (Force Graph).
 **Independent Test Criteria**: Isometric stack builds on scroll; Nodes repel/attract cursor.
 
@@ -63,6 +69,7 @@
 - [ ] T027 [US4] Add E2E test for Skills interaction in `tests/skills.spec.ts`
 
 ## Phase 7: User Story 5 - Contact Terminal (P3)
+
 **Goal**: Build the interactive CLI terminal and footer reveal.
 **Independent Test Criteria**: Footer reveals on scroll; CLI accepts commands.
 
@@ -72,6 +79,7 @@
 - [ ] T031 [US5] Add E2E test for Terminal commands in `tests/contact.spec.ts`
 
 ## Phase 8: Polish & Cross-Cutting
+
 **Goal**: Finalize accessibility, performance, and responsiveness.
 **Independent Test Criteria**: 100% Lighthouse Accessibility; 60fps animations.
 

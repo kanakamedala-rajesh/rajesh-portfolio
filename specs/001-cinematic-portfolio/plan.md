@@ -23,7 +23,7 @@
 
 ## Constitution Check
 
-*GATE: Must pass before Phase 1 design. Re-check after Phase 1 design.*
+_GATE: Must pass before Phase 1 design. Re-check after Phase 1 design._
 
 - **Design Philosophy**: Aligned ("Lively, Grand, & Cyber-Physical" implemented via specific sections).
 - **Tech Stack**: Aligned (Next.js, TS, Tailwind v4, Lenis, Framer Motion, GSAP).
@@ -66,7 +66,7 @@ src/
 
 > **Fill ONLY if Constitution Check has violations that must be justified**
 
-| Violation | Why Needed | Simpler Alternative Rejected Because |
-|-----------|------------|-------------------------------------|
-| [e.g., 4th project] | [current need] | [why 3 projects insufficient] |
-| [e.g., Repository pattern] | [specific problem] | [why direct DB access insufficient] |
+| Violation                  | Why Needed         | Simpler Alternative Rejected Because |
+| -------------------------- | ------------------ | ------------------------------------ |
+| [e.g., 4th project]        | [current need]     | [why 3 projects insufficient]        |
+| [e.g., Repository pattern] | [specific problem] | [why direct DB access insufficient]  |

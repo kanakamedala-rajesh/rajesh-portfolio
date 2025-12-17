@@ -5,7 +5,7 @@
 **Status**: Draft
 **Input**: User description regarding "Rajesh Kanakamedala Portfolio"
 
-## User Scenarios & Testing *(mandatory)*
+## User Scenarios & Testing _(mandatory)_
 
 ### User Story 1 - System Boot & Navigation (Priority: P1)
 
@@ -90,7 +90,7 @@ As a visitor, I want to find contact information via a "Terminal" interface so t
 - **Mobile Landscape**: Devices with small height but wide width should likely default to the "Mobile" vertical layout to avoid layout thrashing.
 - **Missing Data**: If the data layer is empty or malformed, the application should display a graceful error or fallback content instead of crashing.
 
-## Requirements *(mandatory)*
+## Requirements _(mandatory)_
 
 ### Functional Requirements
 
@@ -109,7 +109,7 @@ As a visitor, I want to find contact information via a "Terminal" interface so t
 
 - **ResumeData**: Typed interface containing Header, Summary, Skills (categorized), Experience (with types: Embedded, VR/AR, Full Stack), and Contact info.
 
-## Success Criteria *(mandatory)*
+## Success Criteria _(mandatory)_
 
 ### Measurable Outcomes
 
@@ -120,5 +120,6 @@ As a visitor, I want to find contact information via a "Terminal" interface so t
 - **SC-005**: All text content is rendered using the specified font family hierarchy.
 
 ### Constraints (Non-Functional)
+
 - **Tech Stack**: Next.js (App Router), TypeScript, Tailwind CSS v4 (no config file), OKLCH colors.
 - **Motion**: Lenis, Framer Motion, GSAP.

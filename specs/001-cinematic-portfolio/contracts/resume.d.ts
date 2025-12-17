@@ -1,4 +1,4 @@
-export type ExperienceType = 'Embedded' | 'VR/AR' | 'Full Stack';
+export type ExperienceType = "Embedded" | "VR/AR" | "Full Stack";
 
 export interface HeaderInfo {
   name: string;

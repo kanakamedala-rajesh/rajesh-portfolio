@@ -14,6 +14,7 @@ Sync Impact Report:
     - .specify/templates/tasks-template.md (✅)
 - Follow-up TODOs: None
 -->
+
 # Rajesh Portfolio Constitution
 
 ## Core Principles
@@ -38,7 +39,7 @@ The site represents the data flow from low-level hardware (Embedded) to high-lev
 - **Framework:** **Next.js (Latest Stable)** (App Router, Turbopack).
 - **Language:** **TypeScript** (Strict Mode).
 - **Styling:** **Tailwind CSS v4** (CSS-First Config).
-  - *Constraint:* **NO `tailwind.config.js`**. Define all theme variables and `@theme` blocks directly in `src/app/globals.css`.
+  - _Constraint:_ **NO `tailwind.config.js`**. Define all theme variables and `@theme` blocks directly in `src/app/globals.css`.
 - **Scroll Engine:** **Lenis** (Smooth scrolling).
 - **Animation:** **Framer Motion** (Component interactions) + **GSAP** (ScrollTrigger for pinning/scrubbing).
 - **Icons:** **Lucide React**.
@@ -67,7 +68,7 @@ Strict implementation specifications for motion and interaction:
 - **Hero:** "The Convergence". Split screen (Cloud vs Hardware) connected by a 3D wireframe spline. Halves pull apart on scroll.
 - **About:** "The Full Stack Architecture". GSAP Pin. Isometric stack build-up (Chip -> Middleware -> App).
 - **Experience:** "The Timeline Tunnel". Sticky Horizontal Scroll. Glassmorphic cards. VR "3D Tilt" effect on VR/AR cards.
-  - *Mobile Fallback:* Vertical timeline for `< 768px`.
+  - _Mobile Fallback:_ Vertical timeline for `< 768px`.
 - **Skills:** "The Neural Network". Force-Directed Graph. Magnetic nodes. Hover highlights connections.
 - **Contact:** "The Terminal". Footer reveal. Retro-modern terminal with interactive CLI (`help`, `email`, etc.).
 
@@ -91,6 +92,7 @@ The project requires the following file structure and components:
 ## Governance
 
 ### Amendment Process
+
 1.  Review the "Sync Impact Report" before any change.
 2.  Update version number according to Semantic Versioning.
 3.  Update `Last Amended` date.

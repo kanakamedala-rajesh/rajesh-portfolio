@@ -1,6 +1,7 @@
 # Quickstart Guide
 
 ## Prerequisites
+
 - Node.js 18+ (Recommended: 20 LTS)
 - pnpm (Preferred) or npm
 
