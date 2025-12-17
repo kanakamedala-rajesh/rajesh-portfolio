@@ -40,6 +40,10 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# Testing Files
+test-results/
+playwright-report/
+
 # Google Credentials
 .gemini/
 .venkataSudha/

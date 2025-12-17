@@ -2,6 +2,10 @@ import type { Metadata } from "next";
 import { Inter, Space_Grotesk, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import SmoothScroll from "@/components/ui/SmoothScroll";
+import Loader from "@/components/ui/Loader";
+import Navbar from "@/components/ui/Navbar";
+import PageWrapper from "@/components/ui/PageWrapper";
+import { LoaderProvider } from "@/context/LoaderContext";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -37,9 +41,13 @@ export default function RootLayout({
       className={`${inter.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable}`}
     >
       <body className="antialiased">
-        <SmoothScroll />
-        <div className="texture-overlay" />
-        {children}
+        <LoaderProvider>
+          <Loader />
+          <Navbar />
+          <SmoothScroll />
+          <div className="texture-overlay" />
+          <PageWrapper>{children}</PageWrapper>
+        </LoaderProvider>
       </body>
     </html>
   );

@@ -29,12 +29,12 @@
 **Goal**: Implement the "System Boot" preloader and morphing navigation bar.
 **Independent Test Criteria**: Boot sequence plays on first visit only; Navbar morphs on scroll; Mobile menu works.
 
-- [ ] T008 [US1] Create `Loader` component in `src/components/ui/Loader.tsx` with typewriter effect and vertical split exit animation
-- [ ] T009 [US1] Implement session storage logic for "play once" in `src/components/ui/Loader.tsx`
-- [ ] T010 [US1] Create `Navbar` component in `src/components/ui/Navbar.tsx`
-- [ ] T011 [US1] Implement scroll-triggered morph animation (Transparent -> Pill) in `src/components/ui/Navbar.tsx`
-- [ ] T012 [US1] Implement mobile "Glitch" menu overlay in `src/components/ui/Navbar.tsx`
-- [ ] T013 [US1] Add E2E test for Boot sequence and Navbar behavior in `tests/boot-nav.spec.ts`
+- [x] T008 [US1] Create `Loader` component in `src/components/ui/Loader.tsx` with typewriter effect and vertical split exit animation
+- [x] T009 [US1] Implement session storage logic for "play once" in `src/components/ui/Loader.tsx`
+- [x] T010 [US1] Create `Navbar` component in `src/components/ui/Navbar.tsx`
+- [x] T011 [US1] Implement scroll-triggered morph animation (Transparent -> Pill) in `src/components/ui/Navbar.tsx`
+- [x] T012 [US1] Implement mobile "Glitch" menu overlay in `src/components/ui/Navbar.tsx`
+- [x] T013 [US1] Add E2E test for Boot sequence and Navbar behavior in `tests/boot-nav.spec.ts`
 
 ## Phase 4: User Story 2 - The Convergence (Hero) (P1)
 
