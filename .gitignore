@@ -42,3 +42,4 @@ next-env.d.ts
 
 # Google Credentials
 .gemini/
+.venkataSudha/
