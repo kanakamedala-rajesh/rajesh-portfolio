@@ -20,9 +20,9 @@
 **Goal**: Establish the core layout and scrolling infrastructure.
 **Independent Test Criteria**: Page scrolls smoothly; Layout wraps content correctly.
 
-- [ ] T006 [P] Create `SmoothScroll` client component in `src/components/ui/SmoothScroll.tsx`
-- [ ] T007 Integrate `SmoothScroll` provider in `src/app/layout.tsx`
-- [ ] T007a Implement global "Noise/Scanline" SVG overlay in `src/app/layout.tsx` (pointer-events-none)
+- [x] T006 [P] Create `SmoothScroll` client component in `src/components/ui/SmoothScroll.tsx`
+- [x] T007 Integrate `SmoothScroll` provider in `src/app/layout.tsx`
+- [x] T007a Implement global "Noise/Scanline" SVG overlay in `src/app/layout.tsx` (pointer-events-none)
 
 ## Phase 3: User Story 1 - System Boot & Navigation (P1)
 

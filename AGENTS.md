@@ -13,6 +13,7 @@
 9. **WEB SEARCHES:** For general web searches, use the `google_web_search` tool.
 10. **PACKAGE MANAGER:** Always use `pnpm` instead of `npm` or `yarn` for all package management and script execution tasks.
 11. **VERIFY STANDARDS:** Before finalizing the implementation, run `pnpm lint` and `pnpm check-format`. Ensure these scripts pass **WITHOUT ANY WARNINGS OR ERRORS**. Fix all issues before considering the task complete.
+12. **DOCUMENTATION:** All newly written code MUST include comprehensive JSDoc comments for functions, interfaces, and components. Explain the 'why' and 'how' of complex logic. Ensure top-level file comments describe the file's purpose.
 
 # Role: Principal Frontend Architect & Creative Technologist
 
