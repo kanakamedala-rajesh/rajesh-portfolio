@@ -35,12 +35,12 @@ export default function Loader() {
     // If visited, skip animation
     const visited = sessionStorage.getItem("rk_portfolio_visited");
     if (visited) {
-      // Defer state updates to avoid cascading renders warning
-      setTimeout(() => {
+      // Use setTimeout to avoid synchronous setState warning
+      const timer = setTimeout(() => {
         setIsLoading(false);
         setVisible(false);
       }, 0);
-      return;
+      return () => clearTimeout(timer);
     }
 
     // If not visited, setup load listener
@@ -103,66 +103,66 @@ export default function Loader() {
     };
   }, [setIsLoading]);
 
-  // If invisible, don't render anything
-  if (!visible) return null;
-
   return (
     <AnimatePresence>
-      <motion.div
-        className="pointer-events-none fixed inset-0 z-50 flex items-center justify-center font-mono text-xl md:text-2xl"
-        initial={{ opacity: 1 }}
-        exit={{ transition: { duration: 1.5 } }} // Keep parent mounted for children exit
-      >
-        {/* Left Curtain */}
+      {visible && (
         <motion.div
-          className="bg-background absolute inset-y-0 left-0 w-1/2"
-          initial={{ x: "0%" }}
-          exit={{
-            x: "-100%",
-            transition: { duration: 0.8, ease: [0.76, 0, 0.24, 1] },
-          }}
-        />
-        {/* Right Curtain */}
-        <motion.div
-          className="bg-background absolute inset-y-0 right-0 w-1/2"
-          initial={{ x: "0%" }}
-          exit={{
-            x: "100%",
-            transition: { duration: 0.8, ease: [0.76, 0, 0.24, 1] },
-          }}
-        />
-
-        {/* Text Container */}
-        <motion.div
-          className="relative z-10 flex flex-col items-start gap-2 p-8"
-          animate={{ opacity: textVisible ? 1 : 0 }}
-          transition={{ duration: 0.5 }}
+          id="initial-loader"
+          className="pointer-events-none fixed inset-0 z-50 flex items-center justify-center font-mono text-xl md:text-2xl"
+          initial={{ opacity: 1 }}
+          exit={{ transition: { duration: 1.5 } }} // Keep parent mounted for children exit
         >
-          {BOOT_SEQUENCE.map(
-            (line, index) =>
-              index <= step && (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className={`${line.color}`}
-                >
-                  <span className="mr-2 opacity-50">
-                    {index + 1 < 10 ? `0${index + 1}` : index + 1}
-                  </span>
-                  {line.text}
-                  {index === step && (
-                    <motion.span
-                      animate={{ opacity: [0, 1, 0] }}
-                      transition={{ repeat: Infinity, duration: 0.5 }}
-                      className="ml-1 inline-block h-5 w-2 bg-current align-middle"
-                    />
-                  )}
-                </motion.div>
-              )
-          )}
+          {/* Left Curtain */}
+          <motion.div
+            className="bg-background absolute inset-y-0 left-0 w-1/2"
+            initial={{ x: "0%" }}
+            exit={{
+              x: "-100%",
+              transition: { duration: 0.8, ease: [0.76, 0, 0.24, 1] },
+            }}
+          />
+          {/* Right Curtain */}
+          <motion.div
+            className="bg-background absolute inset-y-0 right-0 w-1/2"
+            initial={{ x: "0%" }}
+            exit={{
+              x: "100%",
+              transition: { duration: 0.8, ease: [0.76, 0, 0.24, 1] },
+            }}
+          />
+
+          {/* Text Container */}
+          <motion.div
+            className="relative z-10 flex flex-col items-start gap-2 p-8"
+            animate={{ opacity: textVisible ? 1 : 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            {BOOT_SEQUENCE.map(
+              (line, index) =>
+                index <= step && (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className={`${line.color}`}
+                  >
+                    <span className="mr-2 opacity-50">
+                      {index + 1 < 10 ? `0${index + 1}` : index + 1}
+                    </span>
+                    {line.text}
+                    {index === step && (
+                      <motion.span
+                        animate={{ opacity: [0, 1, 0] }}
+                        transition={{ repeat: Infinity, duration: 0.5 }}
+                        className="ml-1 inline-block h-5 w-2 bg-current align-middle"
+                      />
+                    )}
+                  </motion.div>
+                )
+            )}
+          </motion.div>
         </motion.div>
-      </motion.div>
+      )}
     </AnimatePresence>
   );
 }

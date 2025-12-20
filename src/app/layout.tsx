@@ -7,6 +7,8 @@ import Navbar from "@/components/ui/Navbar";
 import PageWrapper from "@/components/ui/PageWrapper";
 import { LoaderProvider } from "@/context/LoaderContext";
 
+import Script from "next/script";
+
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
@@ -39,8 +41,18 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${inter.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable}`}
+      suppressHydrationWarning
     >
       <body className="antialiased">
+        <Script id="check-visited" strategy="beforeInteractive">
+          {`
+            try {
+              if (sessionStorage.getItem("rk_portfolio_visited")) {
+                document.documentElement.classList.add("visited-mode");
+              }
+            } catch (e) {}
+          `}
+        </Script>
         <LoaderProvider>
           <Loader />
           <Navbar />
