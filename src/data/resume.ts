@@ -32,7 +32,7 @@ export interface ResumeData {
 
 export const resumeData: ResumeData = {
   header: {
-    name: "Rajesh Kanakamedala",
+    name: "RAJESH KANAKAMEDALA",
     title: "Senior Software Engineer",
     tagline: "Architecting Robust Full Stack, Android, and Embedded Systems",
     location: "Vijayawada, Andhra Pradesh, India",

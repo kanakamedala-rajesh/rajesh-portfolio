@@ -12,6 +12,7 @@
     "format": "prettier --write .",
     "check-format": "prettier --check .",
     "commit": "cz",
+    "commit:validate": "pnpm lint && pnpm type-check && pnpm build && pnpm test",
     "test": "playwright test --reporter=list"
   },
   "dependencies": {

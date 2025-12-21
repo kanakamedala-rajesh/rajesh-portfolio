@@ -202,7 +202,7 @@ export default function Navbar() {
             onMouseDown={(e) => e.stopPropagation()}
           >
             {/* Header: Close Button */}
-            <div className="flex w-full items-center justify-end p-8">
+            <div className="relative z-10 flex w-full items-center justify-end p-8">
               <button
                 className="text-foreground hover:text-accent hover:border-accent/50 group flex h-12 w-12 items-center justify-center rounded-full border border-white/10 transition-all hover:bg-white/5"
                 onClick={() => setIsMobileMenuOpen(false)}

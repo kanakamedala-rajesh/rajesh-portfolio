@@ -98,19 +98,19 @@ test.describe("System Boot & Navigation", () => {
     // Open menu
     await page.locator('button[aria-label="Open Menu"]').click();
 
-    // Check for overlay
-    // Use a simpler selector that avoids the z-[100] escaping issues
+    // Check for overlay and wait for animation to settle
     const overlay = page.locator(".fixed.inset-0.cyber-grid");
     await expect(overlay).toBeVisible();
+    await page.waitForTimeout(1000); // Allow animation to finish
 
     // Check for navigation links inside the mobile menu
     const aboutLink = page.getByRole("link", { name: "About" }).first();
     await expect(aboutLink).toBeVisible();
 
-    // Close menu
-    await page
-      .locator('button[aria-label="Close Menu"]')
-      .click({ force: true });
+    // Close menu - ensure it's visible and in viewport
+    const closeButton = page.locator('button[aria-label="Close Menu"]');
+    await expect(closeButton).toBeVisible();
+    await closeButton.click();
     await expect(overlay).toBeHidden();
   });
 });

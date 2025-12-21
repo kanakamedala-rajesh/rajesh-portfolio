@@ -41,10 +41,10 @@
 **Goal**: Build the split-screen Hero section with "Hardware to Cloud" visualization.
 **Independent Test Criteria**: Split screen separates on scroll; Spline connects halves.
 
-- [ ] T014 [US2] Create `Hero` section component in `src/components/sections/Hero.tsx`
-- [ ] T015 [US2] Implement split-screen layout (Hardware vs Cloud) with CSS Grid/Flex in `src/components/sections/Hero.tsx`
-- [ ] T016 [US2] Implement scroll-linked "pull apart" animation with GSAP/Framer in `src/components/sections/Hero.tsx`
-- [ ] T017 [US2] Add E2E test for Hero scroll interaction in `tests/hero.spec.ts`
+- [x] T014 [US2] Create `Hero` section component in `src/components/sections/Hero.tsx`
+- [x] T015 [US2] Implement split-screen layout (Hardware vs Cloud) with CSS Grid/Flex in `src/components/sections/Hero.tsx`
+- [x] T016 [US2] Implement scroll-linked "pull apart" animation with GSAP/Framer in `src/components/sections/Hero.tsx`
+- [x] T017 [US2] Add E2E test for Hero scroll interaction in `tests/hero.spec.ts`
 
 ## Phase 5: User Story 3 - Experience Tunnel (P2)
 
