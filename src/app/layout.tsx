@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import { Inter, Space_Grotesk, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-import SmoothScroll from "@/components/ui/SmoothScroll";
 import Loader from "@/components/ui/Loader";
 import Navbar from "@/components/ui/Navbar";
 import PageWrapper from "@/components/ui/PageWrapper";
 import { LoaderProvider } from "@/context/LoaderContext";
+import { ScrollProvider } from "@/context/ScrollContext";
 
 import Script from "next/script";
 
@@ -54,11 +54,12 @@ export default function RootLayout({
           `}
         </Script>
         <LoaderProvider>
-          <Loader />
-          <Navbar />
-          <SmoothScroll />
-          <div className="texture-overlay" />
-          <PageWrapper>{children}</PageWrapper>
+          <ScrollProvider>
+            <Loader />
+            <Navbar />
+            <div className="texture-overlay" />
+            <PageWrapper>{children}</PageWrapper>
+          </ScrollProvider>
         </LoaderProvider>
       </body>
     </html>

@@ -51,7 +51,7 @@ export default function Hero() {
         scrollTrigger: {
           trigger: container.current,
           start: "top top",
-          end: "+=150%",
+          end: "+=250%",
           scrub: 1,
           pin: true,
         },
@@ -63,12 +63,14 @@ export default function Hero() {
         .to(topHalf.current, {
           yPercent: -100,
           ease: "power2.inOut",
+          duration: 2,
         })
         .to(
           bottomHalf.current,
           {
             yPercent: 100,
             ease: "power2.inOut",
+            duration: 2,
           },
           "<"
         )
@@ -84,10 +86,10 @@ export default function Hero() {
             opacity: 1,
             scale: 1,
             filter: "blur(0px)",
-            duration: 1,
+            duration: 1.5,
             ease: "expo.out", // "Pop" effect
           },
-          "-=0.5"
+          "-=1"
         )
         // 3. Spline Interaction: Stretch and "Break"
         .to(
@@ -98,6 +100,26 @@ export default function Hero() {
             opacity: 0,
             duration: 1,
             ease: "power1.in",
+          },
+          "<"
+        )
+        // 4. EXIT PHASE: Zoom through content
+        .to(
+          content.current,
+          {
+            scale: 2,
+            opacity: 0,
+            filter: "blur(20px)",
+            duration: 1,
+            ease: "power2.in",
+          },
+          "+=0.5" // Small pause before exit
+        )
+        .to(
+          [topHalf.current, bottomHalf.current],
+          {
+            opacity: 0,
+            duration: 1,
           },
           "<"
         );
@@ -113,6 +135,7 @@ export default function Hero() {
     >
       {/* --- REVEALED CONTENT (Center) --- */}
       <div
+        id="hero-title"
         ref={content}
         className="absolute inset-0 z-10 flex flex-col items-center justify-center p-4 text-center opacity-0"
       >

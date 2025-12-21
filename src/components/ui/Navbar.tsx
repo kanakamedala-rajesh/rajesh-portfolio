@@ -4,16 +4,17 @@ import { useState, useEffect } from "react";
 import {
   motion,
   AnimatePresence,
-  useScroll,
+  useScroll as useMotionScroll,
   useMotionValueEvent,
 } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import Link from "next/link";
 import { useLoader } from "@/context/LoaderContext";
+import { useScroll } from "@/context/ScrollContext";
 import { cn } from "@/lib/utils";
 
 const NAV_LINKS = [
-  { name: "About", href: "#about" },
+  { name: "About", href: "#hero-title" },
   { name: "Experience", href: "#experience" },
   { name: "Skills", href: "#skills" },
   { name: "Contact", href: "#contact" },
@@ -21,10 +22,48 @@ const NAV_LINKS = [
 
 export default function Navbar() {
   const { isLoading } = useLoader();
-  const { scrollY } = useScroll();
+  const { lenis } = useScroll(); // Use our custom context
+  const { scrollY } = useMotionScroll();
+
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [hoveredLink, setHoveredLink] = useState<string | null>(null);
+  const [pendingScrollTarget, setPendingScrollTarget] = useState<string | null>(
+    null
+  );
+
+  const scrollToTarget = (targetId: string) => {
+    const elem = document.getElementById(targetId);
+    if (!elem) return;
+
+    if (lenis) {
+      lenis.scrollTo(elem, {
+        offset: 0,
+        duration: 1.5,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        lock: true,
+      });
+    } else {
+      elem.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
+  const handleScroll = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    href: string
+  ) => {
+    e.preventDefault();
+    const targetId = href.replace("#", "");
+
+    if (isMobileMenuOpen) {
+      // Defer scroll until menu exit animation completes
+      setPendingScrollTarget(targetId);
+      setIsMobileMenuOpen(false);
+    } else {
+      // Immediate scroll
+      scrollToTarget(targetId);
+    }
+  };
 
   // Update scroll state for morph effect
   useMotionValueEvent(scrollY, "change", (latest) => {
@@ -50,18 +89,14 @@ export default function Navbar() {
 
   return (
     <>
-      {/* Navbar Container - Centers the pill */}
-      <header className="pointer-events-none fixed top-0 left-0 z-40 w-full">
+      <header className="pointer-events-none fixed top-0 left-0 z-50 w-full">
         <motion.div
           className={cn(
             "font-space pointer-events-auto relative mx-auto items-center",
-            // Mobile: Grid layout for centered logo
             "grid grid-cols-[1fr_auto_1fr]",
-            // Desktop: Flex layout for standard nav
             "md:flex md:justify-between",
             isScrolled ? "bg-deep-void/80 rounded-full" : "bg-transparent",
-            isLoading && "pointer-events-none", // Disable interaction during load
-            isScrolled && "moving-border-overlay" // Enable CSS animation for the border
+            isLoading && "pointer-events-none"
           )}
           initial={{
             opacity: 0,
@@ -76,25 +111,25 @@ export default function Navbar() {
           animate={{
             opacity: isLoading ? 0 : 1,
             y: isLoading ? -100 : 0,
-            position: "relative", // Prevent Framer Motion positioning overrides
-            width: isScrolled ? "calc(100% - 2rem)" : "100%", // Consistent 1rem margin
-            maxWidth: isScrolled ? "56rem" : "100%", // 4xl equivalent
-            marginTop: isLoading ? "0rem" : isScrolled ? "2rem" : "0rem", // Top spacing
+            position: "relative",
+            width: isScrolled ? "calc(100% - 2rem)" : "100%",
+            maxWidth: isScrolled ? "56rem" : "100%",
+            marginTop: isLoading ? "0rem" : isScrolled ? "2rem" : "0rem",
             borderRadius: isScrolled ? "9999px" : "0px",
             backgroundColor: isScrolled
               ? "rgba(15, 17, 26, 0.85)"
-              : "rgba(15, 17, 26, 0)", // deep-void equivalent
+              : "rgba(15, 17, 26, 0)",
             backdropFilter: isScrolled ? "blur(16px)" : "blur(0px)",
-            borderWidth: "1px", // Keep logical border for layout, but transparent
+            borderWidth: "1px",
             borderColor: isScrolled
-              ? "rgba(255, 255, 255, 0.05)" // Faint static border so the shape is always visible
+              ? "rgba(255, 255, 255, 0.05)"
               : "rgba(255, 255, 255, 0)",
             paddingLeft: isScrolled ? "1.5rem" : "2rem",
             paddingRight: isScrolled ? "1.5rem" : "2rem",
             paddingTop: isScrolled ? "0.75rem" : "1.5rem",
             paddingBottom: isScrolled ? "0.75rem" : "1.5rem",
             boxShadow: isScrolled
-              ? "0 20px 50px -12px rgba(0, 0, 0, 0.8), 0 0 15px rgba(6, 182, 212, 0.15), inset 0 1px 1px rgba(255, 255, 255, 0.1)" // 3D Elevation
+              ? "0 20px 50px -12px rgba(0, 0, 0, 0.8), 0 0 15px rgba(6, 182, 212, 0.15), inset 0 1px 1px rgba(255, 255, 255, 0.1)"
               : "0 0px 0px 0px rgba(0, 0, 0, 0)",
           }}
           transition={{
@@ -104,10 +139,14 @@ export default function Navbar() {
             mass: 1,
           }}
         >
-          {/* Logo */}
+          {isScrolled && (
+            <div className="moving-border-overlay z-0 rounded-full" />
+          )}
+
           <Link
             href="/"
-            className="text-foreground group relative z-10 col-start-2 justify-self-center font-mono text-xl font-bold tracking-tighter md:col-auto md:justify-self-start"
+            className="text-foreground group relative z-50 col-start-2 justify-self-center font-mono text-xl font-bold tracking-tighter md:col-auto md:justify-self-start"
+            onClick={(e) => handleScroll(e, "#hero-title")}
           >
             <span className="text-primary group-hover:text-accent transition-colors">
               &lt;
@@ -118,15 +157,15 @@ export default function Navbar() {
             </span>
           </Link>
 
-          {/* Desktop Nav */}
           <nav className="hidden items-center gap-8 md:flex">
             {NAV_LINKS.map((link) => (
-              <Link
+              <a
                 key={link.name}
                 href={link.href}
-                className="text-foreground/80 hover:text-primary font-space relative z-10 px-1 py-1 text-sm font-medium tracking-widest uppercase transition-colors"
+                className="text-foreground/80 hover:text-primary font-space relative z-50 cursor-pointer px-1 py-1 text-sm font-medium tracking-widest uppercase transition-colors"
                 onMouseEnter={() => setHoveredLink(link.name)}
                 onMouseLeave={() => setHoveredLink(null)}
+                onClick={(e) => handleScroll(e, link.href)}
               >
                 <span className="relative z-10">{link.name}</span>
                 <AnimatePresence>
@@ -150,12 +189,11 @@ export default function Navbar() {
                     />
                   )}
                 </AnimatePresence>
-              </Link>
+              </a>
             ))}
           </nav>
 
-          {/* Mobile Toggle */}
-          <div className="pointer-events-auto relative z-20 col-start-3 justify-self-end md:hidden">
+          <div className="pointer-events-auto relative z-50 col-start-3 justify-self-end md:hidden">
             <button
               className="text-foreground hover:text-primary hover:border-primary/50 flex h-10 w-10 items-center justify-center rounded-md border border-white/10 transition-all hover:bg-white/5 active:scale-95"
               onClick={() => setIsMobileMenuOpen(true)}
@@ -166,18 +204,25 @@ export default function Navbar() {
           </div>
         </motion.div>
       </header>
-      {/* Mobile Cyber-Deck Menu */}{" "}
-      <AnimatePresence>
+
+      <AnimatePresence
+        onExitComplete={() => {
+          if (pendingScrollTarget) {
+            scrollToTarget(pendingScrollTarget);
+            setPendingScrollTarget(null);
+          }
+        }}
+      >
         {isMobileMenuOpen && (
           <motion.div
             className="bg-deep-void cyber-grid fixed inset-0 z-[100] flex flex-col items-center justify-between overflow-hidden"
-            initial={{ opacity: 0, y: "110%" }} // Start slightly further down to ensure no bleed
+            initial={{ opacity: 0, y: "110%" }}
             animate={{
               opacity: 1,
               y: "0%",
               transition: {
                 duration: 0.6,
-                ease: [0.19, 1, 0.22, 1], // Expo-out: Fast start, soft landing
+                ease: [0.19, 1, 0.22, 1],
               },
             }}
             exit={{
@@ -185,7 +230,7 @@ export default function Navbar() {
               y: "110%",
               transition: {
                 duration: 0.5,
-                ease: [0.19, 1, 0.22, 1], // Same smooth curve for exit
+                ease: [0.19, 1, 0.22, 1],
               },
             }}
             style={{
@@ -201,7 +246,6 @@ export default function Navbar() {
             onClick={(e) => e.stopPropagation()}
             onMouseDown={(e) => e.stopPropagation()}
           >
-            {/* Header: Close Button */}
             <div className="relative z-10 flex w-full items-center justify-end p-8">
               <button
                 className="text-foreground hover:text-accent hover:border-accent/50 group flex h-12 w-12 items-center justify-center rounded-full border border-white/10 transition-all hover:bg-white/5"
@@ -212,31 +256,30 @@ export default function Navbar() {
               </button>
             </div>
 
-            {/* Main Navigation Links - Centered Vertically */}
             <nav className="flex flex-1 flex-col items-center justify-center gap-8">
               {NAV_LINKS.map((link, index) => (
                 <motion.div
                   key={link.name}
                   initial={{ x: -50, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
-                  exit={{ opacity: 0, transition: { duration: 0.2 } }} // Quick fade out
+                  exit={{ opacity: 0, transition: { duration: 0.2 } }}
                   transition={{
-                    delay: 0.1 + index * 0.05, // Tighter stagger
+                    delay: 0.1 + index * 0.05,
                     type: "spring",
                     stiffness: 100,
                     damping: 20,
                   }}
                 >
-                  <Link
+                  <a
                     href={link.href}
-                    className="group flex items-baseline gap-4"
-                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="group flex cursor-pointer items-baseline gap-4"
+                    onClick={(e) => handleScroll(e, link.href)}
                   >
                     <span className="group-hover:text-primary font-mono text-sm text-white/40 transition-colors">
                       0{index + 1}
                     </span>
                     <span
-                      className="font-space text-5xl font-bold tracking-tighter text-transparent uppercase transition-all"
+                      className="font-space relative text-5xl font-bold tracking-tighter text-transparent uppercase transition-all"
                       style={{
                         WebkitTextStroke: "1px rgba(255,255,255,0.5)",
                       }}
@@ -246,12 +289,11 @@ export default function Navbar() {
                       </span>
                       {link.name}
                     </span>
-                  </Link>
+                  </a>
                 </motion.div>
               ))}
             </nav>
 
-            {/* Footer: Status / Connect */}
             <motion.div
               className="w-full border-t border-white/10 bg-black/20 p-8"
               initial={{ opacity: 0, y: 20 }}

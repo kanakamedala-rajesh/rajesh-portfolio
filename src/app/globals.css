@@ -87,6 +87,28 @@ body {
   background-color: var(--color-background);
   color: var(--color-foreground);
   overflow-x: hidden;
+  /* Ensure native UI elements (scrollbars) respect dark mode */
+  color-scheme: dark;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-background);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb, var(--color-primary));
+  border-radius: 3px;
+  opacity: 0.5;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-accent);
 }
 
 /* Visited Mode Overrides - Prevent Flash of Loader */

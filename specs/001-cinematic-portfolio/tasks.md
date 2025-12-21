@@ -2,7 +2,7 @@
 
 **Feature**: `001-cinematic-portfolio`
 **Status**: Pending
-**Progress**: 5/33
+**Progress**: 22/33
 
 ## Phase 1: Setup
 
@@ -51,11 +51,11 @@
 **Goal**: Create the horizontal scrolling timeline with mobile fallback.
 **Independent Test Criteria**: Desktop scrolls horizontally; Mobile lists vertically; VR cards tilt.
 
-- [ ] T018 [US3] Create `ExperienceTunnel` component in `src/components/sections/ExperienceTunnel.tsx`
-- [ ] T019 [US3] Implement horizontal scroll behavior using GSAP ScrollTrigger in `src/components/sections/ExperienceTunnel.tsx`
-- [ ] T020 [US3] Implement mobile vertical fallback layout (CSS media queries) in `src/components/sections/ExperienceTunnel.tsx`
-- [ ] T021 [US3] Implement 3D Tilt effect for VR/AR cards in `src/components/sections/ExperienceTunnel.tsx`
-- [ ] T022 [US3] Add E2E test for Experience section (horizontal vs vertical) in `tests/experience.spec.ts`
+- [x] T018 [US3] Create `ExperienceTunnel` component in `src/components/sections/ExperienceTunnel.tsx`
+- [x] T019 [US3] Implement horizontal scroll behavior using GSAP ScrollTrigger in `src/components/sections/ExperienceTunnel.tsx`
+- [x] T020 [US3] Implement mobile vertical fallback layout (CSS media queries) in `src/components/sections/ExperienceTunnel.tsx`
+- [x] T021 [US3] Implement 3D Tilt effect for VR/AR cards in `src/components/sections/ExperienceTunnel.tsx`
+- [x] T022 [US3] Add E2E test for Experience section (horizontal vs vertical) in `tests/experience.spec.ts`
 
 ## Phase 6: User Story 4 - Skills & Architecture (P2)
 
