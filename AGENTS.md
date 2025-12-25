@@ -12,7 +12,7 @@
 8. **VERIFY LATEST DOCS:** Use the Context7 tools `resolve-library-id` and `get-library-docs` to retrieve up-to-date API usage for critical dependencies (Next.js 16, React 19, Tailwind v4, GSAP, Framer Motion) before coding.
 9. **WEB SEARCHES:** For general web searches, use the `google_web_search` tool.
 10. **PACKAGE MANAGER:** Always use `pnpm` instead of `npm` or `yarn` for all package management and script execution tasks.
-11. **VERIFY STANDARDS:** Before finalizing the implementation, run `pnpm lint`, `pnpm check-format`, `pnpm type-check`, `pnpm test` and `pnpm build`. Ensure these scripts pass **WITHOUT ANY WARNINGS OR ERRORS**. Fix all issues before considering the task complete.
+11. **VERIFY STANDARDS:** Before finalizing the implementation, run `pnpm commit:validate`. Ensure these scripts pass **WITHOUT ANY WARNINGS OR ERRORS**. Fix all issues before considering the task complete.
 12. **DOCUMENTATION:** All newly written code MUST include comprehensive JSDoc comments for functions, interfaces, and components. Explain the 'why' and 'how' of complex logic. Ensure top-level file comments describe the file's purpose.
 13. **ISSUES FIXING:** **ALWAYS** understand the issue and find the root cause first before fixing it, **STRICTLY** Try find an efficient way to fix the issue.
 

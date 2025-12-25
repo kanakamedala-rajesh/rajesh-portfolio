@@ -35,7 +35,7 @@ test.describe("Experience Tunnel Section", () => {
     if (isMobile) return;
 
     // Check if cards are present
-    const cards = page.locator("h3"); // Experience titles are h3
+    const cards = page.locator("#experience h3"); // Experience titles are h3 within the section
     await expect(cards).toHaveCount(4);
 
     // On desktop, we expect a full-screen container for the tunnel effect

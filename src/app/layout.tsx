@@ -57,6 +57,7 @@ export default function RootLayout({
           <ScrollProvider>
             <Loader />
             <Navbar />
+            <div className="bg-deep-void fixed inset-0 -z-50" />
             <div className="texture-overlay" />
             <PageWrapper>{children}</PageWrapper>
           </ScrollProvider>

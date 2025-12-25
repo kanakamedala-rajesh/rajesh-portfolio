@@ -1,10 +1,12 @@
 "use client";
 
 import { useRef } from "react";
+import Image from "next/image";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { resumeData } from "@/data/resume";
+import { useSectionContext } from "@/context/SectionContext";
 import {
   CircuitBoard,
   Cloud,
@@ -24,6 +26,8 @@ import {
   Cable,
 } from "lucide-react";
 
+import { MOTION_CONSTANTS } from "@/lib/constants";
+
 gsap.registerPlugin(ScrollTrigger);
 
 export default function Hero() {
@@ -33,6 +37,8 @@ export default function Hero() {
   const content = useRef<HTMLDivElement>(null);
   const spline = useRef<SVGPathElement>(null);
   const splineGlow = useRef<SVGPathElement>(null);
+  const bgRef = useRef<HTMLDivElement>(null);
+  const { registerSection, updateSectionStatus } = useSectionContext();
 
   useGSAP(
     () => {
@@ -51,9 +57,17 @@ export default function Hero() {
         scrollTrigger: {
           trigger: container.current,
           start: "top top",
-          end: "+=250%",
-          scrub: 1,
+          end: MOTION_CONSTANTS.SCROLL.PIN_END,
+          scrub: MOTION_CONSTANTS.SCROLL.SCRUB,
           pin: true,
+          onUpdate: (self) => {
+            // Only mark as exiting in the later half to avoid conflict with "Reveal"
+            if (self.progress > 0.8) {
+              updateSectionStatus("hero", "exiting", self.progress);
+            } else {
+              updateSectionStatus("hero", "active", self.progress);
+            }
+          },
         },
       });
 
@@ -62,15 +76,15 @@ export default function Hero() {
         // 1. Pull apart the halves
         .to(topHalf.current, {
           yPercent: -100,
-          ease: "power2.inOut",
-          duration: 2,
+          ease: MOTION_CONSTANTS.EASE.IN_OUT,
+          duration: MOTION_CONSTANTS.DURATIONS.SLOW,
         })
         .to(
           bottomHalf.current,
           {
             yPercent: 100,
-            ease: "power2.inOut",
-            duration: 2,
+            ease: MOTION_CONSTANTS.EASE.IN_OUT,
+            duration: MOTION_CONSTANTS.DURATIONS.SLOW,
           },
           "<"
         )
@@ -87,7 +101,7 @@ export default function Hero() {
             scale: 1,
             filter: "blur(0px)",
             duration: 1.5,
-            ease: "expo.out", // "Pop" effect
+            ease: MOTION_CONSTANTS.EASE.EXPO_OUT, // "Pop" effect
           },
           "-=1"
         )
@@ -98,31 +112,38 @@ export default function Hero() {
             attr: { d: "M 50 100 Q 50 50 50 0" }, // Straighten
             strokeDashoffset: -pathLength * 2, // Flow effect
             opacity: 0,
-            duration: 1,
-            ease: "power1.in",
+            duration: MOTION_CONSTANTS.DURATIONS.NORMAL,
+            ease: MOTION_CONSTANTS.EASE.IN,
           },
           "<"
         )
-        // 4. EXIT PHASE: Zoom through content
+        // 4. Parallax Exit (Integrated into Timeline)
+        // Fade out content and background with different scales for depth
         .to(
           content.current,
           {
-            scale: 2,
             opacity: 0,
-            filter: "blur(20px)",
-            duration: 1,
-            ease: "power2.in",
+            scale: 1.5, // Faster foreground zoom
+            filter: "blur(10px)",
+            duration: MOTION_CONSTANTS.DURATIONS.NORMAL,
+            ease: MOTION_CONSTANTS.EASE.IN,
           },
-          "+=0.5" // Small pause before exit
+          "+=0.2"
         )
         .to(
-          [topHalf.current, bottomHalf.current],
+          bgRef.current,
           {
             opacity: 0,
-            duration: 1,
+            scale: 1.1, // Slower background zoom (Parallax)
+            filter: "blur(5px)",
+            duration: MOTION_CONSTANTS.DURATIONS.NORMAL,
+            ease: MOTION_CONSTANTS.EASE.IN,
           },
           "<"
         );
+
+      // Register Section
+      registerSection("hero");
     },
     { scope: container }
   );
@@ -130,9 +151,25 @@ export default function Hero() {
   return (
     <section
       ref={container}
-      className="bg-background relative h-screen w-full overflow-hidden"
+      id="hero"
+      className="bg-deep-void sticky top-0 z-10 h-screen w-full overflow-hidden"
       aria-label="Hero Section"
+      style={{ backgroundColor: "var(--color-deep-void)" }}
     >
+      {/* --- BACKGROUND IMAGE --- */}
+      <div ref={bgRef} className="absolute inset-0 z-0">
+        <Image
+          src="/home_bg.webp"
+          alt=""
+          aria-hidden="true"
+          fill
+          priority
+          className="object-cover object-center opacity-60"
+        />
+        {/* Overlay for text readability */}
+        <div className="bg-deep-void/40 absolute inset-0 mix-blend-multiply" />
+      </div>
+
       {/* --- REVEALED CONTENT (Center) --- */}
       <div
         id="hero-title"
@@ -155,13 +192,13 @@ export default function Hero() {
           {resumeData.header.tagline}
         </p>
 
-        <div className="text-accent flex flex-wrap justify-center gap-3 font-mono text-xs sm:gap-8 sm:text-base">
-          <div className="border-accent/20 bg-accent/5 flex items-center gap-2 rounded-full border px-3 py-1.5 backdrop-blur-sm sm:px-4 sm:py-2">
+        <div className="text-secondary flex flex-wrap justify-center gap-3 font-mono text-xs sm:gap-8 sm:text-base">
+          <div className="border-primary/50 bg-accent/5 flex items-center gap-2 rounded-full border px-3 py-1.5 backdrop-blur-sm sm:px-4 sm:py-2">
             <Zap className="h-3 w-3 sm:h-4 sm:w-4" />
             <span>{resumeData.header.title}</span>
           </div>
-          <div className="border-accent/20 bg-accent/5 flex items-center gap-2 rounded-full border px-3 py-1.5 backdrop-blur-sm sm:px-4 sm:py-2">
-            <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-green-500 sm:h-2 sm:w-2" />
+          <div className="border-secondary/50 bg-accent/5 flex items-center gap-2 rounded-full border px-3 py-1.5 backdrop-blur-sm sm:px-4 sm:py-2">
+            <div className="bg-primary h-1.5 w-1.5 animate-pulse rounded-full sm:h-2 sm:w-2" />
             <span>{resumeData.header.location}</span>
           </div>
         </div>
@@ -198,7 +235,7 @@ export default function Hero() {
         {/* Connector Point - Top */}
         <div className="absolute bottom-0 left-0 z-30 flex w-full flex-col items-center">
           {/* Label */}
-          <span className="text-primary mb-2 font-mono text-[10px] tracking-[0.2em] uppercase opacity-80 sm:text-xs">
+          <span className="text-primary mb-2 font-mono text-[10px] tracking-[0.2em] uppercase opacity-80 sm:text-2xl sm:font-extrabold">
             Cloud Layer
           </span>
 
@@ -214,15 +251,12 @@ export default function Hero() {
             {/* Housing */}
             <div className="border-primary/30 bg-primary/5 relative flex h-10 w-36 items-center justify-center gap-3 overflow-hidden rounded-full border shadow-[0_0_30px_rgba(6,182,212,0.2)] backdrop-blur-md sm:h-12 sm:w-48 sm:rounded-xl">
               <div className="bg-grid-white/[0.05] absolute inset-0" />
-              {/* Active Status Light */}
-              <div className="bg-primary absolute top-2 right-3 h-1.5 w-1.5 animate-pulse rounded-full shadow-[0_0_5px_var(--color-primary)]" />
-
               {/* Icon Identity */}
               <Cloud
-                className="text-primary/80 h-4 w-4 sm:h-5 sm:w-5"
-                strokeWidth={1.5}
+                className="text-primary/80 h-4 w-4 animate-pulse sm:h-6 sm:w-6"
+                strokeWidth={2}
               />
-              <span className="text-primary/60 font-mono text-[8px] tracking-[0.2em] sm:text-[10px]">
+              <span className="text-primary/60 font-mono text-[8px] tracking-[0.2em] sm:text-xs">
                 CLOUD.UPLINK
               </span>
             </div>
@@ -296,16 +330,12 @@ export default function Hero() {
             <div className="border-secondary/30 bg-deep-void relative flex h-10 w-36 items-center justify-center gap-3 overflow-hidden rounded-full border shadow-[0_0_30px_rgba(251,191,36,0.15)] sm:h-12 sm:w-48 sm:rounded-xl">
               {/* Tech Texture */}
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,var(--color-secondary)_1px,transparent_1px)] bg-size-[4px_4px] opacity-10" />
-
-              {/* Active Status Light */}
-              <div className="bg-secondary absolute bottom-2 left-3 h-1.5 w-1.5 animate-pulse rounded-full shadow-[0_0_5px_var(--color-secondary)]" />
-
               {/* Icon Identity */}
               <Cpu
-                className="text-secondary/80 h-4 w-4 sm:h-5 sm:w-5"
-                strokeWidth={1.5}
+                className="text-secondary/80 h-4 w-4 animate-pulse sm:h-6 sm:w-6"
+                strokeWidth={2}
               />
-              <span className="text-secondary/60 font-mono text-[8px] tracking-[0.2em] sm:text-[10px]">
+              <span className="text-secondary/60 font-mono text-[8px] tracking-[0.2em] sm:text-xs">
                 CORE.SYS
               </span>
             </div>
@@ -318,7 +348,7 @@ export default function Hero() {
           </div>
 
           {/* Label */}
-          <span className="text-secondary mt-2 font-mono text-[10px] tracking-[0.2em] uppercase opacity-80 sm:text-xs">
+          <span className="text-secondary mt-2 font-mono text-[10px] tracking-[0.2em] uppercase opacity-80 sm:text-2xl sm:font-extrabold">
             Hardware Layer
           </span>
         </div>

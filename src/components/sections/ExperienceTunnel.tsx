@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { motion } from "framer-motion";
+import { useSectionTransition } from "@/hooks/useSectionTransition";
 import { resumeData } from "@/data/resume";
 import { cn } from "@/lib/utils";
 import { Maximize2 } from "lucide-react";
@@ -93,11 +94,11 @@ const ExperienceCard = ({
         } as React.CSSProperties
       }
       className={cn(
-        "bg-void/60 group flex h-[500px] w-full max-w-[90vw] shrink-0 cursor-pointer flex-col justify-between overflow-hidden rounded-xl border p-6 backdrop-blur-md transition-all duration-300 hover:border-white/40 md:h-[600px] md:w-[600px] md:p-8",
+        "bg-void/60 group flex h-125 w-full max-w-[90vw] shrink-0 cursor-pointer flex-col justify-between overflow-hidden rounded-xl border p-6 backdrop-blur-md transition-all duration-300 hover:border-white/40 md:h-150 md:w-150 md:p-8",
         // CSS-driven responsive positioning: Sticky on mobile, Relative on desktop
         "sticky md:relative",
         // Apply top from variable on mobile, auto on desktop
-        "top-[var(--card-top)] md:top-auto",
+        "top-(--card-top) md:top-auto",
         theme.borderColor
       )}
       onClick={() => onSelect(exp, index)}
@@ -178,7 +179,7 @@ const ExperienceCard = ({
           </div>
         </div>
 
-        <ul className="text-muted-foreground flex-grow space-y-3 overflow-hidden">
+        <ul className="text-muted-foreground grow space-y-3 overflow-hidden">
           {exp.description.slice(0, 3).map((desc, i) => (
             <li key={i} className="flex items-start text-sm md:text-base">
               <span
@@ -244,6 +245,14 @@ export default function ExperienceTunnel() {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
+  useSectionTransition({
+    sectionRef,
+    contentRef,
+    id: "experience-tunnel",
+    isPinned: true,
+    enableExit: false, // Handle exit internally
+  });
+
   useEffect(() => {
     if (isMobile) return;
 
@@ -255,14 +264,18 @@ export default function ExperienceTunnel() {
 
     const ctx = gsap.context(() => {
       // 1. Horizontal Scroll Pin
-      // Use functional value for responsive recalculation
-      gsap.to(track, {
-        x: () => -(track.scrollWidth - window.innerWidth + 100),
-        ease: "none",
+      const getScrollAmount = () => {
+        const trackWidth = track.scrollWidth;
+        const viewportWidth =
+          track.parentElement?.clientWidth || window.innerWidth;
+        return -(trackWidth - viewportWidth);
+      };
+
+      const tl = gsap.timeline({
         scrollTrigger: {
           trigger: section,
           start: "top top",
-          end: () => `+=${track.scrollWidth - window.innerWidth + 100}`, // Dynamic end value as well
+          end: () => `+=${Math.abs(getScrollAmount()) + 500}`, // Reduced from 1500 to 500 for tighter scroll
           scrub: 1,
           pin: true,
           invalidateOnRefresh: true,
@@ -270,18 +283,20 @@ export default function ExperienceTunnel() {
         },
       });
 
-      // 2. Entrance Animation
-      gsap.from(content, {
-        scale: 0.8,
+      tl.to(track, {
+        x: getScrollAmount,
+        ease: "none",
+        duration: 1, // Normalized duration
+      });
+
+      // --- EXIT ANIMATION ---
+      // This runs at the end of the scroll duration
+      tl.to(content, {
         opacity: 0,
-        filter: "blur(10px)",
-        ease: "power2.out",
-        scrollTrigger: {
-          trigger: section,
-          start: "top bottom",
-          end: "top top",
-          scrub: 1,
-        },
+        scale: 1.1, // Reduced scale for subtler exit
+        filter: "blur(5px)",
+        ease: "power1.in",
+        duration: 0.1, // Very short duration at end
       });
     }, section);
 
@@ -293,8 +308,10 @@ export default function ExperienceTunnel() {
       <section
         id="experience"
         ref={sectionRef}
-        className="bg-background text-foreground relative min-h-screen md:h-[400vh]"
+        className="bg-deep-void text-foreground relative z-30 min-h-screen md:h-[100vh]"
+        style={{ backgroundColor: "var(--color-deep-void)" }}
       >
+        {" "}
         <div
           ref={contentRef}
           className={cn(
@@ -304,7 +321,7 @@ export default function ExperienceTunnel() {
           )}
         >
           <div className="pointer-events-none absolute inset-0 opacity-10">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white/10 to-transparent" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,var(--tw-gradient-stops))] from-white/10 to-transparent" />
           </div>
 
           <div className="relative z-10 container mx-auto flex h-full flex-col px-4 md:flex-row md:items-center md:px-0">
@@ -337,7 +354,7 @@ export default function ExperienceTunnel() {
               className={cn(
                 "flex gap-8",
                 "w-full flex-col items-center pb-20 pl-6",
-                "md:w-auto md:flex-row md:items-center md:px-20 md:pl-0"
+                "md:w-auto md:flex-row md:items-center md:px-20 md:pr-[30vw] md:pl-0" // Added significantly more right padding
               )}
             >
               {resumeData.experience.map((exp, index) => (
