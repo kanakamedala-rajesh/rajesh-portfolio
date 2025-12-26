@@ -1,6 +1,7 @@
 import Hero from "@/components/sections/Hero";
 import ExperienceTunnel from "@/components/sections/ExperienceTunnel";
 import AboutArchitecture from "@/components/sections/AboutArchitecture";
+import SkillsNetwork from "@/components/sections/SkillsNetwork";
 import { SectionProvider } from "@/context/SectionContext";
 
 export default function Home() {
@@ -10,6 +11,7 @@ export default function Home() {
         <Hero />
         <AboutArchitecture />
         <ExperienceTunnel />
+        <SkillsNetwork />
 
         {/* Placeholder for Contact Section */}
         <section

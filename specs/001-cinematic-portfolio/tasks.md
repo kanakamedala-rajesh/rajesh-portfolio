@@ -57,16 +57,18 @@
 - [x] T021 [US3] Implement 3D Tilt effect for VR/AR cards in `src/components/sections/ExperienceTunnel.tsx`
 - [x] T022 [US3] Add E2E test for Experience section (horizontal vs vertical) in `tests/experience.spec.ts`
 
+**Progress**: 27/33
+
 ## Phase 6: User Story 4 - Skills & Architecture (P2)
 
 **Goal**: Visualize the tech stack (Isometric) and skills (Force Graph).
 **Independent Test Criteria**: Isometric stack builds on scroll; Nodes repel/attract cursor.
 
-- [ ] T023 [US4] Create `AboutArchitecture` component in `src/components/sections/AboutArchitecture.tsx`
-- [ ] T024 [US4] Implement isometric stack build-up animation in `src/components/sections/AboutArchitecture.tsx`
-- [ ] T025 [US4] Create `SkillsNetwork` component in `src/components/sections/SkillsNetwork.tsx`
-- [ ] T026 [US4] Implement Force-Directed Graph physics (or simulation) in `src/components/sections/SkillsNetwork.tsx`
-- [ ] T027 [US4] Add E2E test for Skills interaction in `tests/skills.spec.ts`
+- [x] T023 [US4] Create `AboutArchitecture` component in `src/components/sections/AboutArchitecture.tsx`
+- [x] T024 [US4] Implement isometric stack build-up animation in `src/components/sections/AboutArchitecture.tsx`
+- [x] T025 [US4] Create `SkillsNetwork` component in `src/components/sections/SkillsNetwork.tsx`
+- [x] T026 [US4] Implement Force-Directed Graph physics (or simulation) in `src/components/sections/SkillsNetwork.tsx`
+- [x] T027 [US4] Add E2E tests for Skills and Architecture interactions in `tests/skills.spec.ts` and `tests/architecture.spec.ts`
 
 ## Phase 7: User Story 5 - Contact Terminal (P3)
 

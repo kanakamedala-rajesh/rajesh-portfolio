@@ -308,7 +308,7 @@ export default function ExperienceTunnel() {
       <section
         id="experience"
         ref={sectionRef}
-        className="bg-deep-void text-foreground relative z-30 min-h-screen md:h-[100vh]"
+        className="bg-deep-void text-foreground relative z-30 min-h-screen md:h-screen"
         style={{ backgroundColor: "var(--color-deep-void)" }}
       >
         {" "}
@@ -344,7 +344,7 @@ export default function ExperienceTunnel() {
             </div>
 
             <div className="pointer-events-none absolute top-1/2 left-10 z-0 hidden -translate-y-1/2 opacity-10 select-none md:block">
-              <h2 className="font-heading text-[12rem] leading-none font-bold whitespace-nowrap text-white">
+              <h2 className="font-heading text-gradient text-[12rem] leading-none font-bold whitespace-nowrap">
                 EXPERIENCE
               </h2>
             </div>

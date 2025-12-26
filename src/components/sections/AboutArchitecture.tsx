@@ -374,6 +374,44 @@ export default function AboutArchitecture() {
               opacity="0.5"
               mask="url(#fade-mask)"
             />
+
+            {/* Data Particles */}
+            <circle
+              r="3"
+              fill="var(--color-primary)"
+              className="blur-[1px] filter"
+            >
+              <animateMotion
+                dur="4s"
+                repeatCount="indefinite"
+                path="M 100 600 L 100 0"
+              />
+            </circle>
+            <circle
+              r="2"
+              fill="var(--color-secondary)"
+              className="blur-[1px] filter"
+            >
+              <animateMotion
+                dur="6s"
+                repeatCount="indefinite"
+                path="M 300 600 L 300 0"
+                begin="1.5s"
+              />
+            </circle>
+            <circle
+              r="4"
+              fill="var(--color-accent)"
+              opacity="0.4"
+              className="blur-[2px] filter"
+            >
+              <animateMotion
+                dur="8s"
+                repeatCount="indefinite"
+                path="M 200 600 L 200 0"
+                begin="3s"
+              />
+            </circle>
           </svg>
 
           {/* --- LAYER 3: CLOUD (Top) --- */}
@@ -422,11 +460,28 @@ export default function AboutArchitecture() {
                 backgroundSize: "20px 20px",
               }}
             />
+            {/* Edge Pins / Traces */}
+            <div className="absolute inset-x-0 top-0 flex h-1 justify-around px-8">
+              {[...Array(8)].map((_, i) => (
+                <div
+                  key={i}
+                  className="bg-secondary/40 h-full w-1 rounded-full"
+                />
+              ))}
+            </div>
+            <div className="absolute inset-x-0 bottom-0 flex h-1 justify-around px-8">
+              {[...Array(8)].map((_, i) => (
+                <div
+                  key={i}
+                  className="bg-secondary/40 h-full w-1 rounded-full"
+                />
+              ))}
+            </div>
+
             <div className="absolute inset-0 flex items-center justify-center">
               <Cpu className="text-secondary/20 h-32 w-32 -rotate-45" />
             </div>
             <div className="border-secondary/20 absolute inset-4 rounded-xl border" />
-            {/* Side "Thickness" Simulation (pseudo-3D) - simplified via shadows in JS */}
           </div>
         </div>
       </div>
