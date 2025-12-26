@@ -75,10 +75,12 @@
 **Goal**: Build the interactive CLI terminal and footer reveal.
 **Independent Test Criteria**: Footer reveals on scroll; CLI accepts commands.
 
-- [ ] T028 [US5] Create `ContactTerminal` component in `src/components/sections/ContactTerminal.tsx`
-- [ ] T029 [US5] Implement CLI input logic (command parsing, history) in `src/components/sections/ContactTerminal.tsx`
-- [ ] T030 [US5] Implement footer reveal animation (z-index/fixed logic) in `src/components/sections/ContactTerminal.tsx`
-- [ ] T031 [US5] Add E2E test for Terminal commands in `tests/contact.spec.ts`
+- [x] T028 [US5] Create `ContactTerminal` component in `src/components/sections/ContactTerminal.tsx`
+- [x] T029 [US5] Implement CLI input logic (command parsing, history) in `src/components/sections/ContactTerminal.tsx`
+- [x] T030 [US5] Implement footer reveal animation (z-index/fixed logic) in `src/components/sections/ContactTerminal.tsx`
+- [x] T031 [US5] Add E2E test for Terminal commands in `tests/contact.spec.ts`
+
+**Progress**: 31/33
 
 ## Phase 8: Polish & Cross-Cutting
 

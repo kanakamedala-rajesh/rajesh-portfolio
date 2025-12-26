@@ -2,26 +2,25 @@ import Hero from "@/components/sections/Hero";
 import ExperienceTunnel from "@/components/sections/ExperienceTunnel";
 import AboutArchitecture from "@/components/sections/AboutArchitecture";
 import SkillsNetwork from "@/components/sections/SkillsNetwork";
+import ContactTerminal from "@/components/sections/ContactTerminal";
 import { SectionProvider } from "@/context/SectionContext";
 
 export default function Home() {
   return (
     <SectionProvider>
-      <main className="bg-background min-h-screen w-full">
-        <Hero />
-        <AboutArchitecture />
-        <ExperienceTunnel />
-        <SkillsNetwork />
+      <main className="relative min-h-screen w-full">
+        {/* Main Content Wrapper - Lifts up to reveal footer on Desktop only */}
+        <div className="bg-background relative z-10 mb-0 rounded-b-3xl shadow-2xl lg:mb-[100vh] lg:rounded-b-[3rem]">
+          <Hero />
+          <AboutArchitecture />
+          <ExperienceTunnel />
+          <SkillsNetwork />
+        </div>
 
-        {/* Placeholder for Contact Section */}
-        <section
-          id="contact"
-          className="flex min-h-screen items-center justify-center border-t border-white/10"
-        >
-          <h2 className="text-4xl font-bold text-white/20">
-            CONTACT TERMINAL...
-          </h2>
-        </section>
+        {/* Footer Container - Static on Mobile, Fixed Reveal on Desktop */}
+        <div className="relative bottom-0 left-0 z-0 flex h-auto w-full items-end lg:fixed lg:h-screen">
+          <ContactTerminal />
+        </div>
       </main>
     </SectionProvider>
   );
