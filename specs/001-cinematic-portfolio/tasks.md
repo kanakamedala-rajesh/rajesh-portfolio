@@ -2,7 +2,7 @@
 
 **Feature**: `001-cinematic-portfolio`
 **Status**: Pending
-**Progress**: 22/33
+**Progress**: 33/33
 
 ## Phase 1: Setup
 
@@ -87,8 +87,8 @@
 **Goal**: Finalize accessibility, performance, and responsiveness.
 **Independent Test Criteria**: 100% Lighthouse Accessibility; 60fps animations.
 
-- [ ] T032 Verify and fix `prefers-reduced-motion` behavior across all animations
-- [ ] T033 Verify mobile responsiveness on all sections (landscape/portrait)
+- [x] T032 Verify and fix `prefers-reduced-motion` behavior across all animations
+- [x] T033 Verify mobile responsiveness on all sections (landscape/portrait)
 
 ## Dependencies
 

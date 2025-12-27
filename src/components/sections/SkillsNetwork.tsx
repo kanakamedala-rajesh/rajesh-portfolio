@@ -9,6 +9,7 @@ import {
   useTransform,
   useInView,
   MotionValue,
+  useReducedMotion,
 } from "framer-motion";
 import { resumeData } from "@/data/resume";
 
@@ -153,6 +154,7 @@ export default function SkillsNetwork() {
   const [activeCategoryIndex, setActiveCategoryIndex] = useState(0); // For Mobile Scrolly-telling
   const containerRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(containerRef, { margin: "-10% 0px -10% 0px" });
+  const shouldReduceMotion = useReducedMotion();
 
   // Mouse Tracking for Magnetic Effect
   const mouseX = useMotionValue(0);
@@ -163,7 +165,7 @@ export default function SkillsNetwork() {
   const smoothY = useSpring(mouseY, { stiffness: 50, damping: 20 });
 
   const handleMouseMove = (e: React.MouseEvent) => {
-    if (!containerRef.current) return;
+    if (!containerRef.current || shouldReduceMotion) return;
     const { left, top, width, height } =
       containerRef.current.getBoundingClientRect();
     const x = (e.clientX - left) / width - 0.5; // -0.5 to 0.5
@@ -305,7 +307,7 @@ export default function SkillsNetwork() {
           <div className="relative mt-[-20vh] flex h-[300px] w-[300px] items-center justify-center">
             {/* Ring 1: Outer Data Track (Slow Spin) */}
             <motion.div
-              animate={{ rotate: 360 }}
+              animate={{ rotate: shouldReduceMotion ? 0 : 360 }}
               transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
               className="absolute inset-0 rounded-full border border-dashed border-white/10"
             />
@@ -325,7 +327,7 @@ export default function SkillsNetwork() {
 
             {/* Ring 3: Counter-Rotating Tech Ring */}
             <motion.div
-              animate={{ rotate: -360 }}
+              animate={{ rotate: shouldReduceMotion ? 0 : -360 }}
               transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
               className="absolute inset-12 rounded-full border border-white/5"
             >
@@ -516,6 +518,7 @@ const SkillNode = ({
 
   const size = node.type === "category" ? 80 : 40;
   const halfSize = size / 2;
+  const shouldReduceMotion = useReducedMotion();
 
   return (
     <motion.div
@@ -563,7 +566,7 @@ const SkillNode = ({
       {/* Floating Animation Wrapper */}
       <motion.div
         animate={{
-          y: [-5, 5, -5],
+          y: shouldReduceMotion ? 0 : [-5, 5, -5],
         }}
         transition={{
           repeat: Infinity,

@@ -11,7 +11,7 @@
  */
 
 import { useEffect, useState, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { useLoader } from "@/context/LoaderContext";
 
 const BOOT_SEQUENCE = [
@@ -25,6 +25,7 @@ export default function Loader() {
   const [step, setStep] = useState(0);
   const [visible, setVisible] = useState(true);
   const [textVisible, setTextVisible] = useState(true);
+  const shouldReduceMotion = useReducedMotion();
 
   // Use ref to track if component is mounted to prevent state updates on unmount
   const isMounted = useRef(true);
@@ -115,18 +116,20 @@ export default function Loader() {
           {/* Left Curtain */}
           <motion.div
             className="bg-background absolute inset-y-0 left-0 w-1/2"
-            initial={{ x: "0%" }}
+            initial={{ x: "0%", opacity: 1 }}
             exit={{
-              x: "-100%",
+              x: shouldReduceMotion ? "0%" : "-100%",
+              opacity: shouldReduceMotion ? 0 : 1,
               transition: { duration: 0.8, ease: [0.76, 0, 0.24, 1] },
             }}
           />
           {/* Right Curtain */}
           <motion.div
             className="bg-background absolute inset-y-0 right-0 w-1/2"
-            initial={{ x: "0%" }}
+            initial={{ x: "0%", opacity: 1 }}
             exit={{
-              x: "100%",
+              x: shouldReduceMotion ? "0%" : "100%",
+              opacity: shouldReduceMotion ? 0 : 1,
               transition: { duration: 0.8, ease: [0.76, 0, 0.24, 1] },
             }}
           />

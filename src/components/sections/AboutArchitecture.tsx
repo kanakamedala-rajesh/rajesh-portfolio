@@ -49,177 +49,263 @@ export default function AboutArchitecture() {
     () => {
       if (!container.current || !stackRef.current) return;
 
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: container.current,
-          start: "top top",
-          end: "+=300%", // 3x height for scroll duration
-          pin: true,
-          scrub: 1,
-          anticipatePin: 1,
+      const mm = gsap.matchMedia();
+
+      mm.add(
+        {
+          reduce: "(prefers-reduced-motion: reduce)",
+          noReduce: "(prefers-reduced-motion: no-preference)",
         },
-      });
+        (context) => {
+          const { reduce } = context.conditions as { reduce: boolean };
 
-      // --- INITIAL STATE SETUP ---
-      // Layers start compressed together
-      gsap.set(
-        [hardwareLayer.current, middlewareLayer.current, cloudLayer.current],
-        {
-          z: 0,
-          opacity: 0,
-          scale: 0.8,
-          filter: "blur(10px)",
-        }
-      );
+          // Common Setup
+          const tl = gsap.timeline({
+            scrollTrigger: {
+              trigger: container.current,
+              start: "top top",
+              end: "+=300%",
+              pin: true,
+              scrub: 1,
+              anticipatePin: 1,
+            },
+          });
 
-      // Hide Text initially
-      gsap.set(
-        [hardwareText.current, middlewareText.current, cloudText.current],
-        {
-          opacity: 0,
-          x: -50,
-          pointerEvents: "none",
-        }
-      );
+          if (reduce) {
+            // --- REDUCED MOTION ---
+            // Simple fade ins, no large movements
 
-      // Hide Pipes initially
-      gsap.set(pipesRef.current, { opacity: 0 });
+            // Initial State (Visible but dim)
+            gsap.set(
+              [
+                hardwareLayer.current,
+                middlewareLayer.current,
+                cloudLayer.current,
+              ],
+              {
+                opacity: 0.3,
+                scale: 1,
+                z: 0,
+                y: 0,
+                filter: "blur(0px)",
+              }
+            );
 
-      // --- ANIMATION SEQUENCE ---
+            // Text hidden
+            gsap.set(
+              [hardwareText.current, middlewareText.current, cloudText.current],
+              {
+                opacity: 0,
+                x: 0,
+              }
+            );
 
-      // 1. EXPLOSION PHASE (0% - 20%)
-      // Expand the stack vertically and fade in
-      tl.to(
-        [hardwareLayer.current, middlewareLayer.current, cloudLayer.current],
-        {
-          opacity: 1,
-          scale: 1,
-          filter: "blur(0px)",
-          duration: 1,
-          stagger: 0.1,
-          ease: "power2.out",
-        }
-      )
-        .to(
-          hardwareLayer.current,
-          { z: 0, y: 150, duration: 2, ease: "power2.inOut" },
-          "<"
-        )
-        .to(
-          middlewareLayer.current,
-          { z: 50, y: 0, duration: 2, ease: "power2.inOut" },
-          "<"
-        )
-        .to(
-          cloudLayer.current,
-          { z: 100, y: -150, duration: 2, ease: "power2.inOut" },
-          "<"
-        )
-        // Show pipes
-        .to(pipesRef.current, { opacity: 1, duration: 1 }, "-=1");
+            gsap.set(pipesRef.current, { opacity: 0 }); // Hide animated pipes
 
-      // 2. FOCUS: HARDWARE (20% - 40%)
-      tl.to(hardwareLayer.current, {
-        scale: 1.1,
-        filter: "brightness(1.5)",
-        boxShadow: "0 0 50px rgba(251,191,36,0.3)", // Amber glow
-        borderColor: "var(--color-secondary)",
-        duration: 0.5,
-      })
-        .to(
-          [middlewareLayer.current, cloudLayer.current],
-          { opacity: 0.3, scale: 1, filter: "brightness(1)", duration: 0.5 },
-          "<"
-        )
-        .to(
-          hardwareText.current,
-          { opacity: 1, x: 0, pointerEvents: "auto", duration: 0.5 },
-          "<"
-        );
+            // Sequence: Just highlight layers and show text
+            // 1. Hardware Focus
+            tl.to(hardwareLayer.current, { opacity: 1, duration: 0.5 })
+              .to(hardwareText.current, { opacity: 1, duration: 0.5 }, "<")
+              .to({}, { duration: 1 }) // Hold
 
-      // Hold Hardware Focus
-      tl.to({}, { duration: 1 });
+              // 2. Middleware Focus
+              .to(hardwareLayer.current, { opacity: 0.3, duration: 0.5 })
+              .to(hardwareText.current, { opacity: 0, duration: 0.5 }, "<")
+              .to(middlewareLayer.current, { opacity: 1, duration: 0.5 }, "<")
+              .to(middlewareText.current, { opacity: 1, duration: 0.5 }, "<")
+              .to({}, { duration: 1 }) // Hold
 
-      // 3. FOCUS: MIDDLEWARE (40% - 60%)
-      // Reset Hardware, Focus Middleware
-      tl.to(hardwareText.current, { opacity: 0, x: -20, duration: 0.5 })
-        .to(hardwareLayer.current, {
-          scale: 1,
-          filter: "brightness(1)",
-          boxShadow: "none",
-          borderColor: "rgba(255,255,255,0.1)",
-          duration: 0.5,
-        })
-        .to(middlewareLayer.current, {
-          scale: 1.1,
-          opacity: 1,
-          filter: "brightness(1.5)",
-          boxShadow: "0 0 50px rgba(34,197,94,0.3)", // Green glow
-          borderColor: "var(--color-accent)",
-          duration: 0.5,
-        })
-        .to(
-          middlewareText.current,
-          { opacity: 1, x: 0, pointerEvents: "auto", duration: 0.5 },
-          "<"
-        );
+              // 3. Cloud Focus
+              .to(middlewareLayer.current, { opacity: 0.3, duration: 0.5 })
+              .to(middlewareText.current, { opacity: 0, duration: 0.5 }, "<")
+              .to(cloudLayer.current, { opacity: 1, duration: 0.5 }, "<")
+              .to(cloudText.current, { opacity: 1, duration: 0.5 }, "<")
+              .to({}, { duration: 1 }); // Hold
 
-      // Hold Middleware Focus
-      tl.to({}, { duration: 1 });
+            // Exit handled by section transition or simple fade out
+          } else {
+            // --- FULL ANIMATION ---
 
-      // 4. FOCUS: CLOUD (60% - 80%)
-      // Reset Middleware, Focus Cloud
-      tl.to(middlewareText.current, { opacity: 0, x: -20, duration: 0.5 })
-        .to(middlewareLayer.current, {
-          scale: 1,
-          opacity: 0.3,
-          filter: "brightness(1)",
-          boxShadow: "none",
-          borderColor: "rgba(255,255,255,0.1)",
-          duration: 0.5,
-        })
-        .to(cloudLayer.current, {
-          scale: 1.1,
-          opacity: 1,
-          filter: "brightness(1.5)",
-          boxShadow: "0 0 50px rgba(6,182,212,0.3)", // Cyan glow
-          borderColor: "var(--color-primary)",
-          duration: 0.5,
-        })
-        .to(
-          cloudText.current,
-          { opacity: 1, x: 0, pointerEvents: "auto", duration: 0.5 },
-          "<"
-        );
+            // --- INITIAL STATE SETUP ---
+            // Layers start compressed together
+            gsap.set(
+              [
+                hardwareLayer.current,
+                middlewareLayer.current,
+                cloudLayer.current,
+              ],
+              {
+                z: 0,
+                opacity: 0,
+                scale: 0.8,
+                filter: "blur(10px)",
+              }
+            );
 
-      // Hold Cloud Focus
-      tl.to({}, { duration: 1 });
+            // Hide Text initially
+            gsap.set(
+              [hardwareText.current, middlewareText.current, cloudText.current],
+              {
+                opacity: 0,
+                x: -50,
+                pointerEvents: "none",
+              }
+            );
 
-      // 5. EXIT PHASE (80% - 90%)
-      // All connect/pulse together
-      tl.to(cloudText.current, { opacity: 0, x: -20, duration: 0.5 })
-        .to(
-          [hardwareLayer.current, middlewareLayer.current, cloudLayer.current],
-          {
-            y: 0,
-            z: 0,
-            scale: 0.8,
-            opacity: 0,
-            duration: 1,
-            ease: "power2.in",
+            // Hide Pipes initially
+            gsap.set(pipesRef.current, { opacity: 0 });
+
+            // --- ANIMATION SEQUENCE ---
+
+            // 1. EXPLOSION PHASE (0% - 20%)
+            // Expand the stack vertically and fade in
+            tl.to(
+              [
+                hardwareLayer.current,
+                middlewareLayer.current,
+                cloudLayer.current,
+              ],
+              {
+                opacity: 1,
+                scale: 1,
+                filter: "blur(0px)",
+                duration: 1,
+                stagger: 0.1,
+                ease: "power2.out",
+              }
+            )
+              .to(
+                hardwareLayer.current,
+                { z: 0, y: 150, duration: 2, ease: "power2.inOut" },
+                "<"
+              )
+              .to(
+                middlewareLayer.current,
+                { z: 50, y: 0, duration: 2, ease: "power2.inOut" },
+                "<"
+              )
+              .to(
+                cloudLayer.current,
+                { z: 100, y: -150, duration: 2, ease: "power2.inOut" },
+                "<"
+              )
+              // Show pipes
+              .to(pipesRef.current, { opacity: 1, duration: 1 }, "-=1");
+
+            // 2. FOCUS: HARDWARE (20% - 40%)
+            tl.to(hardwareLayer.current, {
+              scale: 1.1,
+              filter: "brightness(1.5)",
+              boxShadow: "0 0 50px rgba(251,191,36,0.3)", // Amber glow
+              borderColor: "var(--color-secondary)",
+              duration: 0.5,
+            })
+              .to(
+                [middlewareLayer.current, cloudLayer.current],
+                {
+                  opacity: 0.3,
+                  scale: 1,
+                  filter: "brightness(1)",
+                  duration: 0.5,
+                },
+                "<"
+              )
+              .to(
+                hardwareText.current,
+                { opacity: 1, x: 0, pointerEvents: "auto", duration: 0.5 },
+                "<"
+              );
+
+            // Hold Hardware Focus
+            tl.to({}, { duration: 1 });
+
+            // 3. FOCUS: MIDDLEWARE (40% - 60%)
+            // Reset Hardware, Focus Middleware
+            tl.to(hardwareText.current, { opacity: 0, x: -20, duration: 0.5 })
+              .to(hardwareLayer.current, {
+                scale: 1,
+                filter: "brightness(1)",
+                boxShadow: "none",
+                borderColor: "rgba(255,255,255,0.1)",
+                duration: 0.5,
+              })
+              .to(middlewareLayer.current, {
+                scale: 1.1,
+                opacity: 1,
+                filter: "brightness(1.5)",
+                boxShadow: "0 0 50px rgba(34,197,94,0.3)", // Green glow
+                borderColor: "var(--color-accent)",
+                duration: 0.5,
+              })
+              .to(
+                middlewareText.current,
+                { opacity: 1, x: 0, pointerEvents: "auto", duration: 0.5 },
+                "<"
+              );
+
+            // Hold Middleware Focus
+            tl.to({}, { duration: 1 });
+
+            // 4. FOCUS: CLOUD (60% - 80%)
+            // Reset Middleware, Focus Cloud
+            tl.to(middlewareText.current, { opacity: 0, x: -20, duration: 0.5 })
+              .to(middlewareLayer.current, {
+                scale: 1,
+                opacity: 0.3,
+                filter: "brightness(1)",
+                boxShadow: "none",
+                borderColor: "rgba(255,255,255,0.1)",
+                duration: 0.5,
+              })
+              .to(cloudLayer.current, {
+                scale: 1.1,
+                opacity: 1,
+                filter: "brightness(1.5)",
+                boxShadow: "0 0 50px rgba(6,182,212,0.3)", // Cyan glow
+                borderColor: "var(--color-primary)",
+                duration: 0.5,
+              })
+              .to(
+                cloudText.current,
+                { opacity: 1, x: 0, pointerEvents: "auto", duration: 0.5 },
+                "<"
+              );
+
+            // Hold Cloud Focus
+            tl.to({}, { duration: 1 });
+
+            // 5. EXIT PHASE (80% - 90%)
+            // All connect/pulse together
+            tl.to(cloudText.current, { opacity: 0, x: -20, duration: 0.5 })
+              .to(
+                [
+                  hardwareLayer.current,
+                  middlewareLayer.current,
+                  cloudLayer.current,
+                ],
+                {
+                  y: 0,
+                  z: 0,
+                  scale: 0.8,
+                  opacity: 0,
+                  duration: 1,
+                  ease: "power2.in",
+                }
+              )
+              .to(pipesRef.current, { opacity: 0, duration: 0.5 }, "<");
+
+            // --- GLOBAL SECTION EXIT (90% - 100%) ---
+            // This replicates the "Fly Through" effect manually at the end of the pin
+            tl.to(contentWrapper.current, {
+              opacity: 0,
+              scale: 1.2,
+              filter: "blur(10px)",
+              duration: 2, // Use remaining timeline duration
+              ease: "power1.in",
+            });
           }
-        )
-        .to(pipesRef.current, { opacity: 0, duration: 0.5 }, "<");
-
-      // --- GLOBAL SECTION EXIT (90% - 100%) ---
-      // This replicates the "Fly Through" effect manually at the end of the pin
-      tl.to(contentWrapper.current, {
-        opacity: 0,
-        scale: 1.2,
-        filter: "blur(10px)",
-        duration: 2, // Use remaining timeline duration
-        ease: "power1.in",
-      });
+        }
+      );
     },
     { scope: container }
   );

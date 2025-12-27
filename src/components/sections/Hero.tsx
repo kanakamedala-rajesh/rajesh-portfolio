@@ -46,101 +46,134 @@ export default function Hero() {
       const path = spline.current;
       const pathLength = path?.getTotalLength() || 100;
 
-      // Set initial dash states for "drawing" effect
-      gsap.set([spline.current, splineGlow.current], {
-        strokeDasharray: pathLength,
-        strokeDashoffset: 0,
-        opacity: 1,
-      });
+      const mm = gsap.matchMedia();
 
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: container.current,
-          start: "top top",
-          end: MOTION_CONSTANTS.SCROLL.PIN_END,
-          scrub: MOTION_CONSTANTS.SCROLL.SCRUB,
-          pin: true,
-          onUpdate: (self) => {
-            // Only mark as exiting in the later half to avoid conflict with "Reveal"
-            if (self.progress > 0.8) {
-              updateSectionStatus("hero", "exiting", self.progress);
-            } else {
-              updateSectionStatus("hero", "active", self.progress);
-            }
-          },
+      mm.add(
+        {
+          reduce: "(prefers-reduced-motion: reduce)",
+          noReduce: "(prefers-reduced-motion: no-preference)",
         },
-      });
+        (context) => {
+          const { reduce } = context.conditions as { reduce: boolean };
 
-      // Animation Sequence
-      tl
-        // 1. Pull apart the halves
-        .to(topHalf.current, {
-          yPercent: -100,
-          ease: MOTION_CONSTANTS.EASE.IN_OUT,
-          duration: MOTION_CONSTANTS.DURATIONS.SLOW,
-        })
-        .to(
-          bottomHalf.current,
-          {
-            yPercent: 100,
-            ease: MOTION_CONSTANTS.EASE.IN_OUT,
-            duration: MOTION_CONSTANTS.DURATIONS.SLOW,
-          },
-          "<"
-        )
-        // 2. Reveal Content (Dramatic Zoom In)
-        .fromTo(
-          content.current,
-          {
-            opacity: 0,
-            scale: 0.5,
-            filter: "blur(10px)",
-          },
-          {
-            opacity: 1,
-            scale: 1,
-            filter: "blur(0px)",
-            duration: 1.5,
-            ease: MOTION_CONSTANTS.EASE.EXPO_OUT, // "Pop" effect
-          },
-          "-=1"
-        )
-        // 3. Spline Interaction: Stretch and "Break"
-        .to(
-          [spline.current, splineGlow.current],
-          {
-            attr: { d: "M 50 100 Q 50 50 50 0" }, // Straighten
-            strokeDashoffset: -pathLength * 2, // Flow effect
-            opacity: 0,
-            duration: MOTION_CONSTANTS.DURATIONS.NORMAL,
-            ease: MOTION_CONSTANTS.EASE.IN,
-          },
-          "<"
-        )
-        // 4. Parallax Exit (Integrated into Timeline)
-        // Fade out content and background with different scales for depth
-        .to(
-          content.current,
-          {
-            opacity: 0,
-            scale: 1.5, // Faster foreground zoom
-            filter: "blur(10px)",
-            duration: MOTION_CONSTANTS.DURATIONS.NORMAL,
-            ease: MOTION_CONSTANTS.EASE.IN,
-          },
-          "+=0.2"
-        )
-        .to(
-          bgRef.current,
-          {
-            opacity: 0,
-            scale: 1.1, // Slower background zoom (Parallax)
-            filter: "blur(5px)",
-            duration: MOTION_CONSTANTS.DURATIONS.NORMAL,
-            ease: MOTION_CONSTANTS.EASE.IN,
-          },
-          "<"
-        );
+          if (reduce) {
+            // Simplified state for reduced motion
+            gsap.set(topHalf.current, { yPercent: -100 });
+            gsap.set(bottomHalf.current, { yPercent: 100 });
+            gsap.set(content.current, {
+              opacity: 1,
+              scale: 1,
+              filter: "blur(0px)",
+            });
+            gsap.set([spline.current, splineGlow.current], { opacity: 0 });
+
+            // Simple scroll trigger to track status
+            ScrollTrigger.create({
+              trigger: container.current,
+              start: "top top",
+              end: "bottom top",
+              onUpdate: (self) => {
+                updateSectionStatus("hero", "active", self.progress);
+              },
+            });
+          } else {
+            // Full Animation Sequence
+            // Set initial dash states for "drawing" effect
+            gsap.set([spline.current, splineGlow.current], {
+              strokeDasharray: pathLength,
+              strokeDashoffset: 0,
+              opacity: 1,
+            });
+
+            const tl = gsap.timeline({
+              scrollTrigger: {
+                trigger: container.current,
+                start: "top top",
+                end: MOTION_CONSTANTS.SCROLL.PIN_END,
+                scrub: MOTION_CONSTANTS.SCROLL.SCRUB,
+                pin: true,
+                onUpdate: (self) => {
+                  // Only mark as exiting in the later half to avoid conflict with "Reveal"
+                  if (self.progress > 0.8) {
+                    updateSectionStatus("hero", "exiting", self.progress);
+                  } else {
+                    updateSectionStatus("hero", "active", self.progress);
+                  }
+                },
+              },
+            });
+
+            tl
+              // 1. Pull apart the halves
+              .to(topHalf.current, {
+                yPercent: -100,
+                ease: MOTION_CONSTANTS.EASE.IN_OUT,
+                duration: MOTION_CONSTANTS.DURATIONS.SLOW,
+              })
+              .to(
+                bottomHalf.current,
+                {
+                  yPercent: 100,
+                  ease: MOTION_CONSTANTS.EASE.IN_OUT,
+                  duration: MOTION_CONSTANTS.DURATIONS.SLOW,
+                },
+                "<"
+              )
+              // 2. Reveal Content (Dramatic Zoom In)
+              .fromTo(
+                content.current,
+                {
+                  opacity: 0,
+                  scale: 0.5,
+                  filter: "blur(10px)",
+                },
+                {
+                  opacity: 1,
+                  scale: 1,
+                  filter: "blur(0px)",
+                  duration: 1.5,
+                  ease: MOTION_CONSTANTS.EASE.EXPO_OUT, // "Pop" effect
+                },
+                "-=1"
+              )
+              // 3. Spline Interaction: Stretch and "Break"
+              .to(
+                [spline.current, splineGlow.current],
+                {
+                  attr: { d: "M 50 100 Q 50 50 50 0" }, // Straighten
+                  strokeDashoffset: -pathLength * 2, // Flow effect
+                  opacity: 0,
+                  duration: MOTION_CONSTANTS.DURATIONS.NORMAL,
+                  ease: MOTION_CONSTANTS.EASE.IN,
+                },
+                "<"
+              )
+              // 4. Parallax Exit (Integrated into Timeline)
+              .to(
+                content.current,
+                {
+                  opacity: 0,
+                  scale: 1.5, // Faster foreground zoom
+                  filter: "blur(10px)",
+                  duration: MOTION_CONSTANTS.DURATIONS.NORMAL,
+                  ease: MOTION_CONSTANTS.EASE.IN,
+                },
+                "+=0.2"
+              )
+              .to(
+                bgRef.current,
+                {
+                  opacity: 0,
+                  scale: 1.1, // Slower background zoom (Parallax)
+                  filter: "blur(5px)",
+                  duration: MOTION_CONSTANTS.DURATIONS.NORMAL,
+                  ease: MOTION_CONSTANTS.EASE.IN,
+                },
+                "<"
+              );
+          }
+        }
+      );
 
       // Register Section
       registerSection("hero");

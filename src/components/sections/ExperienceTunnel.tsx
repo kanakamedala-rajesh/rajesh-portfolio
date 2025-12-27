@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { useSectionTransition } from "@/hooks/useSectionTransition";
 import { resumeData } from "@/data/resume";
 import { cn } from "@/lib/utils";
@@ -223,6 +223,11 @@ export default function ExperienceTunnel() {
   const trackRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const [isMobile, setIsMobile] = useState(false);
+  const shouldReduceMotion = useReducedMotion();
+
+  // Force vertical layout if on mobile OR reduced motion is preferred
+  const isVertical = isMobile || !!shouldReduceMotion;
+
   const [selectedExp, setSelectedExp] = useState<{
     data: (typeof resumeData.experience)[0];
     theme: (typeof THEMES)[0];
@@ -254,7 +259,7 @@ export default function ExperienceTunnel() {
   });
 
   useEffect(() => {
-    if (isMobile) return;
+    if (isVertical) return;
 
     const section = sectionRef.current;
     const track = trackRef.current;
@@ -301,7 +306,7 @@ export default function ExperienceTunnel() {
     }, section);
 
     return () => ctx.revert();
-  }, [isMobile]);
+  }, [isVertical]);
 
   return (
     <>
@@ -354,7 +359,8 @@ export default function ExperienceTunnel() {
               className={cn(
                 "flex gap-8",
                 "w-full flex-col items-center pb-20 pl-6",
-                "md:w-auto md:flex-row md:items-center md:px-20 md:pr-[30vw] md:pl-0" // Added significantly more right padding
+                !isVertical &&
+                  "md:w-auto md:flex-row md:items-center md:px-20 md:pr-[30vw] md:pl-0" // Added significantly more right padding
               )}
             >
               {resumeData.experience.map((exp, index) => (
@@ -363,7 +369,7 @@ export default function ExperienceTunnel() {
                   exp={exp}
                   index={index}
                   onSelect={handleSelect}
-                  isMobile={isMobile}
+                  isMobile={isVertical}
                 />
               ))}
             </div>
