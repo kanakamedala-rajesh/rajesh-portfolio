@@ -1,0 +1,55 @@
+# Custom headers for Cloudflare Workers Static Assets
+# This file configures cache and performance headers for static resources
+
+# Long-term immutable caching for all images
+/*.webp
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.png
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.jpg
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.jpeg
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.svg
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.ico
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.gif
+  Cache-Control: public, max-age=31536000, immutable
+
+# Font files - immutable caching
+/*.woff
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.woff2
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.ttf
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.otf
+  Cache-Control: public, max-age=31536000, immutable
+
+# Next.js static chunks - fingerprinted, immutable
+/_next/static/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Next.js image optimization - cache for 1 year (images are content-hashed)
+/_next/image*
+  Cache-Control: public, max-age=31536000, immutable
+
+# PDF documents - moderate caching
+/*.pdf
+  Cache-Control: public, max-age=86400
+
+# Security headers for all responses
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: SAMEORIGIN
+  Referrer-Policy: strict-origin-when-cross-origin

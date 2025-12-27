@@ -6,3 +6,6 @@ yarn.lock
 dist
 build
 public
+.open-next
+.wrangler
+cloudflare-env.d.ts

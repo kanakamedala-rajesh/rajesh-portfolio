@@ -1,0 +1,11 @@
+main = ".open-next/worker.js"
+name = "rajesh-portfolio"
+compatibility_date = "2025-12-26"
+compatibility_flags = ["nodejs_compat"]
+
+[assets]
+directory = ".open-next/assets"
+binding = "ASSETS"
+
+# Note: Custom headers are configured via public/_headers file
+# See: https://developers.cloudflare.com/workers/static-assets/headers/

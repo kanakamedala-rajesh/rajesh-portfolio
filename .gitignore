@@ -47,3 +47,11 @@ playwright-report/
 # Google Credentials
 .gemini/
 .venkataSudha/
+
+# Cloudflare / OpenNext
+.open-next/
+.wrangler/
+cloudflare-env.d.ts
+
+# Performance Insights
+page-speed-insights-*.json
