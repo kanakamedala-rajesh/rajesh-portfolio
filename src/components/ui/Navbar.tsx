@@ -14,10 +14,10 @@ import { useScroll } from "@/context/ScrollContext";
 import { cn } from "@/lib/utils";
 
 const NAV_LINKS = [
-  { name: "About", href: "#hero-title" },
+  { name: "About", href: "#about" },
   { name: "Experience", href: "#experience" },
   { name: "Skills", href: "#skills" },
-  { name: "Contact", href: "#contact" },
+  { name: "Contact", href: "#contact-terminal" },
 ];
 
 export default function Navbar() {
