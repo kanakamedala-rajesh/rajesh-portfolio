@@ -72,7 +72,11 @@ const ContactTerminal = () => {
         output = (
           <span className="text-primary">Opening LinkedIn profile...</span>
         );
-        window.open(`https://${resumeData.contact.linkedin}`, "_blank");
+        window.open(
+          `https://${resumeData.contact.linkedin}`,
+          "_blank",
+          "noopener,noreferrer"
+        );
         break;
       case "resume":
         output = (
@@ -80,7 +84,7 @@ const ContactTerminal = () => {
             Initiating download sequence... (Profile.pdf)
           </span>
         );
-        window.open("/docs/profile.pdf", "_blank");
+        window.open("/docs/profile.pdf", "_blank", "noopener,noreferrer");
         break;
       case "whoami":
         output = "guest@rk-portfolio";

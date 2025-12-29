@@ -187,8 +187,28 @@ export const resumeData: ResumeData = {
     },
   ],
   contact: {
-    email: "kanakamedala.rajesh@gmail.com",
-    phone: "9440083114",
-    linkedin: "www.linkedin.com/in/kanakamedala-rajesh",
+    email:
+      process.env.NEXT_PUBLIC_CONTACT_EMAIL ||
+      (() => {
+        if (process.env.NODE_ENV === "production") {
+          console.error(
+            "CRITICAL: NEXT_PUBLIC_CONTACT_EMAIL is missing in production!"
+          );
+        }
+        return "user@example.com";
+      })(),
+    phone:
+      process.env.NEXT_PUBLIC_CONTACT_PHONE ||
+      (() => {
+        if (process.env.NODE_ENV === "production") {
+          console.error(
+            "CRITICAL: NEXT_PUBLIC_CONTACT_PHONE is missing in production!"
+          );
+        }
+        return "123-456-7890";
+      })(),
+    linkedin:
+      process.env.NEXT_PUBLIC_CONTACT_LINKEDIN ||
+      "www.linkedin.com/in/kanakamedala-rajesh",
   },
 };

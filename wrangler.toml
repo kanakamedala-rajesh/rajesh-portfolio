@@ -2,10 +2,39 @@ main = ".open-next/worker.js"
 name = "rajesh-portfolio"
 compatibility_date = "2025-12-26"
 compatibility_flags = ["nodejs_compat"]
+preview_urls = true
 
 [assets]
 directory = ".open-next/assets"
 binding = "ASSETS"
+
+[placement]
+mode = "smart"
+
+[[kv_namespaces]]
+binding = "RAJESH_PORTFOLIO_WORKERS_KV"
+id = "c207e1077b11497286ee7d8273792ecc"
+
+[observability]
+[observability.logs]
+enabled = true
+head_sampling_rate = 0.05
+invocation_logs = true
+persist = true
+
+[observability.traces]
+enabled = true
+head_sampling_rate = 0.05
+persist = true
+
+[[routes]]
+pattern = "portfolio.rajesh.venkatasudha.com"
+custom_domain = true
+
+# Uncomment below lines to enable new route 
+#[[routes]]
+#pattern = "rajesh.venkatasudha.com"
+#custom_domain = true
 
 # Note: Custom headers are configured via public/_headers file
 # See: https://developers.cloudflare.com/workers/static-assets/headers/
