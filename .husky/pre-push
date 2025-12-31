@@ -1,0 +1,7 @@
+echo "Running pre-push hooks..."
+
+echo "Generating CloudFlare types..."
+pnpm cf:typegen
+
+echo "Running cloud flare Build..."
+pnpm cf:build
