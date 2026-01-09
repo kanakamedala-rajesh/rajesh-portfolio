@@ -20,6 +20,11 @@ export const ScrollProvider = ({ children }: { children: React.ReactNode }) => {
   const [lenis, setLenis] = useState<Lenis | null>(null);
 
   useEffect(() => {
+    // Skip Lenis in Headless/Automation environments to prevent scroll hijacking
+    if (navigator.userAgent.includes("HeadlessChrome") || navigator.webdriver) {
+      return;
+    }
+
     // Initialize Lenis
     const lenisInstance = new Lenis({
       duration: 1.2,

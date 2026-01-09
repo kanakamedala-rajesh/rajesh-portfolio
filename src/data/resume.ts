@@ -66,6 +66,7 @@ export const resumeData: ResumeData = {
         "RxJava",
         "Retrofit",
         "Unity 3D",
+        "Spring Boot",
       ],
     },
     {
@@ -77,6 +78,7 @@ export const resumeData: ResumeData = {
         "System Programming",
         "CAN Protocol",
         "ZMQ",
+        "JNI",
       ],
     },
     {

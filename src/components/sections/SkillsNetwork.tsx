@@ -153,7 +153,7 @@ export default function SkillsNetwork() {
   const [activeNode, setActiveNode] = useState<string | null>(null); // New State for Click-to-Lock
   const [activeCategoryIndex, setActiveCategoryIndex] = useState(0); // For Mobile Scrolly-telling
   const containerRef = useRef<HTMLDivElement>(null);
-  const isInView = useInView(containerRef, { margin: "-10% 0px -10% 0px" });
+  const isInView = useInView(containerRef, { margin: "-30% 0px -30% 0px" });
   const shouldReduceMotion = useReducedMotion();
 
   // Mouse Tracking for Magnetic Effect

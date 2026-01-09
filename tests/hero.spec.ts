@@ -31,9 +31,24 @@ test.describe("Hero Section Convergence", () => {
     // Initial check (positions might be difficult to check exactly with CSS classes as GSAP uses inline styles)
     // But we can check if they are at 0 transform initially or check visibility
 
-    // Scroll
-    await page.evaluate(() => window.scrollTo(0, 1000));
-    await page.waitForTimeout(1000); // Wait for GSAP scrub
+    // Ensure scrollability and disable smooth scroll
+    await page.evaluate(() => {
+      document.documentElement.style.scrollBehavior = "auto";
+      // Hero is sticky, so we need content below it to scroll.
+      // The real page has content, so body height should be sufficient.
+    });
+
+    // Scroll using evaluate
+    await page.evaluate(() => window.scrollTo(0, 1500));
+    await page.waitForTimeout(1000);
+
+    // Verify scroll and retry
+    await page.evaluate(() => {
+      if (window.scrollY < 1000) {
+        window.scrollTo(0, 1500);
+      }
+    });
+    await page.waitForTimeout(2000); // Wait for GSAP scrub
 
     // Check if content is becoming visible
     const contentContainer = page.locator(

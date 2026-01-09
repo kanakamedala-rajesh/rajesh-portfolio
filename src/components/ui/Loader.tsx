@@ -13,6 +13,7 @@
 import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { useLoader } from "@/context/LoaderContext";
+import { useScroll } from "@/context/ScrollContext";
 
 const BOOT_SEQUENCE = [
   { text: "> INITIALIZING KERNEL...", color: "text-accent" },
@@ -22,6 +23,7 @@ const BOOT_SEQUENCE = [
 
 export default function Loader() {
   const { setIsLoading } = useLoader();
+  const { lenis } = useScroll();
   const [step, setStep] = useState(0);
   const [visible, setVisible] = useState(true);
   const [textVisible, setTextVisible] = useState(true);
@@ -32,6 +34,15 @@ export default function Loader() {
 
   useEffect(() => {
     isMounted.current = true;
+
+    // Enforce scroll to top on refresh/load
+    if ("scrollRestoration" in history) {
+      history.scrollRestoration = "manual";
+    }
+    window.scrollTo(0, 0);
+    if (lenis) {
+      lenis.scrollTo(0, { immediate: true });
+    }
 
     // If visited, skip animation
     const visited = sessionStorage.getItem("rk_portfolio_visited");
@@ -102,7 +113,7 @@ export default function Loader() {
       isMounted.current = false;
       window.removeEventListener("load", handleLoad);
     };
-  }, [setIsLoading]);
+  }, [setIsLoading, lenis]);
 
   return (
     <AnimatePresence>

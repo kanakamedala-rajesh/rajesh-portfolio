@@ -8,24 +8,20 @@ test.describe("Experience Tunnel Section", () => {
   });
 
   test("should render experience section", async ({ page, isMobile }) => {
-    // Check for the section title based on viewport
-    if (isMobile) {
-      // Only the mobile header should be visible
-      await expect(
-        page.getByRole("heading", { name: "EXPERIENCE" }).first()
-      ).toBeVisible();
-    } else {
-      // On desktop, the title is "EXPERIENCE" (watermark)
-      // It might be 'visible' in terms of display:block, but opacity is low.
-      // We can filter by the class specific to desktop: hidden md:block
-      const experienceText = page
-        .locator(".hidden.md\\:block")
-        .getByText("EXPERIENCE");
-      await expect(experienceText).toBeAttached();
-    }
-
-    // Check for content
+    // Check for the section content
     await expect(page.getByText("CNH Industrial").first()).toBeVisible();
+
+    if (isMobile) {
+      // On mobile, check for the sidebar period indicator
+      const periodIndicator = page
+        .locator("#experience span.font-heading")
+        .first();
+      await expect(periodIndicator).toBeVisible();
+    } else {
+      // On desktop, check for the dynamic watermark period
+      const watermark = page.locator("#experience h2").first();
+      await expect(watermark).toBeAttached();
+    }
   });
 
   test("should have horizontal scroll structure on desktop", async ({
@@ -35,18 +31,13 @@ test.describe("Experience Tunnel Section", () => {
     if (isMobile) return;
 
     // Check if cards are present
-    const cards = page.locator("#experience h3"); // Experience titles are h3 within the section
+    const cards = page.locator(".experience-card");
     await expect(cards).toHaveCount(4);
 
     // On desktop, we expect a full-screen container for the tunnel effect
-    const tunnelContainer = page.locator(".md\\:h-screen").first();
-    await expect(tunnelContainer).toBeVisible();
-
-    // Check for horizontal layout
-    // The track has the class 'md:flex-row' and contains the cards
-    // We can find the element that has 'md:flex-row' AND 'md:px-20' (specific to track)
-    const track = tunnelContainer.locator(".md\\:flex-row.md\\:px-20");
-    await expect(track).toBeVisible();
+    // DesktopExperience is wrapped in .hidden.md:block
+    const desktopWrapper = page.locator(".hidden.md\\:block #experience");
+    await expect(desktopWrapper).toBeVisible();
   });
 
   test("should show VR card with specific attributes", async ({
@@ -78,21 +69,24 @@ test.describe("Experience Tunnel Section", () => {
 
   test("should open modal on card click (or button click)", async ({
     page,
+    isMobile,
   }) => {
-    // Scroll to the experience section title to ensure cards are in initial state (not fully stacked)
-    // This prevents the sticky stacking from covering the first card's button
+    // Scroll to the experience section
     const section = page.locator("#experience");
     await section.scrollIntoViewIfNeeded();
 
-    // Click the first Expand System button
-    // It is visible on all viewports now
-    await page
-      .getByRole("button", { name: /Expand System/i })
-      .first()
-      .click({ force: true });
+    if (isMobile) {
+      // On mobile, the entire card is a button
+      await page.locator('div[role="button"]').first().click({ force: true });
+    } else {
+      // On desktop, click the Expand System button
+      await page
+        .getByRole("button", { name: /Expand System/i })
+        .first()
+        .click({ force: true });
+    }
 
-    // Check if modal is visible
-    // The modal has a distinct header with "SYS_LOG"
+    // Check if modal is visible using the SYS_LOG indicator
     await expect(page.getByText(/SYS_LOG/i)).toBeVisible();
 
     // Check for modal content
@@ -110,31 +104,21 @@ test.describe("Experience Tunnel Section", () => {
     await expect(page.getByText(/SYS_LOG/i)).not.toBeVisible();
   });
 
-  test("mobile view should show vertical list", async ({ page, isMobile }) => {
+  test("mobile view should show stacking cards", async ({ page, isMobile }) => {
     // This test is specifically for mobile viewports
     if (!isMobile) return;
 
-    // There are two headers now: vertical watermark and main title
-    // We target the main title which is not the vertical one
-    // The vertical one has style writing-mode: vertical-rl
+    // Check for the mobile-only section
+    const mobileSection = page.locator(".md\\:hidden#experience");
+    await expect(mobileSection).toBeVisible();
 
-    // Or simpler: filter by class or order. The main one is inside a div with 'pt-20'
-    const visibleHeader = page
-      .locator(".pt-20")
-      .getByRole("heading", { name: "EXPERIENCE" });
+    // Check for the sidebar period indicator
+    const periodIndicator = mobileSection.locator("span.font-heading");
+    await expect(periodIndicator).toBeVisible();
 
-    await expect(visibleHeader).toBeVisible();
-
-    // Scope search to the experience section to avoid finding other flex-cols
-    // The section has the heading "EXPERIENCE"
-    const section = page
-      .locator("section")
-      .filter({ hasText: "EXPERIENCE" })
-      .first();
-
-    // Check if the track uses flex-col inside this section
-    const track = section.locator(".flex.flex-col").first();
-    await expect(track).toBeVisible();
+    // Check if cards are present (absolute positioned divs)
+    const cards = mobileSection.locator('div[role="button"]');
+    await expect(cards).toHaveCount(4);
   });
 
   test("should handle resize without breaking layout", async ({
@@ -143,21 +127,18 @@ test.describe("Experience Tunnel Section", () => {
   }) => {
     if (isMobile) return;
 
-    // Initial State
-    await expect(page.locator(".md\\:h-screen").first()).toBeVisible();
+    // Initial State - Desktop section should be visible
+    await expect(page.locator(".hidden.md\\:block #experience")).toBeVisible();
 
-    // Resize Window
-    await page.setViewportSize({ width: 1024, height: 768 });
-    await page.waitForTimeout(500); // Allow GSAP to refresh
+    // Resize Window to Mobile
+    await page.setViewportSize({ width: 375, height: 667 });
+    await page.waitForTimeout(500);
+    await expect(page.locator(".md\\:hidden#experience")).toBeVisible();
 
-    // Check if track is still there
-    const track = page.locator(".md\\:flex-row.md\\:px-20");
-    await expect(track).toBeVisible();
-
-    // Resize again
+    // Resize back to Desktop
     await page.setViewportSize({ width: 1280, height: 800 });
     await page.waitForTimeout(500);
-    await expect(track).toBeVisible();
+    await expect(page.locator(".hidden.md\\:block #experience")).toBeVisible();
   });
 
   test("should correspond to accessibility standards", async ({ page }) => {

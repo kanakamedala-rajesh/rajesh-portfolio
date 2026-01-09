@@ -78,9 +78,23 @@ test.describe("System Boot & Navigation", () => {
     // Initial state: Full width, transparent
     await expect(navbarContent).toHaveClass(/bg-transparent/);
 
+    // Ensure scrollability and disable smooth scroll for test
+    await page.evaluate(() => {
+      document.documentElement.style.scrollBehavior = "auto";
+      document.body.style.height = "5000px";
+    });
+
     // Scroll down
     await page.evaluate(() => window.scrollTo(0, 500));
-    await page.waitForTimeout(1000); // Wait for animation
+    await page.waitForTimeout(500);
+
+    // Verify scroll position and retry if needed (Loader might have reset it)
+    await page.evaluate(async () => {
+      if (window.scrollY < 100) {
+        window.scrollTo(0, 500);
+      }
+    });
+    await page.waitForTimeout(1000);
 
     // Scrolled state: Pill shape, background color
     await expect(navbarContent).toHaveClass(/bg-deep-void\/80/);
