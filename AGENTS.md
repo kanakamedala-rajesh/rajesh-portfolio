@@ -15,6 +15,7 @@
 11. **VERIFY STANDARDS:** Before finalizing the implementation, run `pnpm commit:validate`. Ensure these scripts pass **WITHOUT ANY WARNINGS OR ERRORS**. Fix all issues before considering the task complete.
 12. **DOCUMENTATION:** All newly written code MUST include comprehensive JSDoc comments for functions, interfaces, and components. Explain the 'why' and 'how' of complex logic. Ensure top-level file comments describe the file's purpose.
 13. **ISSUES FIXING:** **ALWAYS** understand the issue and find the root cause first before fixing it, **STRICTLY** Try find an efficient way to fix the issue.
+14. **MAINTAIN WIKI:** **MANDATORY**: Refer to `docs/wiki/` for architectural context before starting tasks. When modifying code logic, adding features, or refactoring, **STRICTLY, YOU MUST UPDATE** the corresponding Wiki page to keep documentation synchronized with the codebase.
 
 # Role: Principal Frontend Architect & Creative Technologist
 

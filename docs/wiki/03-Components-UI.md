@@ -1,0 +1,49 @@
+# Components & UI System
+
+This section details the reusable UI components and the global styling strategy that defines the "Cinematic" look and feel.
+
+## 1. Global Styling (`src/app/globals.css`)
+
+The project utilizes **Tailwind CSS v4** with a "CSS-first" configuration approach. Instead of a `tailwind.config.js`, variables are defined directly in the CSS using the `@theme` directive.
+
+### Color Palette (OKLCH)
+
+The system uses the OKLCH color space for maximum vibrancy on modern displays.
+
+- **Primary (`--color-primary`)**: Neon Cyan (`oklch(85% 0.2 160)`) - Represents Cloud/Web.
+- **Secondary (`--color-secondary`)**: Solar Amber (`oklch(75% 0.18 60)`) - Represents Hardware/Kernel.
+- **Accent (`--color-accent`)**: Signal Green (`oklch(70% 0.25 140)`) - Represents Active State/Signals.
+- **Background (`--color-deep-void`)**: Deep Void (`oklch(15% 0.02 260)`) - The base canvas.
+
+### Custom Utilities
+
+- **`.texture-overlay`**: An SVG fractal noise filter applied globally to give a tactical, hardware grain to the UI.
+- **`.moving-border-overlay`**: A CSS animation that creates a "laser beam" traveling along the border of the navigation pill.
+- **`.cyber-grid`**: A background pattern resembling a schematic grid.
+
+## 2. Core UI Components (`src/components/ui/`)
+
+### `Loader.tsx` ("The System Boot")
+
+- **Purpose**: Simulates a kernel boot sequence on initial load.
+- **Behavior**:
+  - Displays lines of text sequentially (Kernel -> Runtime -> React).
+  - Uses a "curtain" reveal effect to transition to the main page.
+  - **Optimization**: Checks `sessionStorage` ("rk_portfolio_visited") to skip the animation on subsequent visits.
+  - **Accessibility**: Respects `prefers-reduced-motion` to simplify the exit animation.
+
+### `Navbar.tsx` ("The Liquid Morph")
+
+- **Purpose**: Global navigation that adapts to scroll state.
+- **Behavior**:
+  - **State A (Top)**: Transparent, full-width.
+  - **State B (Scrolled)**: Morphs into a centered, glassmorphic pill shape (`rounded-full`).
+  - **Mobile**: Features a full-screen overlay menu with staggered entry animations for links.
+- **Interaction**:
+  - Links trigger smooth scrolling via `Lenis` (or native fallback).
+  - Hovering links triggers a "spring" underline animation (`framer-motion` layoutId).
+
+### `PageWrapper.tsx`
+
+- **Purpose**: Wraps the page content to ensure consistent padding/margins or to apply global page transitions if needed.
+- **Current Usage**: Ensures content sits above the fixed background layers.
