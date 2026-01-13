@@ -9,6 +9,8 @@ import {
 } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import Link from "next/link";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useLoader } from "@/context/LoaderContext";
 import { useScroll } from "@/context/ScrollContext";
 import { cn } from "@/lib/utils";
@@ -26,6 +28,7 @@ export default function Navbar() {
   const { scrollY } = useMotionScroll();
 
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [hoveredLink, setHoveredLink] = useState<string | null>(null);
   const [pendingScrollTarget, setPendingScrollTarget] = useState<string | null>(
@@ -75,6 +78,32 @@ export default function Navbar() {
     }
   });
 
+  // Handle Scroll Direction for Hide/Reveal
+  useEffect(() => {
+    gsap.registerPlugin(ScrollTrigger);
+
+    const trigger = ScrollTrigger.create({
+      start: "top top",
+      end: 99999,
+      onUpdate: (self) => {
+        // If at the very top, always show
+        if (self.scroll() < 100) {
+          setIsVisible(true);
+        } else if (self.direction === 1) {
+          // Scrolling Down -> Hide
+          setIsVisible(false);
+        } else if (self.direction === -1) {
+          // Scrolling Up -> Show
+          setIsVisible(true);
+        }
+      },
+    });
+
+    return () => {
+      trigger.kill();
+    };
+  }, []);
+
   // Toggle body scroll when mobile menu is open
   useEffect(() => {
     if (isMobileMenuOpen) {
@@ -86,6 +115,9 @@ export default function Navbar() {
       document.body.style.overflow = "unset";
     };
   }, [isMobileMenuOpen]);
+
+  // Combined visibility state
+  const shouldShow = !isLoading && isVisible;
 
   return (
     <>
@@ -109,12 +141,17 @@ export default function Navbar() {
             paddingBottom: "1.5rem",
           }}
           animate={{
-            opacity: isLoading ? 0 : 1,
-            y: isLoading ? -100 : 0,
+            // Visibility & Position
+            opacity: shouldShow ? 1 : 0,
+            y: shouldShow ? 0 : -100,
+            filter: shouldShow ? "blur(0px)" : "blur(12px)",
+            scaleX: shouldShow ? 1 : 1.05, // Subtle stretch when vanishing
+
+            // Morphing Props (Dependent on isScrolled)
             position: "relative",
             width: isScrolled ? "calc(100% - 2rem)" : "100%",
             maxWidth: isScrolled ? "56rem" : "100%",
-            marginTop: isLoading ? "0rem" : isScrolled ? "2rem" : "0rem",
+            marginTop: isScrolled ? "2rem" : "0rem",
             borderRadius: isScrolled ? "9999px" : "0px",
             backgroundColor: isScrolled
               ? "rgba(15, 17, 26, 0.85)"
@@ -133,10 +170,18 @@ export default function Navbar() {
               : "0 0px 0px 0px rgba(0, 0, 0, 0)",
           }}
           transition={{
-            type: "spring",
-            stiffness: 150,
-            damping: 20,
-            mass: 1,
+            // Separate transitions for layout morphing vs visibility
+            layout: {
+              type: "spring",
+              stiffness: 150,
+              damping: 20,
+              mass: 1,
+            },
+            // Snappier transition for the "hide/reveal" effect
+            opacity: { duration: 0.4, ease: "easeOut" },
+            y: { duration: 0.5, ease: [0.16, 1, 0.3, 1] }, // Expo-like ease
+            filter: { duration: 0.4 },
+            scaleX: { duration: 0.4 },
           }}
         >
           {isScrolled && (

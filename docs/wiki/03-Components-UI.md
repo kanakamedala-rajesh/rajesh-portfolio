@@ -32,16 +32,20 @@ The system uses the OKLCH color space for maximum vibrancy on modern displays.
   - **Optimization**: Checks `sessionStorage` ("rk_portfolio_visited") to skip the animation on subsequent visits.
   - **Accessibility**: Respects `prefers-reduced-motion` to simplify the exit animation.
 
-### `Navbar.tsx` ("The Liquid Morph")
+### `Navbar.tsx` ("The Liquid Morph" + "Liquid Dissolve")
 
-- **Purpose**: Global navigation that adapts to scroll state.
+- **Purpose**: Global navigation that adapts to scroll state and direction.
 - **Behavior**:
   - **State A (Top)**: Transparent, full-width.
-  - **State B (Scrolled)**: Morphs into a centered, glassmorphic pill shape (`rounded-full`).
+  - **State B (Scrolled)**: Morphs into a centered, glassmorphic pill shape (`rounded-full`) with a "laser beam" moving border.
+  - **Directional Awareness**:
+    - **Scroll Down**: The navbar executes a "Liquid Dissolve" (translates up, blurs, and stretches horizontally) to maximize content immersion.
+    - **Scroll Up**: Instantly snaps back into view.
   - **Mobile**: Features a full-screen overlay menu with staggered entry animations for links.
 - **Interaction**:
   - Links trigger smooth scrolling via `Lenis` (or native fallback).
   - Hovering links triggers a "spring" underline animation (`framer-motion` layoutId).
+- **Tech Stack**: Uses `gsap.ScrollTrigger` for robust direction detection and `framer-motion` for the dissolve/snap animations.
 
 ### `PageWrapper.tsx`
 
