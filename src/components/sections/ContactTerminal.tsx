@@ -224,6 +224,12 @@ const ContactTerminal = () => {
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
+          onViewportEnter={() => {
+            // Only autofocus on desktop to prevent keyboard popping up on mobile
+            if (typeof window !== "undefined" && window.innerWidth >= 1024) {
+              inputRef.current?.focus({ preventScroll: true });
+            }
+          }}
           transition={{ duration: 0.6, delay: 0.2 }}
           className="order-1 w-full lg:order-2"
         >
@@ -299,7 +305,6 @@ const ContactTerminal = () => {
                     onChange={(e) => setInput(e.target.value)}
                     onKeyDown={handleKeyDown}
                     className="w-full border-none bg-transparent p-0 font-mono text-base text-white outline-none focus:ring-0 lg:text-sm"
-                    autoFocus
                     aria-label="Terminal Input"
                     autoComplete="off"
                   />

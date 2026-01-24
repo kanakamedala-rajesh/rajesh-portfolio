@@ -22,6 +22,12 @@ test.describe("Contact Terminal Section", () => {
     const input = page.locator('input[aria-label="Terminal Input"]');
     await expect(input).toBeVisible();
 
+    // Verify input is automatically focused on desktop when in view
+    const viewport = page.viewportSize();
+    if (viewport && viewport.width >= 1024) {
+      await expect(input).toBeFocused();
+    }
+
     // 1. Test 'help' command
     await input.fill("help");
     await input.press("Enter");

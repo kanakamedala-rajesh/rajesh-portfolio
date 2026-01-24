@@ -1,162 +1,323 @@
-# Critical Implementation Rules
+# AGENTS.md — Rajesh Kanakamedala Portfolio
+
+> **Purpose**: This document provides AI assistants and developers with comprehensive guidelines for contributing to this cinematic scrolly-telling portfolio project.
+
+---
+
+## Project Overview
+
+A high-performance, cinematic **"Scrolly-telling"** portfolio for **Rajesh Kanakamedala**, showcasing expertise spanning Embedded Systems to Cloud Applications. The design philosophy is **"From Silicon to Cloud"**—visualizing the data flow from low-level hardware to high-level UI.
+
+---
+
+## 1. Critical Rules
 
 **STRICT ADHERENCE REQUIRED:**
 
-1. **NO HALLUCINATIONS OR ASSUMPTIONS:** Do not invent data, files, or requirements.
-2. **VERIFY CONTEXT:** Always check existing project structure, files, and configuration before acting.
-3. **USE EXPLICIT DATA:** Rely solely on provided inputs (e.g., `Profile.pdf`, specifications).
-4. **REFERENCE PATTERNS:** Follow established code styles and architectural patterns.
-5. **VALIDATE SCHEMA:** Ensure all data and code strictly match defined schemas (e.g., `ResumeData`).
-6. **CONFIRM REQUIREMENTS:** Double-check specifications against the prompt.
-7. **SEEK CLARIFICATION:** If ambiguity exists, **ASK THE USER** before proceeding.
-8. **VERIFY LATEST DOCS:** Use the Context7 tools `resolve-library-id` and `get-library-docs` to retrieve up-to-date API usage for critical dependencies (Next.js 16, React 19, Tailwind v4, GSAP, Framer Motion) before coding.
-9. **WEB SEARCHES:** For general web searches, use the `google_web_search` tool.
-10. **PACKAGE MANAGER:** Always use `pnpm` instead of `npm` or `yarn` for all package management and script execution tasks.
-11. **VERIFY STANDARDS:** Before finalizing the implementation, run `pnpm commit:validate`. Ensure these scripts pass **WITHOUT ANY WARNINGS OR ERRORS**. Fix all issues before considering the task complete.
-12. **DOCUMENTATION:** All newly written code MUST include comprehensive JSDoc comments for functions, interfaces, and components. Explain the 'why' and 'how' of complex logic. Ensure top-level file comments describe the file's purpose.
-13. **ISSUES FIXING:** **ALWAYS** understand the issue and find the root cause first before fixing it, **STRICTLY** Try find an efficient way to fix the issue.
-14. **MAINTAIN WIKI:** **MANDATORY**: Refer to `docs/wiki/` for architectural context before starting tasks. When modifying code logic, adding features, or refactoring, **STRICTLY, YOU MUST UPDATE** the corresponding Wiki page to keep documentation synchronized with the codebase.
+1. **NO HALLUCINATIONS**: Never invent data, files, APIs, or requirements. Verify existence before referencing.
+2. **VERIFY CONTEXT FIRST**: Always check existing project structure and files before making changes.
+3. **FOLLOW EXISTING PATTERNS**: Reference established code styles in the codebase.
+4. **SEEK CLARIFICATION**: If ambiguity exists, **ASK** before proceeding.
+5. **VALIDATE BEFORE COMPLETION**: Run `pnpm commit:validate` before finalizing. Fix ALL warnings and errors.
+6. **DOCUMENT CODE**: Include JSDoc comments for functions, interfaces, and components.
+7. **UPDATE WIKI**: When modifying code logic, **you MUST update** the corresponding `docs/wiki/` page.
 
-# Role: Principal Frontend Architect & Creative Technologist
+---
 
-**Objective:** Generate the **complete, runnable source code** for a high-performance, cinematic **"Scrolly-telling"** portfolio for **Rajesh Kanakamedala**.
-**Input Data:** The user will provide a file named `docs/profile.pdf`. Parse this file to extract **all** content (Summary, Experience, Skills, Contact) for the data layer.
+## 2. Tech Stack
 
-## 1. Design Philosophy: "Lively, Grand, & Cyber-Physical"
+| Category          | Technology                                          |
+| ----------------- | --------------------------------------------------- |
+| **Framework**     | Next.js 16 (App Router, React Compiler enabled)     |
+| **Language**      | TypeScript (Strict Mode)                            |
+| **Styling**       | Tailwind CSS v4 (CSS-First Config via `@theme`)     |
+| **Scroll Engine** | Lenis (Smooth scrolling)                            |
+| **Animation**     | GSAP (ScrollTrigger) + Framer Motion                |
+| **3D Graphics**   | Three.js via @react-three/fiber & @react-three/drei |
+| **Icons**         | Lucide React                                        |
+| **Deployment**    | Cloudflare Workers via OpenNext                     |
+| **Testing**       | Playwright (E2E)                                    |
+| **Package Mgr**   | **pnpm** (Always use `pnpm`, never `npm` or `yarn`) |
 
-- **Concept:** "From Silicon to Cloud." The site represents the data flow from low-level hardware (Embedded) to high-level UI (React/VR).
-- **Color System (OKLCH):** Use **OKLCH** for maximum gamut and vibrancy.
-  - _Primary (Cloud/Web):_ Neon Cyan (`oklch(85% 0.2 160)`).
-  - _Secondary (Hardware/Kernel):_ Solar Amber (`oklch(75% 0.18 60)`).
-  - _Accent (Signals):_ Signal Green (`oklch(70% 0.25 140)`).
-  - _Base:_ Deep Void (`oklch(15% 0.02 260)`) to Light Gray (`oklch(95% 0.01 260)`).
-- **Texture:** Implement a subtle SVG "Noise" or "Scanline" overlay (`opacity: 0.03`, `pointer-events-none`) over the entire app to give it a tactical, hardware feel.
-- **Typography:** `next/font`.
-  - Headers: **Space Grotesk** (Tech/Industrial feel).
-  - Body: **Inter** (Variable).
-  - Code/Accents: **JetBrains Mono**.
+---
 
-## 2. Modern Tech Stack (Bleeding Edge)
+## 3. Directory Structure
 
-- **Framework:** **Next.js (Latest Stable)** (App Router, Turbopack).
-- **Language:** **TypeScript** (Strict Mode).
-- **Styling:** **Tailwind CSS v4** (CSS-First Config).
-  - _Constraint:_ **NO `tailwind.config.js`**. Define all theme variables and `@theme` blocks directly in `src/app/globals.css`.
-- **Scroll Engine:** **Lenis** (Smooth scrolling).
-- **Animation:** **Framer Motion** (Component interactions) + **GSAP** (ScrollTrigger for pinning/scrubbing).
-- **Icons:** **Lucide React**.
+```text
+src/
+├── app/                     # Next.js App Router
+│   ├── globals.css          # Tailwind v4 @theme config & custom utilities
+│   ├── layout.tsx           # Root layout, providers, fonts, SEO
+│   └── page.tsx             # Home page composition
+├── components/
+│   ├── sections/            # Feature sections (Hero, About, Experience, Skills, Contact)
+│   └── ui/                  # Atomic UI (Loader, Navbar, Modal, PageWrapper)
+├── context/                 # React Contexts (LoaderContext, ScrollContext, SectionContext)
+├── data/                    # Data layer (resume.ts with ResumeData interface)
+├── hooks/                   # Custom hooks (useSectionTransition)
+├── lib/                     # Utilities (cn, constants)
+└── middleware.ts            # Edge runtime security (CSP, headers)
 
-## 3. Dynamic Data Layer (`src/data/resume.ts`)
+docs/wiki/                   # Technical documentation (MUST be kept in sync)
+tests/                       # Playwright E2E tests
+specs/                       # Project specifications
+```
 
-- **Requirement:** Parse `docs/profile.pdf` and export a strongly-typed `const resumeData`.
-- **Schema Definition:**
+---
 
-  ```typescript
-  interface ResumeData {
-    header: { name: string; title: string; tagline: string; location: string };
-    summary: string;
-    skills: {
-      category: "Languages" | "Frameworks" | "Embedded/Systems" | "Cloud/DB";
-      items: string[];
-    }[];
-    experience: {
-      company: string;
-      role: string;
-      period: string;
-      type: "Embedded" | "VR/AR" | "Full Stack"; // Deriving from PDF context
-      description: string[]; // Bullet points
-      techStack: string[];
-    }[];
-    contact: { email: string; phone: string; linkedin: string };
-  }
-  ```
+## 4. Design System
 
-- **Contextual Parsing Rules:**
-  - Extract "CNH Industrial" -> Type: "Embedded" (Focus on CAN Protocol, BSP, Linux Daemons).
-  - Extract "Eagle Creek" -> Type: "VR/AR" (Focus on Unity 3D, OpenGL, Android).
-  - Extract "VoxVilla" -> Type: "Full Stack" (Focus on Java, Angular, REST).
+### Color Palette (OKLCH)
 
-## 4. Scrolly-telling Motion Script (Strict Implementation Specs)
+| Token                | Value                 | Usage                  |
+| -------------------- | --------------------- | ---------------------- |
+| `--color-primary`    | `oklch(85% 0.2 160)`  | Neon Cyan (Cloud/Web)  |
+| `--color-secondary`  | `oklch(75% 0.18 60)`  | Solar Amber (Hardware) |
+| `--color-accent`     | `oklch(70% 0.25 140)` | Signal Green (Accents) |
+| `--color-background` | `oklch(15% 0.02 260)` | Deep Void (Dark base)  |
+| `--color-foreground` | `oklch(95% 0.01 260)` | Light Gray (Text)      |
 
-### 0. The Preloader: "System Boot"
+### Typography (via `next/font`)
 
-- **Initial State:** Full screen black overlay (`z-index: 50`).
-- **Sequence:**
-  1. Typewriter text: `> INITIALIZING KERNEL...` (Green).
-  2. `> LOADING ANDROID RUNTIME...` (Amber).
-  3. `> HYDRATING REACT ROOT...` (Cyan).
-- **Exit:** Overlay splits vertically (curtain effect).
-- **UX Requirement:** If user has visited before (sessionStorage), skip animation.
+- **Headers**: Space Grotesk (`--font-space`)
+- **Body**: Inter (`--font-inter`)
+- **Code/Monospace**: JetBrains Mono (`--font-mono`)
 
-### 1. Global Navigation: "The Liquid Morph"
+### Custom CSS Utilities
 
-- **State A (Top):** Transparent, full width. Logo: "RK" (Monospace).
-- **State B (Scrolled):** Morphs into a centered "Pill" (`bg-void/80`, `backdrop-blur`).
-- **Mobile:** Hamburger menu triggers a full-screen "Glitch" overlay effect before showing links.
+Defined in `src/app/globals.css`:
 
-### 2. Section A: Hero -> "The Convergence"
+- `.text-gradient` — Cyan-to-Amber gradient text
+- `.glass-panel` — Glassmorphic panel with backdrop blur
+- `.texture-overlay` — SVG noise overlay for tactile feel
+- `.moving-border-overlay` — Animated border shimmer effect
+- `.cyber-grid` — Grid background pattern
 
-- **Layout:** `h-screen`, `sticky`, `top-0`.
-- **Visual:** Split screen representing Rajesh's dual expertise.
-  - _Top Half (Cloud):_ Cyan glow, floating abstract UI elements (React symbols).
-  - _Bottom Half (Hardware):_ Amber glow, wireframe PCB traces.
-  - _The Connection:_ A 3D wireframe spline connects the bottom to the top.
-- **Scroll Interaction:**
-  - As user scrolls, the two halves "pull apart" to reveal the content.
-  - The connecting spline glows (SVG path length animation) as if data is transmitting from Hardware to Cloud.
+---
 
-### 3. Section B: About -> "The Full Stack Architecture"
+## 5. Data Layer
 
-- **Mechanism:** **GSAP Pin**. `trigger: section, start: "top top", end: "+=300%"`.
-- **Visual:** An isometric representation of an Architecture Stack (Bottom-up).
-- **Timeline:**
-  1. **Phase 1 (Hardware):** A "Chip" or PCB graphic slides in. Text: "Embedded Linux & BSP" (Resume: CNH Industrial details).
-  2. **Phase 2 (Middleware):** A block drops onto the Chip. Text: "Android Native & HAL" (Resume: JNI, C++ Daemons).
-  3. **Phase 3 (Application):** A UI layer floats on top. Text: "Cloud & React" (Resume: Web/VR Apps).
-- **Decoration:** Animated "particles" flow continuously from the bottom block to the top block.
+### Schema (`src/data/resume.ts`)
 
-### 4. Section C: Experience -> "The Timeline Tunnel"
+```typescript
+interface ResumeData {
+  header: { name: string; title: string; tagline: string; location: string };
+  summary: string;
+  skills: {
+    category:
+      | "Languages"
+      | "Frameworks"
+      | "Embedded/Systems"
+      | "Cloud/DB"
+      | "Methodologies";
+    items: string[];
+  }[];
+  experience: {
+    company: string;
+    role: string;
+    period: string;
+    type: "Embedded" | "VR/AR" | "Full Stack";
+    description: string[];
+    techStack: string[];
+  }[];
+  contact: { email: string; phone: string; linkedin: string };
+}
+```
 
-- **Mechanism:** **Sticky Horizontal Scroll**.
-- **Structure:** A `div` with `h-[400vh]` acts as the scroll track. The content `div` is sticky and translates `x` based on scroll progress.
-- **Cards:** Glassmorphic cards containing Experience data.
-- **VR Special Effect (Eagle Creek Card):**
-  - When this card enters the viewport, trigger a "3D Tilt" effect based on mouse position (use `framer-motion` `useMotionValue`).
-  - Background of this card should use a subtle WebGL distortion or static image of a wireframe mesh to signify VR.
-- **Mobile Fallback:** On devices `< 768px`, disable horizontal scroll. Render cards as a standard vertical timeline with a connecting dashed line on the left.
+### Contact Info Security
 
-### 5. Section D: Skills -> "The Neural Network"
+Contact fields use environment variables with fallbacks:
 
-- **Layout:** `min-h-screen`.
-- **Visual:** Force-Directed Graph simulation (simulated via Framer Motion layout).
-- **Nodes:** Skills (Java, C++, React, etc.) are circles.
-- **Edges:** Draw SVG lines between related skills (e.g., Line between "Java" and "Android", "C++" and "Embedded Linux").
-- **Interaction:**
-  - _Magnetic:_ Nodes slightly follow the cursor within a radius.
-  - _Hover:_ Hovering a node highlights all connected nodes (e.g., Hover "Android" -> highlights "Java", "Kotlin", "JNI").
+```typescript
+email: process.env.NEXT_PUBLIC_CONTACT_EMAIL || "user@example.com";
+```
 
-### 6. Section E: Contact -> "The Terminal"
+---
 
-- **Layout:** Footer Reveal (Fixed bottom, previous section lifts up).
-- **Design:** A retro-modern Terminal window.
-- **Content:**
-  - Left col: Contact Info (parsed from PDF).
-  - Right col: An interactive command line input `user@rk-portfolio:~$`.
-  - _Interaction:_ If user types `help`, list commands (`email`, `linkedin`, `resume`). Typing `email` opens `mailto`.
+## 6. Section Architecture
 
-## 5. Execution Deliverables
+| Section        | File                             | Mechanism                                           |
+| -------------- | -------------------------------- | --------------------------------------------------- |
+| **Loader**     | `ui/Loader.tsx`                  | Boot sequence with typewriter text                  |
+| **Navbar**     | `ui/Navbar.tsx`                  | Liquid morph (pill on scroll)                       |
+| **Hero**       | `sections/Hero.tsx`              | Split-screen convergence, GSAP pin                  |
+| **About**      | `sections/AboutArchitecture.tsx` | Isometric stack, GSAP 300% pin                      |
+| **Experience** | `sections/ExperienceTunnel.tsx`  | Desktop: Horizontal scroll / Mobile: Vertical stack |
+| **Skills**     | `sections/SkillsNetwork.tsx`     | Constellation layout with parallax                  |
+| **Contact**    | `sections/ContactTerminal.tsx`   | CLI terminal                                        |
 
-_Generate the complete code for the following file structure. Ensure rigorous type safety._
+### Responsive Patterns
 
-1. **`src/app/layout.tsx`**: Root layout, Lenis provider, Metadata (SEO).
-2. **`src/app/globals.css`**: Tailwind v4 `@theme` configuration.
-3. **`src/lib/utils.ts`**: Helper for `cn` (clsx/tailwind-merge).
-4. **`src/data/resume.ts`**: The parsed data object.
-5. **`src/components/ui/Loader.tsx`**: The boot sequence.
-6. **`src/components/ui/Navbar.tsx`**: Liquid morph navigation.
-7. **`src/components/sections/Hero.tsx`**: Convergence effect.
-8. **`src/components/sections/AboutArchitecture.tsx`**: The Isometric Stack (GSAP).
-9. **`src/components/sections/ExperienceTunnel.tsx`**: Horizontal scroll + Mobile Fallback.
-10. **`src/components/sections/SkillsNetwork.tsx`**: Magnetic nodes.
-11. **`src/components/sections/ContactTerminal.tsx`**: Footer + CLI.
-12. **`src/app/page.tsx`**: Main orchestration.
+- **Desktop** (`≥768px`): Full animations, horizontal scroll, parallax effects
+- **Mobile** (`<768px`): Simplified layouts, vertical stacks, touch-optimized
+
+---
+
+## 7. Context Providers
+
+| Context          | Purpose                                         |
+| ---------------- | ----------------------------------------------- |
+| `LoaderContext`  | Manages boot sequence state (`isLoading`)       |
+| `ScrollContext`  | Provides Lenis instance for programmatic scroll |
+| `SectionContext` | Tracks section status for animation sync        |
+
+Usage pattern:
+
+```tsx
+const { isLoading, setIsLoading } = useLoader();
+const { lenis } = useScroll();
+const { registerSection, updateSectionStatus } = useSectionContext();
+```
+
+---
+
+## 8. Animation Guidelines
+
+### GSAP (Scroll-linked)
+
+- Use for: Pinning, scrubbing, complex timelines
+- Always use `@gsap/react` hook: `useGSAP()`
+- Clean up ScrollTrigger instances in hook cleanup
+
+### Framer Motion (Component-level)
+
+- Use for: Entrances, exits, layout animations, gestures
+- Prefer `whileInView` for viewport-triggered animations
+- Use `useMotionValue` and `useTransform` for cursor-based effects
+
+### Lenis (Smooth Scroll)
+
+- Accessed via `ScrollContext`
+- Pause during modals: `lenis?.stop()` / `lenis?.start()`
+
+---
+
+## 9. Commands Reference
+
+| Command                | Description                                            |
+| ---------------------- | ------------------------------------------------------ |
+| `pnpm dev`             | Start development server                               |
+| `pnpm build`           | Production build                                       |
+| `pnpm lint`            | Run ESLint                                             |
+| `pnpm type-check`      | TypeScript type checking                               |
+| `pnpm format`          | Format code with Prettier                              |
+| `pnpm test`            | Run Playwright E2E tests                               |
+| `pnpm commit`          | Interactive conventional commit                        |
+| `pnpm commit:validate` | **Full validation** (lint + type-check + build + test) |
+| `pnpm cf:deploy`       | Deploy to Cloudflare                                   |
+
+---
+
+## 10. Testing Strategy
+
+**Framework**: Playwright
+
+**Test Suites** (`tests/`):
+
+- `boot-nav.spec.ts` — Loader sequence, session storage, navbar morph
+- `hero.spec.ts` — Hero visuals and responsiveness
+- `architecture.spec.ts` — Architecture layers rendering
+- `experience.spec.ts` — Experience cards and mobile fallback
+- `skills.spec.ts` — Skills network rendering
+- `contact.spec.ts` — Terminal functionality
+- `security.spec.ts` — Security headers validation
+
+**Run Tests**:
+
+```bash
+pnpm test                              # Headless
+pnpm exec playwright test --ui         # Interactive UI
+pnpm exec playwright test --debug      # Debug mode
+```
+
+---
+
+## 11. Security
+
+### Middleware (`src/middleware.ts`)
+
+- **Runtime**: `experimental-edge`
+- **CSP**: Nonce-based, strict-dynamic scripts
+- **Headers**: `X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`
+
+### Best Practices
+
+- Never hardcode sensitive data
+- Use `NEXT_PUBLIC_*` env vars for client-exposed config
+- Validate all external inputs
+
+---
+
+## 12. Documentation Requirements
+
+### Code Documentation
+
+- **JSDoc**: Required for all exported functions, interfaces, and components
+- **File Headers**: Describe the file's purpose at the top
+- **Complex Logic**: Explain the "why" and "how" inline
+
+### Wiki Maintenance (`docs/wiki/`)
+
+| Wiki Page              | Covers                                      |
+| ---------------------- | ------------------------------------------- |
+| `01-Architecture.md`   | Tech stack, directory structure, deployment |
+| `02-Core-Utilities.md` | Contexts, hooks, middleware, utilities      |
+| `03-Components-UI.md`  | Global styling, UI components               |
+| `04-Sections.md`       | Feature section implementations             |
+| `05-Data-Layer.md`     | ResumeData schema, data handling            |
+| `06-Testing.md`        | Playwright setup and test suites            |
+
+**Rule**: Any code change affecting architecture or features **MUST** have a corresponding Wiki update.
+
+---
+
+## 13. Commit Convention
+
+Uses **Conventional Commits** enforced via Commitlint:
+
+```text
+<type>(<scope>): <description>
+
+[optional body]
+
+[optional footer(s)]
+```
+
+**Types**: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`, `perf`
+
+**Examples**:
+
+```text
+feat(hero): add 3D spline connection animation
+fix(navbar): resolve mobile menu z-index issue
+docs(wiki): update architecture section with deployment info
+```
+
+---
+
+## 14. AI Assistant Guidelines
+
+### Before Starting Work
+
+1. Read relevant `docs/wiki/` pages for context
+2. Check existing patterns in similar files
+3. Verify the component/feature doesn't already exist
+
+### During Implementation
+
+1. Follow TypeScript strict mode
+2. Use existing utilities (`cn`, contexts, hooks)
+3. Match the established animation patterns (GSAP vs Framer Motion)
+4. Ensure responsive design (desktop and mobile)
+
+### Before Completing
+
+1. Run `pnpm commit:validate` — fix ALL issues
+2. Update relevant Wiki documentation
+3. Verify no regressions with `pnpm test`
+
+### Tool Usage
+
+- **Context7**: Use `resolve-library-id` + `get-library-docs` for up-to-date API docs
+- **Package Manager**: Always use `pnpm`, never `npm` or `yarn`
+- **Root Cause Analysis**: Understand issues fully before applying fixes

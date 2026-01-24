@@ -75,11 +75,8 @@ A visually rich, interactive representation of technical skills.
 
 A functional, retro-futuristic CLI terminal that doubles as the site footer.
 
-- **Footer Reveal Effect**:
-  - **Mechanism**: Achieved via `src/app/page.tsx`.
-    - Main content has `mb-[100vh]` (margin-bottom equal to viewport height).
-    - Footer is `fixed` at the bottom with `z-0`.
-    - As the user scrolls the last screen of main content, the footer is "revealed" underneath.
+- **Placement**:
+  - Standard vertical section at the end of the page flow (previous "footer reveal" effect has been removed for seamless integration).
 - **Terminal Logic**:
   - **State**: Tracks `input` and `history` (array of commands/outputs).
   - **Commands**:
