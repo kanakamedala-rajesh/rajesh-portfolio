@@ -41,10 +41,16 @@ The system uses the OKLCH color space for maximum vibrancy on modern displays.
   - **Directional Awareness**:
     - **Scroll Down**: The navbar executes a "Liquid Dissolve" (translates up, blurs, and stretches horizontally) to maximize content immersion.
     - **Scroll Up**: Instantly snaps back into view.
+  - **Active Section Highlighting**:
+    - **Visual Detection**: Uses direct DOM measurement (`getBoundingClientRect`) to identify which section covers the viewport center. This ensures 100% accuracy for pinned sections (About/Experience) and standard sections (Skills/Contact).
+    - **Style**: The active link is highlighted in **Neon Cyan (`--color-primary`)** with a subtle drop-shadow glow.
   - **Mobile**: Features a full-screen overlay menu with staggered entry animations for links.
 - **Interaction**:
   - Links trigger smooth scrolling via `Lenis` (or native fallback).
-  - Hovering links triggers a "spring" underline animation (`framer-motion` layoutId).
+  - **Hover Effect**:
+    - High-contrast **Solar Amber (`--color-secondary`)** underline.
+    - **Optimized Performance**: 3px thick line with "spring" physics.
+    - **Flicker-Free**: Hover logic is handled at the container level to maintain continuous animation when moving between links.
 - **Tech Stack**: Uses `gsap.ScrollTrigger` for robust direction detection and `framer-motion` for the dissolve/snap animations.
 
 ### `PageWrapper.tsx`

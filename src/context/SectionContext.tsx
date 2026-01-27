@@ -23,6 +23,8 @@ interface SectionContextType {
     progress: number
   ) => void;
   getSectionStatus: (id: string) => { status: SectionStatus; progress: number };
+  /** Read-only access to all section statuses for consumers like Navbar */
+  sectionStatuses: Record<string, SectionStatus>;
 }
 
 const SectionContext = createContext<SectionContextType | undefined>(undefined);
@@ -88,8 +90,9 @@ export const SectionProvider = ({ children }: { children: ReactNode }) => {
       registerSection,
       updateSectionStatus,
       getSectionStatus,
+      sectionStatuses,
     }),
-    [registerSection, updateSectionStatus, getSectionStatus]
+    [registerSection, updateSectionStatus, getSectionStatus, sectionStatuses]
   );
 
   return (

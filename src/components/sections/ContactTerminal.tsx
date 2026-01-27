@@ -2,6 +2,10 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useGSAP } from "@gsap/react";
+import { useSectionContext } from "@/context/SectionContext";
 import { resumeData } from "@/data/resume";
 import {
   Terminal as TerminalIcon,
@@ -15,6 +19,8 @@ import {
   X,
 } from "lucide-react";
 
+gsap.registerPlugin(ScrollTrigger);
+
 interface CommandHistory {
   command: string;
   output: React.ReactNode;
@@ -25,6 +31,31 @@ const ContactTerminal = () => {
   const [history, setHistory] = useState<CommandHistory[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const containerRef = useRef<HTMLElement>(null);
+  const { registerSection, updateSectionStatus } = useSectionContext();
+
+  useGSAP(
+    () => {
+      registerSection("contact-terminal");
+
+      ScrollTrigger.create({
+        trigger: containerRef.current,
+        start: "top 80%",
+        end: "bottom bottom",
+        onToggle: (self) => {
+          updateSectionStatus(
+            "contact-terminal",
+            self.isActive ? "active" : "idle",
+            self.progress
+          );
+        },
+      });
+    },
+    {
+      scope: containerRef,
+      dependencies: [registerSection, updateSectionStatus],
+    }
+  );
 
   const handleCommand = (cmd: string) => {
     const trimmedCmd = cmd.trim().toLowerCase();
@@ -127,6 +158,7 @@ const ContactTerminal = () => {
 
   return (
     <section
+      ref={containerRef}
       id="contact-terminal"
       className="bg-deep-void text-foreground relative z-10 flex min-h-screen w-full flex-col justify-end overflow-hidden p-6 lg:min-h-[80vh] lg:p-20"
     >

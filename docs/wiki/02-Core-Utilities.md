@@ -10,14 +10,14 @@ This section documents the foundational utilities and global state management us
 
 Manages the state of the initial "System Boot" sequence.
 
-- **State**: `isLoading` (boolean)
+- **State**: `isLoading` (boolean), `hasHydrated` (boolean)
 - **Purpose**:
   - Prevents interaction with the rest of the app while the boot animation plays.
   - Signals components (like `Navbar`) to hide or animate in only after the loader finishes.
 - **Usage**:
 
   ```tsx
-  const { isLoading, setIsLoading } = useLoader();
+  const { isLoading, setIsLoading, hasHydrated } = useLoader();
   ```
 
 ### `ScrollContext`
@@ -41,16 +41,18 @@ Provides access to the **Lenis** scroll instance throughout the component tree.
 
 **File**: `src/context/SectionContext.tsx`
 
-Tracks the status of each major section (Hero, About, etc.) for animation synchronization.
+Tracks the status of each major section (Hero, About, etc.) for high-level coordination.
 
-- **State**: `sections` (Map of section IDs to their status: `idle`, `entering`, `active`, `exiting`).
+- **Placement**: Global (Root Layout)
+- **State**: `sectionStatuses` (Read-only map of section IDs to status).
 - **Purpose**:
-  - Allows components to know when they are the "active" section.
-  - Useful for triggering global state changes based on scroll position (e.g., changing Navbar text color).
+  - Allows components to report their lifecycle status during scroll.
+  - **Note**: While available for general synchronization, the **Navbar** now utilizes direct DOM measurement (`getBoundingClientRect`) for active link highlighting to ensure maximum reliability with pinned sections.
 - **Usage**:
 
   ```tsx
-  const { registerSection, updateSectionStatus } = useSectionContext();
+  const { registerSection, updateSectionStatus, sectionStatuses } =
+    useSectionContext();
   ```
 
 ## 2. Custom Hooks (`src/hooks/`)

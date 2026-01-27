@@ -6,8 +6,7 @@ import Navbar from "@/components/ui/Navbar";
 import PageWrapper from "@/components/ui/PageWrapper";
 import { LoaderProvider } from "@/context/LoaderContext";
 import { ScrollProvider } from "@/context/ScrollContext";
-
-import Script from "next/script";
+import { SectionProvider } from "@/context/SectionContext";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -44,22 +43,15 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="antialiased">
-        <Script id="check-visited" strategy="beforeInteractive">
-          {`
-            try {
-              if (sessionStorage.getItem("rk_portfolio_visited")) {
-                document.documentElement.classList.add("visited-mode");
-              }
-            } catch (e) {}
-          `}
-        </Script>
         <LoaderProvider>
           <ScrollProvider>
-            <Loader />
-            <Navbar />
-            <div className="bg-deep-void fixed inset-0 -z-50" />
-            <div className="texture-overlay" />
-            <PageWrapper>{children}</PageWrapper>
+            <SectionProvider>
+              <Loader />
+              <Navbar />
+              <div className="bg-deep-void fixed inset-0 -z-50" />
+              <div className="texture-overlay" />
+              <PageWrapper>{children}</PageWrapper>
+            </SectionProvider>
           </ScrollProvider>
         </LoaderProvider>
       </body>

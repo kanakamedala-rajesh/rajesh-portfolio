@@ -11,7 +11,13 @@ import {
   MotionValue,
   useReducedMotion,
 } from "framer-motion";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useGSAP } from "@gsap/react";
+import { useSectionContext } from "@/context/SectionContext";
 import { resumeData } from "@/data/resume";
+
+gsap.registerPlugin(ScrollTrigger);
 
 // --- Types ---
 type NodeType = "category" | "skill";
@@ -155,6 +161,30 @@ export default function SkillsNetwork() {
   const containerRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(containerRef, { margin: "-30% 0px -30% 0px" });
   const shouldReduceMotion = useReducedMotion();
+  const { registerSection, updateSectionStatus } = useSectionContext();
+
+  useGSAP(
+    () => {
+      registerSection("skills");
+
+      ScrollTrigger.create({
+        trigger: containerRef.current,
+        start: "top 80%",
+        end: "bottom 20%",
+        onToggle: (self) => {
+          updateSectionStatus(
+            "skills",
+            self.isActive ? "active" : "idle",
+            self.progress
+          );
+        },
+      });
+    },
+    {
+      scope: containerRef,
+      dependencies: [registerSection, updateSectionStatus],
+    }
+  );
 
   // Mouse Tracking for Magnetic Effect
   const mouseX = useMotionValue(0);

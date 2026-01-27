@@ -22,15 +22,18 @@ const BOOT_SEQUENCE = [
 ];
 
 export default function Loader() {
-  const { setIsLoading } = useLoader();
+  const { isLoading, setIsLoading, hasHydrated } = useLoader();
   const { lenis } = useScroll();
   const [step, setStep] = useState(0);
-  const [visible, setVisible] = useState(true);
   const [textVisible, setTextVisible] = useState(true);
   const shouldReduceMotion = useReducedMotion();
 
   // Use ref to track if component is mounted to prevent state updates on unmount
   const isMounted = useRef(true);
+  // Track if boot sequence has already started
+  const sequenceStarted = useRef(false);
+  // Track animation completion for first-time visitors
+  const [animationComplete, setAnimationComplete] = useState(false);
 
   useEffect(() => {
     isMounted.current = true;
@@ -44,18 +47,22 @@ export default function Loader() {
       lenis.scrollTo(0, { immediate: true });
     }
 
-    // If visited, skip animation
-    const visited = sessionStorage.getItem("rk_portfolio_visited");
-    if (visited) {
-      // Use setTimeout to avoid synchronous setState warning
-      const timer = setTimeout(() => {
-        setIsLoading(false);
-        setVisible(false);
-      }, 0);
-      return () => clearTimeout(timer);
-    }
+    return () => {
+      isMounted.current = false;
+    };
+  }, [lenis]);
 
-    // If not visited, setup load listener
+  // Determine if loader should be shown:
+  // - Before hydration: don't show (prevents flash)
+  // - After hydration: show only if isLoading is true AND animation not complete
+  const shouldShow = hasHydrated && isLoading && !animationComplete;
+
+  // Run boot sequence only for first-time visitors after hydration
+  useEffect(() => {
+    if (!hasHydrated || !isLoading || sequenceStarted.current) return;
+    sequenceStarted.current = true;
+
+    // First-time visitor - run the boot sequence
     let isPageLoaded = document.readyState === "complete";
     const handleLoad = () => {
       isPageLoaded = true;
@@ -101,23 +108,26 @@ export default function Loader() {
       setTextVisible(false);
       await new Promise((r) => setTimeout(r, 500));
 
-      // Finish
-      sessionStorage.setItem("rk_portfolio_visited", "true");
+      // Finish - mark as visited and update context
+      try {
+        sessionStorage.setItem("rk_portfolio_visited", "true");
+      } catch {
+        // sessionStorage not available
+      }
       setIsLoading(false);
-      setVisible(false);
+      setAnimationComplete(true);
     };
 
     runSequence();
 
     return () => {
-      isMounted.current = false;
       window.removeEventListener("load", handleLoad);
     };
-  }, [setIsLoading, lenis]);
+  }, [hasHydrated, isLoading, setIsLoading]);
 
   return (
     <AnimatePresence>
-      {visible && (
+      {shouldShow && (
         <motion.div
           id="initial-loader"
           className="pointer-events-none fixed inset-0 z-50 flex items-center justify-center font-mono text-xl md:text-2xl"

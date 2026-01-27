@@ -5,6 +5,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { useSectionTransition } from "@/hooks/useSectionTransition";
+import { useSectionContext } from "@/context/SectionContext";
 import {
   Cloud,
   Cpu,
@@ -23,6 +24,7 @@ export default function AboutArchitecture() {
   const container = useRef<HTMLDivElement>(null);
   const contentWrapper = useRef<HTMLDivElement>(null);
   const stackRef = useRef<HTMLDivElement>(null);
+  const { updateSectionStatus } = useSectionContext();
 
   useSectionTransition({
     sectionRef: container,
@@ -68,6 +70,13 @@ export default function AboutArchitecture() {
               pin: true,
               scrub: 1,
               anticipatePin: 1,
+              onToggle: (self) => {
+                updateSectionStatus(
+                  "about-architecture",
+                  self.isActive ? "active" : "idle",
+                  self.progress
+                );
+              },
             },
           });
 
@@ -307,7 +316,7 @@ export default function AboutArchitecture() {
         }
       );
     },
-    { scope: container }
+    { scope: container, dependencies: [updateSectionStatus] }
   );
 
   return (

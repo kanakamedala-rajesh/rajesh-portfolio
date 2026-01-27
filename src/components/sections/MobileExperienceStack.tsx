@@ -10,6 +10,7 @@ import { motion } from "framer-motion";
 import { useSectionTransition } from "@/hooks/useSectionTransition";
 import { Modal } from "@/components/ui/Modal";
 import { Maximize2 } from "lucide-react";
+import { useSectionContext } from "@/context/SectionContext";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -56,6 +57,7 @@ export default function MobileExperienceStack() {
   const contentRef = useRef<HTMLDivElement>(null);
   const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
   const yearRef = useRef<HTMLSpanElement>(null);
+  const { updateSectionStatus } = useSectionContext();
 
   const [selectedExp, setSelectedExp] = useState<{
     data: (typeof resumeData.experience)[0];
@@ -100,6 +102,13 @@ export default function MobileExperienceStack() {
           end: `+=${scrollDistance}vh`,
           scrub: 2, // Smooth scrub catch-up
           pin: containerRef.current,
+          onToggle: (self) => {
+            updateSectionStatus(
+              "experience-tunnel",
+              self.isActive ? "active" : "idle",
+              self.progress
+            );
+          },
           onUpdate: (self) => {
             // Update active year based on which card is currently "on top"
             const idx = Math.round(self.progress * (totalCards - 1));
@@ -181,7 +190,7 @@ export default function MobileExperienceStack() {
         }
       });
     },
-    { scope: wrapperRef }
+    { scope: wrapperRef, dependencies: [updateSectionStatus] }
   );
 
   return (

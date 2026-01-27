@@ -9,6 +9,7 @@ import { resumeData } from "@/data/resume";
 import { cn } from "@/lib/utils";
 import { Maximize2 } from "lucide-react";
 import { Modal } from "@/components/ui/Modal";
+import { useSectionContext } from "@/context/SectionContext";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -235,6 +236,7 @@ export default function DesktopExperience() {
   const sectionRef = useRef<HTMLElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const activePeriodRef = useRef<HTMLHeadingElement>(null);
+  const { updateSectionStatus } = useSectionContext();
   const [selectedExp, setSelectedExp] = useState<{
     data: (typeof resumeData.experience)[0];
     theme: (typeof THEMES)[0];
@@ -288,6 +290,13 @@ export default function DesktopExperience() {
           scrub: 0.5, // Smooth scrubbing
           invalidateOnRefresh: true,
           anticipatePin: 1,
+          onToggle: (self) => {
+            updateSectionStatus(
+              "experience-tunnel",
+              self.isActive ? "active" : "idle",
+              self.progress
+            );
+          },
           onUpdate: () => {
             // 2. The "Parallax Lens" Effect (Physics Loop)
             const viewportCenter = window.innerWidth / 2;
@@ -373,7 +382,7 @@ export default function DesktopExperience() {
     }, wrapper);
 
     return () => ctx.revert();
-  }, []);
+  }, [updateSectionStatus]);
 
   return (
     <>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import {
   motion,
   AnimatePresence,
@@ -15,25 +15,101 @@ import { useLoader } from "@/context/LoaderContext";
 import { useScroll } from "@/context/ScrollContext";
 import { cn } from "@/lib/utils";
 
+/**
+ * Navigation links with mapping to DOM IDs.
+ * The `href` is used to derive the DOM element ID for viewport detection.
+ */
 const NAV_LINKS = [
-  { name: "About", href: "#about" },
-  { name: "Experience", href: "#experience" },
-  { name: "Skills", href: "#skills" },
-  { name: "Contact", href: "#contact-terminal" },
+  { name: "About", href: "#about", sectionId: "about-architecture" },
+  { name: "Experience", href: "#experience", sectionId: "experience-tunnel" },
+  { name: "Skills", href: "#skills", sectionId: "skills" },
+  { name: "Contact", href: "#contact-terminal", sectionId: "contact-terminal" },
 ];
+
+/** Throttle interval in ms for active section detection */
+const ACTIVE_SECTION_THROTTLE_MS = 100;
 
 export default function Navbar() {
   const { isLoading } = useLoader();
-  const { lenis } = useScroll(); // Use our custom context
+  const { lenis } = useScroll();
   const { scrollY } = useMotionScroll();
 
   const [isScrolled, setIsScrolled] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [hoveredLink, setHoveredLink] = useState<string | null>(null);
+  const [activeLink, setActiveLink] = useState<string | null>(null);
   const [pendingScrollTarget, setPendingScrollTarget] = useState<string | null>(
     null
   );
+
+  // Throttle state for active section detection
+  const lastUpdateTime = useRef(0);
+
+  /**
+   * Compute which section is currently active based on viewport position.
+   * Uses getBoundingClientRect but is throttled to avoid layout thrashing.
+   */
+  const computeActiveSection = useCallback(() => {
+    const viewportHeight = window.innerHeight;
+    const center = viewportHeight / 2;
+
+    let currentActive: string | null = null;
+    let minDistance = Infinity;
+
+    for (const link of NAV_LINKS) {
+      const domId = link.href.replace("#", "");
+      const el = document.getElementById(domId);
+
+      if (el) {
+        const rect = el.getBoundingClientRect();
+
+        // Check if section is covering the middle of the viewport
+        const isInView = rect.top < center && rect.bottom > center;
+
+        if (isInView) {
+          currentActive = link.name;
+          break; // Prioritize the one covering the center
+        }
+
+        // Fallback: Pick the one closest to the center
+        const distance = Math.abs(rect.top + rect.height / 2 - center);
+        if (
+          distance < minDistance &&
+          rect.top < viewportHeight &&
+          rect.bottom > 0
+        ) {
+          minDistance = distance;
+          currentActive = link.name;
+        }
+      }
+    }
+
+    // Special case for Hero (if at very top)
+    const scrollValue = scrollY.get();
+    if (scrollValue < 200) {
+      currentActive = null;
+    }
+
+    return currentActive;
+  }, [scrollY]);
+
+  /**
+   * Throttled scroll handler for active section detection.
+   * Only performs DOM measurements at most once per ACTIVE_SECTION_THROTTLE_MS.
+   */
+  useMotionValueEvent(scrollY, "change", () => {
+    if (isLoading) return;
+
+    const now = performance.now();
+    if (now - lastUpdateTime.current < ACTIVE_SECTION_THROTTLE_MS) {
+      return; // Skip if within throttle window
+    }
+    lastUpdateTime.current = now;
+
+    const newActive = computeActiveSection();
+    setActiveLink((prev) => (prev === newActive ? prev : newActive));
+  });
 
   const scrollToTarget = (targetId: string) => {
     const elem = document.getElementById(targetId);
@@ -202,40 +278,50 @@ export default function Navbar() {
             </span>
           </Link>
 
-          <nav className="hidden items-center gap-8 md:flex">
-            {NAV_LINKS.map((link) => (
-              <a
-                key={link.name}
-                href={link.href}
-                className="text-foreground/80 hover:text-primary font-space relative z-50 cursor-pointer px-1 py-1 text-sm font-medium tracking-widest uppercase transition-colors"
-                onMouseEnter={() => setHoveredLink(link.name)}
-                onMouseLeave={() => setHoveredLink(null)}
-                onClick={(e) => handleScroll(e, link.href)}
-              >
-                <span className="relative z-10">{link.name}</span>
-                <AnimatePresence>
-                  {hoveredLink === link.name && (
-                    <motion.span
-                      layoutId="navbar-underline"
-                      className="bg-primary absolute bottom-0 left-0 block h-[2px] w-full"
-                      initial={{ opacity: 0, scaleX: 0 }}
-                      animate={{ opacity: 1, scaleX: 1 }}
-                      exit={{ opacity: 0, scaleX: 0 }}
-                      transition={{
-                        layout: {
-                          type: "spring",
-                          stiffness: 300,
-                          damping: 30,
-                        },
-                        opacity: { duration: 0.2 },
-                        scaleX: { duration: 0.2 },
-                      }}
-                      style={{ originX: 0 }}
-                    />
+          <nav
+            className="hidden items-center gap-8 md:flex"
+            onMouseLeave={() => setHoveredLink(null)}
+          >
+            {NAV_LINKS.map((link) => {
+              const isActive = activeLink === link.name;
+              return (
+                <a
+                  key={link.name}
+                  href={link.href}
+                  className={cn(
+                    "font-space relative z-50 cursor-pointer px-1 py-1 text-sm font-medium tracking-widest uppercase transition-all duration-300",
+                    isActive
+                      ? "text-primary drop-shadow-[0_0_8px_rgba(6,182,212,0.5)]"
+                      : "text-foreground/80 hover:text-primary"
                   )}
-                </AnimatePresence>
-              </a>
-            ))}
+                  onMouseEnter={() => setHoveredLink(link.name)}
+                  onClick={(e) => handleScroll(e, link.href)}
+                >
+                  <span className="relative z-10">{link.name}</span>
+                  <AnimatePresence>
+                    {hoveredLink === link.name && (
+                      <motion.span
+                        layoutId="navbar-underline"
+                        className="bg-secondary absolute bottom-0 left-0 block h-[3px] w-full"
+                        initial={{ opacity: 0, scaleX: 0 }}
+                        animate={{ opacity: 1, scaleX: 1 }}
+                        exit={{ opacity: 0, scaleX: 0 }}
+                        transition={{
+                          layout: {
+                            type: "spring",
+                            stiffness: 350, // Slightly stiffer for more "snappy" feel
+                            damping: 30,
+                          },
+                          opacity: { duration: 0.15 },
+                          scaleX: { duration: 0.15 },
+                        }}
+                        style={{ originX: 0 }}
+                      />
+                    )}
+                  </AnimatePresence>
+                </a>
+              );
+            })}
           </nav>
 
           <div className="pointer-events-auto relative z-50 col-start-3 justify-self-end md:hidden">
@@ -302,41 +388,60 @@ export default function Navbar() {
             </div>
 
             <nav className="flex flex-1 flex-col items-center justify-center gap-8">
-              {NAV_LINKS.map((link, index) => (
-                <motion.div
-                  key={link.name}
-                  initial={{ x: -50, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  exit={{ opacity: 0, transition: { duration: 0.2 } }}
-                  transition={{
-                    delay: 0.1 + index * 0.05,
-                    type: "spring",
-                    stiffness: 100,
-                    damping: 20,
-                  }}
-                >
-                  <a
-                    href={link.href}
-                    className="group flex cursor-pointer items-baseline gap-4"
-                    onClick={(e) => handleScroll(e, link.href)}
+              {NAV_LINKS.map((link, index) => {
+                const isActive = activeLink === link.name;
+                return (
+                  <motion.div
+                    key={link.name}
+                    initial={{ x: -50, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    exit={{ opacity: 0, transition: { duration: 0.2 } }}
+                    transition={{
+                      delay: 0.1 + index * 0.05,
+                      type: "spring",
+                      stiffness: 100,
+                      damping: 20,
+                    }}
                   >
-                    <span className="group-hover:text-primary font-mono text-sm text-white/40 transition-colors">
-                      0{index + 1}
-                    </span>
-                    <span
-                      className="font-space relative text-5xl font-bold tracking-tighter text-transparent uppercase transition-all"
-                      style={{
-                        WebkitTextStroke: "1px rgba(255,255,255,0.5)",
-                      }}
+                    <a
+                      href={link.href}
+                      className="group flex cursor-pointer items-baseline gap-4"
+                      onClick={(e) => handleScroll(e, link.href)}
                     >
-                      <span className="text-foreground group-hover:text-primary absolute inset-0 opacity-0 transition-opacity group-hover:opacity-100 group-hover:blur-sm">
+                      <span
+                        className={cn(
+                          "font-mono text-sm transition-colors",
+                          isActive
+                            ? "text-primary"
+                            : "group-hover:text-primary text-white/40"
+                        )}
+                      >
+                        0{index + 1}
+                      </span>
+                      <span
+                        className="font-space relative text-5xl font-bold tracking-tighter text-transparent uppercase transition-all"
+                        style={{
+                          WebkitTextStroke: isActive
+                            ? "1px var(--color-primary)"
+                            : "1px rgba(255,255,255,0.5)",
+                        }}
+                      >
+                        <span
+                          className={cn(
+                            "absolute inset-0 blur-sm transition-opacity",
+                            isActive
+                              ? "text-primary opacity-100"
+                              : "text-foreground group-hover:text-primary opacity-0 group-hover:opacity-100"
+                          )}
+                        >
+                          {link.name}
+                        </span>
                         {link.name}
                       </span>
-                      {link.name}
-                    </span>
-                  </a>
-                </motion.div>
-              ))}
+                    </a>
+                  </motion.div>
+                );
+              })}
             </nav>
 
             <motion.div
