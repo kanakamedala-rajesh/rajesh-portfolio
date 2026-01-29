@@ -70,6 +70,7 @@ export default function AboutArchitecture() {
               pin: true,
               scrub: 1,
               anticipatePin: 1,
+              fastScrollEnd: true, // Performance optimization
               onToggle: (self) => {
                 updateSectionStatus(
                   "about-architecture",
@@ -324,10 +325,11 @@ export default function AboutArchitecture() {
       ref={container}
       id="about"
       className="bg-deep-void relative z-20 flex min-h-screen w-full items-center justify-center overflow-hidden py-20 [perspective:2000px]"
+      style={{ contain: "layout style paint" }}
     >
       <div
         ref={contentWrapper}
-        className="relative flex h-full w-full items-center justify-center"
+        className="relative flex h-full w-full items-center justify-center will-change-[opacity,transform,filter]"
       >
         {/* Background Ambience */}
         <div className="cyber-grid absolute inset-0 opacity-20" />

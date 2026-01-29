@@ -198,6 +198,7 @@ export default function MobileExperienceStack() {
       <div
         ref={containerRef}
         className="relative h-screen w-full overflow-hidden bg-[var(--color-background)] text-[var(--color-foreground)]"
+        style={{ contain: "layout style paint" }}
       >
         <div ref={contentRef} className="relative flex h-full w-full">
           {/* Left Sticky Sidebar (12%) */}

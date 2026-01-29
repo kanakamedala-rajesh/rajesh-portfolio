@@ -290,6 +290,7 @@ export default function DesktopExperience() {
           scrub: 0.5, // Smooth scrubbing
           invalidateOnRefresh: true,
           anticipatePin: 1,
+          fastScrollEnd: true, // Performance optimization
           onToggle: (self) => {
             updateSectionStatus(
               "experience-tunnel",
@@ -299,44 +300,49 @@ export default function DesktopExperience() {
           },
           onUpdate: () => {
             // 2. The "Parallax Lens" Effect (Physics Loop)
+            // Optimized: Batch all DOM reads first, then batch all writes
             const viewportCenter = window.innerWidth / 2;
+
+            // BATCH READ PHASE: Read all card positions at once
+            const cardData = cards.map((card) => {
+              const rect = card.getBoundingClientRect();
+              return {
+                card,
+                cardCenter: rect.left + rect.width / 2,
+              };
+            });
+
             let closestDist = Infinity;
             let closestIndex = -1;
 
-            cards.forEach((card, index) => {
-              const rect = card.getBoundingClientRect();
-              const cardCenter = rect.left + rect.width / 2;
-
-              // Calculate distance from center (absolute)
+            // Calculate all values without DOM writes
+            const updates = cardData.map(({ card, cardCenter }, index) => {
               const dist = Math.abs(viewportCenter - cardCenter);
 
-              // Track closest card for background text update
               if (dist < closestDist) {
                 closestDist = dist;
                 closestIndex = index;
               }
 
-              // Normalized distance (0 = center, 1 = edge of effective range)
-              // Range is set to 800px from center (adjustable for "lens" width)
               const range = 800;
               const normalizedDist = Math.min(dist / range, 1);
 
-              // Gaussian-like falloff for Scale and Opacity
-              // Center: scale 1.05, opacity 1.0
-              // Edge: scale 0.95, opacity 0.5
-              const scale = gsap.utils.interpolate(1.05, 0.92, normalizedDist);
-              const opacity = gsap.utils.interpolate(1, 0.5, normalizedDist);
-              const brightness = gsap.utils.interpolate(
-                100,
-                60,
-                normalizedDist
-              );
+              return {
+                card,
+                scale: gsap.utils.interpolate(1.05, 0.92, normalizedDist),
+                opacity: gsap.utils.interpolate(1, 0.5, normalizedDist),
+                brightness: gsap.utils.interpolate(100, 60, normalizedDist),
+                zIndex: 10 - Math.floor(normalizedDist * 10),
+              };
+            });
 
+            // BATCH WRITE PHASE: Apply all transforms at once using gsap.set
+            updates.forEach(({ card, scale, opacity, brightness, zIndex }) => {
               gsap.set(card, {
-                scale: scale,
-                opacity: opacity,
+                scale,
+                opacity,
                 filter: `brightness(${brightness}%)`,
-                zIndex: 10 - Math.floor(normalizedDist * 10), // Stack ordering
+                zIndex,
               });
             });
 
@@ -391,13 +397,16 @@ export default function DesktopExperience() {
           id="experience"
           ref={sectionRef}
           className="bg-deep-void text-foreground relative z-30 h-screen overflow-hidden"
-          style={{ backgroundColor: "var(--color-deep-void)" }}
+          style={{
+            backgroundColor: "var(--color-deep-void)",
+            contain: "layout style paint",
+          }}
         >
           {/* Dynamic Parallax Background Layer */}
           <div className="pointer-events-none absolute inset-0 z-0 flex h-full w-full items-center justify-center select-none">
             <h2
               ref={activePeriodRef}
-              className="font-heading max-w-[90vw] text-center leading-none font-bold whitespace-nowrap text-white opacity-5 will-change-[opacity,filter]"
+              className="font-heading max-w-[90vw] text-center leading-none font-bold whitespace-nowrap text-white opacity-5 will-change-[opacity,filter,transform]"
               style={{ fontSize: "5vw" }} // Initial fallback
             >
               {resumeData.experience[0]?.period}

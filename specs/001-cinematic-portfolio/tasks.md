@@ -9,7 +9,7 @@
 **Goal**: Initialize project dependencies, global styles, and data layer.
 **Independent Test Criteria**: Project builds without errors; global styles (fonts, colors) are visible.
 
-- [x] T001 Install dependencies (framer-motion, gsap, @gsap/react, lenis, lucide-react, three, @types/three, @react-three/fiber, @react-three/drei, d3-force, @types/d3-force)
+- [x] T001 Install dependencies (framer-motion, gsap, @gsap/react, lenis, lucide-react, three, @types/three, `@react-three/fiber`, `@react-three/drei`, d3-force, @types/d3-force)
 - [x] T002 Configure Tailwind v4 colors and fonts in `src/app/globals.css`
 - [x] T003 Create `cn` utility in `src/lib/utils.ts`
 - [x] T004 Create typed data layer in `src/data/resume.ts`

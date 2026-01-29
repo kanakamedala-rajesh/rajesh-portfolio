@@ -227,6 +227,7 @@ export default function SkillsNetwork() {
       onClick={handleBackgroundClick} // Unlock on background click
       className="bg-deep-void relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden py-20"
       id="skills"
+      style={{ contain: "layout style paint" }}
     >
       {/* Background Decor */}
       <div className="cyber-grid absolute inset-0 opacity-20" />

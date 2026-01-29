@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useLayoutEffect } from "react";
 import Image from "next/image";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
@@ -30,6 +30,14 @@ import { MOTION_CONSTANTS } from "@/lib/constants";
 
 gsap.registerPlugin(ScrollTrigger);
 
+/**
+ * Hero Section Component
+ * Optimized for LCP performance with:
+ * - Batched DOM operations to prevent forced reflows
+ * - CSS containment for layout isolation
+ * - will-change hints for GPU acceleration
+ * - Deferred non-critical animations
+ */
 export default function Hero() {
   const container = useRef<HTMLDivElement>(null);
   const topHalf = useRef<HTMLDivElement>(null);
@@ -40,11 +48,19 @@ export default function Hero() {
   const bgRef = useRef<HTMLDivElement>(null);
   const { registerSection, updateSectionStatus } = useSectionContext();
 
+  // Pre-calculate path length on mount to avoid layout thrashing during scroll
+  const pathLengthRef = useRef<number>(100);
+
+  // Use useLayoutEffect to batch initial DOM reads before paint
+  useLayoutEffect(() => {
+    if (spline.current) {
+      pathLengthRef.current = spline.current.getTotalLength() || 100;
+    }
+  }, []);
+
   useGSAP(
     () => {
-      // Spline Logic
-      const path = spline.current;
-      const pathLength = path?.getTotalLength() || 100;
+      const pathLength = pathLengthRef.current;
 
       const mm = gsap.matchMedia();
 
@@ -58,6 +74,10 @@ export default function Hero() {
 
           if (reduce) {
             // Simplified state for reduced motion
+            // Batch all gsap.set calls to minimize layout thrashing
+            gsap.set([topHalf.current, bottomHalf.current, content.current], {
+              clearProps: "all",
+            });
             gsap.set(topHalf.current, { yPercent: -100 });
             gsap.set(bottomHalf.current, { yPercent: 100 });
             gsap.set(content.current, {
@@ -78,7 +98,8 @@ export default function Hero() {
             });
           } else {
             // Full Animation Sequence
-            // Set initial dash states for "drawing" effect
+            // Batch initial setup to prevent forced reflows
+            // Set all initial states in a single GSAP context
             gsap.set([spline.current, splineGlow.current], {
               strokeDasharray: pathLength,
               strokeDashoffset: 0,
@@ -187,27 +208,35 @@ export default function Hero() {
       id="hero"
       className="bg-deep-void sticky top-0 z-10 h-screen w-full overflow-hidden"
       aria-label="Hero Section"
-      style={{ backgroundColor: "var(--color-deep-void)" }}
+      style={{
+        backgroundColor: "var(--color-deep-void)",
+        // NOTE: 'contain: paint' creates a new Stacking Context.
+        // This isolates the Hero's z-index from the rest of the page.
+        // Ensure global overlays (Modals, Navbar) are outside this section.
+        contain: "layout style paint",
+      }}
     >
       {/* --- BACKGROUND IMAGE --- */}
-      <div ref={bgRef} className="absolute inset-0 z-0">
+      <div ref={bgRef} className="absolute inset-0 z-0 will-change-transform">
         <Image
           src="/home_bg.webp"
           alt=""
           aria-hidden="true"
           fill
           priority
+          sizes="100vw"
           className="object-cover object-center opacity-60"
         />
         {/* Overlay for text readability */}
         <div className="bg-deep-void/40 absolute inset-0 mix-blend-multiply" />
       </div>
 
-      {/* --- REVEALED CONTENT (Center) --- */}
+      {/* --- REVEALED CONTENT (Center) --- LCP Element */}
       <div
         id="hero-title"
         ref={content}
-        className="absolute inset-0 z-10 flex flex-col items-center justify-center p-4 text-center opacity-0"
+        className="absolute inset-0 z-10 flex flex-col items-center justify-center p-4 text-center opacity-0 will-change-[opacity,transform,filter]"
+        style={{ contain: "layout style" }}
       >
         <div className="relative w-full max-w-[90vw]">
           {/* Glowing Back-light for text */}
@@ -240,19 +269,20 @@ export default function Hero() {
       {/* --- TOP HALF: CLOUD / WEB --- */}
       <div
         ref={topHalf}
-        className="bg-deep-void border-primary/50 absolute top-0 left-0 z-20 flex h-1/2 w-full items-end justify-center overflow-hidden border-b shadow-[0_4px_30px_rgba(6,182,212,0.1)] will-change-transform"
+        className="bg-deep-void border-primary/50 gpu-accelerated absolute top-0 left-0 z-20 flex h-1/2 w-full items-end justify-center overflow-hidden border-b shadow-[0_4px_30px_rgba(6,182,212,0.1)] will-change-transform"
+        style={{ contain: "layout style paint" }}
       >
         {/* Background Effects */}
         <div className="from-primary/5 pointer-events-none absolute inset-0 bg-linear-to-b to-transparent" />
         <div className="cyber-grid absolute inset-0 opacity-20" />
 
-        {/* Decorative Icons */}
-        <Cloud className="text-primary/5 animate-pulse-slow absolute top-[15%] left-[10%] h-16 w-16 sm:h-24 sm:w-24" />
-        <Server className="text-primary/5 absolute top-[25%] right-[15%] h-12 w-12 sm:h-16 sm:w-16" />
-        <Database className="text-primary/10 absolute bottom-[20%] left-[20%] h-8 w-8 sm:h-10 sm:w-10" />
-        <Globe className="text-primary/5 absolute top-[10%] right-[30%] hidden h-10 w-10 md:block" />
-        <Wifi className="text-primary/5 absolute right-[5%] bottom-[30%] hidden h-14 w-14 opacity-50 lg:block" />
-        <Share2 className="text-primary/5 absolute top-[40%] left-[5%] hidden h-8 w-8 md:block" />
+        {/* Decorative Icons - marked as decorative for containment */}
+        <Cloud className="text-primary/5 animate-pulse-slow decorative-icon absolute top-[15%] left-[10%] h-16 w-16 sm:h-24 sm:w-24" />
+        <Server className="text-primary/5 decorative-icon absolute top-[25%] right-[15%] h-12 w-12 sm:h-16 sm:w-16" />
+        <Database className="text-primary/10 decorative-icon absolute bottom-[20%] left-[20%] h-8 w-8 sm:h-10 sm:w-10" />
+        <Globe className="text-primary/5 decorative-icon absolute top-[10%] right-[30%] hidden h-10 w-10 md:block" />
+        <Wifi className="text-primary/5 decorative-icon absolute right-[5%] bottom-[30%] hidden h-14 w-14 opacity-50 lg:block" />
+        <Share2 className="text-primary/5 decorative-icon absolute top-[40%] left-[5%] hidden h-8 w-8 md:block" />
 
         {/* Floating Code Snippet Visual - React */}
         <div className="bg-primary/10 border-primary/20 text-primary pointer-events-none absolute top-[20%] left-[40%] h-24 w-48 -translate-x-1/2 overflow-hidden rounded-md border p-2 font-mono text-[8px] opacity-10 select-none sm:h-32 sm:w-64 sm:text-[10px]">
@@ -312,20 +342,21 @@ export default function Hero() {
       {/* --- BOTTOM HALF: HARDWARE / KERNEL --- */}
       <div
         ref={bottomHalf}
-        className="bg-deep-void border-secondary/50 absolute bottom-0 left-0 z-20 flex h-1/2 w-full items-start justify-center overflow-hidden border-t shadow-[0_-4px_30px_rgba(251,191,36,0.1)] will-change-transform"
+        className="bg-deep-void border-secondary/50 gpu-accelerated absolute bottom-0 left-0 z-20 flex h-1/2 w-full items-start justify-center overflow-hidden border-t shadow-[0_-4px_30px_rgba(251,191,36,0.1)] will-change-transform"
+        style={{ contain: "layout style paint" }}
       >
         {/* Background Effects */}
         <div className="from-secondary/5 pointer-events-none absolute inset-0 bg-linear-to-t to-transparent" />
         <div className="cyber-grid absolute inset-0 opacity-20" />
 
-        {/* Decorative Icons */}
-        <CircuitBoard className="text-secondary/5 absolute right-[8%] bottom-[10%] h-20 w-20 sm:h-32 sm:w-32" />
-        <Cpu className="text-secondary/5 animate-pulse-slow absolute bottom-[20%] left-[12%] h-12 w-12 sm:h-20 sm:w-20" />
-        <Code className="text-secondary/10 absolute top-[15%] right-[25%] h-8 w-8 sm:h-12 sm:w-12" />
-        <Layers className="text-secondary/5 absolute bottom-[30%] left-[5%] hidden h-10 w-10 md:block" />
-        <Radio className="text-secondary/5 absolute top-[25%] left-[25%] hidden h-14 w-14 opacity-40 lg:block" />
-        <Mic2 className="text-secondary/5 absolute right-[30%] bottom-[15%] hidden h-8 w-8 md:block" />
-        <Terminal className="text-secondary/5 absolute top-[40%] right-[5%] hidden h-8 w-8 sm:block" />
+        {/* Decorative Icons - marked as decorative for containment */}
+        <CircuitBoard className="text-secondary/5 decorative-icon absolute right-[8%] bottom-[10%] h-20 w-20 sm:h-32 sm:w-32" />
+        <Cpu className="text-secondary/5 animate-pulse-slow decorative-icon absolute bottom-[20%] left-[12%] h-12 w-12 sm:h-20 sm:w-20" />
+        <Code className="text-secondary/10 decorative-icon absolute top-[15%] right-[25%] h-8 w-8 sm:h-12 sm:w-12" />
+        <Layers className="text-secondary/5 decorative-icon absolute bottom-[30%] left-[5%] hidden h-10 w-10 md:block" />
+        <Radio className="text-secondary/5 decorative-icon absolute top-[25%] left-[25%] hidden h-14 w-14 opacity-40 lg:block" />
+        <Mic2 className="text-secondary/5 decorative-icon absolute right-[30%] bottom-[15%] hidden h-8 w-8 md:block" />
+        <Terminal className="text-secondary/5 decorative-icon absolute top-[40%] right-[5%] hidden h-8 w-8 sm:block" />
 
         {/* Floating Code Snippet Visual - Embedded/C++ */}
         <div className="bg-secondary/10 border-secondary/20 text-secondary pointer-events-none absolute bottom-[15%] left-[60%] h-24 w-48 -translate-x-1/2 overflow-hidden rounded-md border p-2 font-mono text-[8px] opacity-10 select-none sm:h-32 sm:w-64 sm:text-[10px]">

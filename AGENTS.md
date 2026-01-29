@@ -26,18 +26,18 @@ A high-performance, cinematic **"Scrolly-telling"** portfolio for **Rajesh Kanak
 
 ## 2. Tech Stack
 
-| Category          | Technology                                          |
-| ----------------- | --------------------------------------------------- |
-| **Framework**     | Next.js 16 (App Router, React Compiler enabled)     |
-| **Language**      | TypeScript (Strict Mode)                            |
-| **Styling**       | Tailwind CSS v4 (CSS-First Config via `@theme`)     |
-| **Scroll Engine** | Lenis (Smooth scrolling)                            |
-| **Animation**     | GSAP (ScrollTrigger) + Framer Motion                |
-| **3D Graphics**   | Three.js via @react-three/fiber & @react-three/drei |
-| **Icons**         | Lucide React                                        |
-| **Deployment**    | Cloudflare Workers via OpenNext                     |
-| **Testing**       | Playwright (E2E)                                    |
-| **Package Mgr**   | **pnpm** (Always use `pnpm`, never `npm` or `yarn`) |
+| Category          | Technology                                              |
+| ----------------- | ------------------------------------------------------- |
+| **Framework**     | Next.js 16 (App Router, React Compiler enabled)         |
+| **Language**      | TypeScript (Strict Mode)                                |
+| **Styling**       | Tailwind CSS v4 (CSS-First Config via `@theme`)         |
+| **Scroll Engine** | Lenis (Smooth scrolling)                                |
+| **Animation**     | GSAP (ScrollTrigger) + Framer Motion                    |
+| **3D Graphics**   | Three.js via `@react-three/fiber` & `@react-three/drei` |
+| **Icons**         | Lucide React                                            |
+| **Deployment**    | Cloudflare Workers via OpenNext                         |
+| **Testing**       | Playwright (E2E)                                        |
+| **Package Mgr**   | **pnpm** (Always use `pnpm`, never `npm` or `yarn`)     |
 
 ---
 
