@@ -35,6 +35,20 @@ The project uses **Playwright** for End-to-End (E2E) testing to ensure critical 
 - Checks for the correct number of experience entries based on the data.
 - Tests the mobile fallback behavior (vertical stack vs horizontal scroll).
 
+### 5. Skills (`tests/skills.spec.ts`)
+
+- **Desktop**: Verifies the presence of Vertical HUD Sidebars and "HOVER TO DECRYPT" text.
+- **Visuals**: Checks for the large background "SKILLS" watermark.
+- **Interaction**: Tests node locking/unlocking via click and keyboard (Enter).
+- **Mobile**: Verifies the presence of the "SKILLS" header and sticky background HUD.
+
+### 6. Contact (`tests/contact.spec.ts`)
+
+- **Visibility**: Checks that the terminal section and input are visible.
+- **Commands**: Verifies functionality of `help`, `whoami`, `email`, `linkedin`, `resume`.
+- **History**: Tests the `clear` command to reset terminal output.
+- **Error Handling**: verifies response to unknown commands.
+
 ## Running Tests
 
 ### Run all tests (Headless)

@@ -27,20 +27,14 @@ test.describe("About Architecture Section", () => {
     await section.scrollIntoViewIfNeeded();
 
     // Hardware title
-    await expect(
-      page.getByRole("heading", { name: "HARDWARE" })
-    ).toBeAttached();
+    await expect(page.getByText("HARDWARE", { exact: true })).toBeAttached();
 
     // Scroll a bit more to trigger middleware
     await page.mouse.wheel(0, 1000);
-    await expect(
-      page.getByRole("heading", { name: "MIDDLEWARE" })
-    ).toBeAttached();
+    await expect(page.getByText("MIDDLEWARE", { exact: true })).toBeAttached();
 
     // Scroll more for cloud/application
     await page.mouse.wheel(0, 1000);
-    await expect(
-      page.getByRole("heading", { name: "APPLICATION" })
-    ).toBeAttached();
+    await expect(page.getByText("APPLICATION", { exact: true })).toBeAttached();
   });
 });

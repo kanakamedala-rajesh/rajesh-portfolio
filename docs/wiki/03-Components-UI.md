@@ -20,6 +20,7 @@ The system uses the OKLCH color space for maximum vibrancy on modern displays.
 - **`.texture-overlay`**: An SVG fractal noise filter applied globally to give a tactical, hardware grain to the UI.
 - **`.moving-border-overlay`**: A CSS animation that creates a "laser beam" traveling along the border of the navigation pill.
 - **`.cyber-grid`**: A background pattern resembling a schematic grid.
+- **`.glass-panel`**: A standardized class for glassmorphic elements (`bg-deep-void/60`, `backdrop-blur-xl`, `border-white/10`) used in the Architecture HUD and Skills Instruction pill.
 
 ## 2. Core UI Components (`src/components/ui/`)
 

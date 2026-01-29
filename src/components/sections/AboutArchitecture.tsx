@@ -6,6 +6,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { useSectionTransition } from "@/hooks/useSectionTransition";
 import { useSectionContext } from "@/context/SectionContext";
+import { cn } from "@/lib/utils";
 import {
   Cloud,
   Cpu,
@@ -16,9 +17,91 @@ import {
   Database,
   Code,
   Zap,
+  LucideIcon,
 } from "lucide-react";
 
 gsap.registerPlugin(ScrollTrigger);
+
+// --- COMPONENTS ---
+
+interface InfoCardProps {
+  title: string;
+  subtitle: string;
+  items: { icon: LucideIcon; text: string }[];
+  colorClass: string; // e.g., "text-secondary"
+  glowClass: string; // e.g., "shadow-secondary/20"
+  align?: "left" | "right"; // Desktop alignment preference
+  className?: string;
+}
+
+const InfoCard = ({
+  title,
+  subtitle,
+  items,
+  colorClass,
+  glowClass,
+  align = "left",
+  className,
+}: InfoCardProps) => (
+  <div
+    className={cn(
+      "glass-panel bg-deep-void/60 pointer-events-auto relative w-[90vw] max-w-sm overflow-hidden rounded-xl border border-white/10 p-6 backdrop-blur-xl transition-all duration-500 md:w-96",
+      glowClass, // Add specific glow
+      "shadow-2xl hover:border-white/20", // Hover effect
+      className
+    )}
+  >
+    {/* Decorative Gradient Blob */}
+    <div
+      className={cn(
+        "absolute -top-10 -right-10 h-32 w-32 opacity-20 blur-3xl",
+        colorClass.replace("text-", "bg-")
+      )}
+    />
+
+    <h3
+      className={cn(
+        "font-space mb-1 text-3xl font-bold tracking-tighter",
+        colorClass
+      )}
+    >
+      {title}
+    </h3>
+    <p
+      className={cn(
+        "mb-6 font-mono text-xs tracking-widest uppercase opacity-80",
+        colorClass
+      )}
+    >
+      {subtitle}
+    </p>
+
+    <ul className="space-y-3">
+      {items.map((Item, i) => (
+        <li key={i} className="flex items-center gap-3 text-sm font-light">
+          <div
+            className={cn(
+              "flex h-8 w-8 items-center justify-center rounded-lg bg-white/5",
+              colorClass
+            )}
+          >
+            <Item.icon className="h-4 w-4" />
+          </div>
+          <span className="text-foreground/90">{Item.text}</span>
+        </li>
+      ))}
+    </ul>
+
+    {/* Alignment decoration (Desktop only) */}
+    <div
+      className={cn(
+        "absolute top-1/2 hidden h-8 w-1 -translate-y-1/2 rounded-full opacity-50 md:block",
+        colorClass.replace("text-", "bg-"),
+        align === "left" ? "left-0" : "right-0"
+      )}
+    />
+  </div>
+);
 
 export default function AboutArchitecture() {
   const container = useRef<HTMLDivElement>(null);
@@ -31,7 +114,7 @@ export default function AboutArchitecture() {
     contentRef: contentWrapper,
     id: "about-architecture",
     isPinned: true,
-    enableExit: false, // Handle exit internally
+    enableExit: false,
   });
 
   // Layer Refs
@@ -39,10 +122,10 @@ export default function AboutArchitecture() {
   const middlewareLayer = useRef<HTMLDivElement>(null);
   const cloudLayer = useRef<HTMLDivElement>(null);
 
-  // Text Refs
-  const hardwareText = useRef<HTMLDivElement>(null);
-  const middlewareText = useRef<HTMLDivElement>(null);
-  const cloudText = useRef<HTMLDivElement>(null);
+  // Card Refs
+  const hardwareCard = useRef<HTMLDivElement>(null);
+  const middlewareCard = useRef<HTMLDivElement>(null);
+  const cloudCard = useRef<HTMLDivElement>(null);
 
   // Data Pipes (SVG)
   const pipesRef = useRef<SVGSVGElement>(null);
@@ -55,22 +138,27 @@ export default function AboutArchitecture() {
 
       mm.add(
         {
+          isMobile: "(max-width: 767px)",
+          isDesktop: "(min-width: 768px)",
           reduce: "(prefers-reduced-motion: reduce)",
-          noReduce: "(prefers-reduced-motion: no-preference)",
         },
         (context) => {
-          const { reduce } = context.conditions as { reduce: boolean };
+          const { isMobile, reduce } = context.conditions as {
+            isMobile: boolean;
+            isDesktop: boolean;
+            reduce: boolean;
+          };
 
-          // Common Setup
+          // --- TIMELINE SETUP ---
           const tl = gsap.timeline({
             scrollTrigger: {
               trigger: container.current,
               start: "top top",
-              end: "+=300%",
+              end: "+=350%", // Slightly longer for better pacing
               pin: true,
               scrub: 1,
               anticipatePin: 1,
-              fastScrollEnd: true, // Performance optimization
+              fastScrollEnd: true,
               onToggle: (self) => {
                 updateSectionStatus(
                   "about-architecture",
@@ -81,239 +169,237 @@ export default function AboutArchitecture() {
             },
           });
 
+          // Configs
+          const spreadY = isMobile ? 90 : 160;
+          const spreadZ = isMobile ? 30 : 60;
+
+          // Card Movement Config
+          // Mobile: Cards slide up from bottom (+20% y to 0%)
+          // Desktop: Cards slide in from sides
+          const cardEntryConfig = isMobile
+            ? { y: 50, autoAlpha: 0 }
+            : { x: -50, autoAlpha: 0 };
+
+          // --- INITIAL STATES ---
+          // Stack
+          gsap.set(
+            [
+              hardwareLayer.current,
+              middlewareLayer.current,
+              cloudLayer.current,
+            ],
+            { z: 0, opacity: 1, scale: 0.85, filter: "blur(0px)" } // Visible start
+          );
+
+          // Cards (Hidden)
+          gsap.set(
+            [hardwareCard.current, middlewareCard.current, cloudCard.current],
+            { ...cardEntryConfig, scale: 0.95 }
+          );
+
+          gsap.set(pipesRef.current, { opacity: 0 });
+
           if (reduce) {
-            // --- REDUCED MOTION ---
-            // Simple fade ins, no large movements
+            // Simplified Fade Logic could go here
+            // For now, let's just make the standard timeline gentle enough
+          }
 
-            // Initial State (Visible but dim)
-            gsap.set(
-              [
-                hardwareLayer.current,
-                middlewareLayer.current,
-                cloudLayer.current,
-              ],
+          // --- PHASE 1: EXPANSION (0% - 20%) ---
+          tl.to(
+            [
+              hardwareLayer.current,
+              middlewareLayer.current,
+              cloudLayer.current,
+            ],
+            {
+              scale: 1,
+              duration: 1.5,
+              stagger: 0.05,
+              ease: "power3.out",
+            }
+          )
+            // Move Layers Apart
+            .to(hardwareLayer.current, { z: 0, y: spreadY, duration: 2 }, "<")
+            .to(middlewareLayer.current, { z: spreadZ, y: 0, duration: 2 }, "<")
+            .to(
+              cloudLayer.current,
+              { z: spreadZ * 2, y: -spreadY, duration: 2 },
+              "<"
+            )
+            // Show Pipes
+            .to(pipesRef.current, { opacity: 1, duration: 1 }, "-=1");
+
+          // --- PHASE 2: HARDWARE FOCUS (20% - 40%) ---
+          // Highlight Layer
+          tl.to(hardwareLayer.current, {
+            scale: 1.05,
+            borderColor: "var(--color-secondary)",
+            boxShadow: "0 0 40px rgba(251,191,36,0.15)",
+            backgroundColor: "rgba(251,191,36,0.05)",
+            filter: "brightness(1.2)",
+            duration: 0.8,
+          })
+            // Dim others
+            .to(
+              [middlewareLayer.current, cloudLayer.current],
               {
-                opacity: 0.3,
+                opacity: 0.15,
+                filter: "blur(4px) grayscale(0.5)",
+                duration: 0.8,
+              },
+              "<"
+            )
+            // Show Card
+            .to(
+              hardwareCard.current,
+              {
+                autoAlpha: 1,
+                x: 0, // Reset desktop offset
+                y: 0, // Reset mobile offset
                 scale: 1,
-                z: 0,
-                y: 0,
-                filter: "blur(0px)",
-              }
-            );
+                duration: 1.2, // Slowed down
+                ease: "power3.out", // Smoother ease
+              },
+              "<+=0.1"
+            )
+            .to({}, { duration: 1 }); // READ TIME
 
-            // Text hidden
-            gsap.set(
-              [hardwareText.current, middlewareText.current, cloudText.current],
-              {
-                opacity: 0,
-                x: 0,
-              }
-            );
-
-            gsap.set(pipesRef.current, { opacity: 0 }); // Hide animated pipes
-
-            // Sequence: Just highlight layers and show text
-            // 1. Hardware Focus
-            tl.to(hardwareLayer.current, { opacity: 1, duration: 0.5 })
-              .to(hardwareText.current, { opacity: 1, duration: 0.5 }, "<")
-              .to({}, { duration: 1 }) // Hold
-
-              // 2. Middleware Focus
-              .to(hardwareLayer.current, { opacity: 0.3, duration: 0.5 })
-              .to(hardwareText.current, { opacity: 0, duration: 0.5 }, "<")
-              .to(middlewareLayer.current, { opacity: 1, duration: 0.5 }, "<")
-              .to(middlewareText.current, { opacity: 1, duration: 0.5 }, "<")
-              .to({}, { duration: 1 }) // Hold
-
-              // 3. Cloud Focus
-              .to(middlewareLayer.current, { opacity: 0.3, duration: 0.5 })
-              .to(middlewareText.current, { opacity: 0, duration: 0.5 }, "<")
-              .to(cloudLayer.current, { opacity: 1, duration: 0.5 }, "<")
-              .to(cloudText.current, { opacity: 1, duration: 0.5 }, "<")
-              .to({}, { duration: 1 }); // Hold
-
-            // Exit handled by section transition or simple fade out
-          } else {
-            // --- FULL ANIMATION ---
-
-            // --- INITIAL STATE SETUP ---
-            // Layers start compressed together
-            gsap.set(
-              [
-                hardwareLayer.current,
-                middlewareLayer.current,
-                cloudLayer.current,
-              ],
-              {
-                z: 0,
-                opacity: 0,
-                scale: 0.8,
-                filter: "blur(10px)",
-              }
-            );
-
-            // Hide Text initially
-            gsap.set(
-              [hardwareText.current, middlewareText.current, cloudText.current],
-              {
-                opacity: 0,
-                x: -50,
-                pointerEvents: "none",
-              }
-            );
-
-            // Hide Pipes initially
-            gsap.set(pipesRef.current, { opacity: 0 });
-
-            // --- ANIMATION SEQUENCE ---
-
-            // 1. EXPLOSION PHASE (0% - 20%)
-            // Expand the stack vertically and fade in
-            tl.to(
-              [
-                hardwareLayer.current,
-                middlewareLayer.current,
-                cloudLayer.current,
-              ],
+          // --- PHASE 3: MIDDLEWARE FOCUS (40% - 60%) ---
+          // Hide HW
+          tl.to(hardwareCard.current, {
+            autoAlpha: 0,
+            y: isMobile ? -20 : 0, // Slide up out on mobile
+            scale: 0.95,
+            duration: 0.5,
+          })
+            .to(hardwareLayer.current, {
+              scale: 0.95,
+              opacity: 0.15,
+              filter: "blur(4px) grayscale(0.5)",
+              boxShadow: "none",
+              borderColor: "rgba(255,255,255,0.1)",
+              backgroundColor: "transparent",
+              duration: 0.8,
+            })
+            // Show MW Layer
+            .to(
+              middlewareLayer.current,
               {
                 opacity: 1,
+                scale: 1.05,
+                borderColor: "var(--color-accent)",
+                boxShadow: "0 0 40px rgba(34,197,94,0.15)",
+                backgroundColor: "rgba(34,197,94,0.05)",
+                filter: "brightness(1.2) blur(0px) grayscale(0)",
+                duration: 0.8,
+              },
+              "<"
+            )
+            // Show MW Card (Enter from Right on Desktop)
+            .fromTo(
+              middlewareCard.current,
+              {
+                autoAlpha: 0,
+                x: isMobile ? 0 : 50, // Right side
+                y: isMobile ? 50 : 0,
+                scale: 0.95,
+              },
+              {
+                autoAlpha: 1,
+                x: 0,
+                y: 0,
                 scale: 1,
-                filter: "blur(0px)",
-                duration: 1,
-                stagger: 0.1,
-                ease: "power2.out",
+                duration: 1.2, // Slowed down
+                ease: "power3.out", // Smoother ease
+              },
+              "<+=0.1"
+            )
+            .to({}, { duration: 1 }); // READ TIME
+
+          // --- PHASE 4: CLOUD FOCUS (60% - 80%) ---
+          // Hide MW
+          tl.to(middlewareCard.current, {
+            autoAlpha: 0,
+            y: isMobile ? -20 : 0,
+            scale: 0.95,
+            duration: 0.5,
+          })
+            .to(middlewareLayer.current, {
+              scale: 0.95,
+              opacity: 0.15,
+              filter: "blur(4px) grayscale(0.5)",
+              boxShadow: "none",
+              borderColor: "rgba(255,255,255,0.1)",
+              backgroundColor: "transparent",
+              duration: 0.8,
+            })
+            // Show Cloud Layer
+            .to(
+              cloudLayer.current,
+              {
+                opacity: 1,
+                scale: 1.05,
+                borderColor: "var(--color-primary)",
+                boxShadow: "0 0 40px rgba(6,182,212,0.15)",
+                backgroundColor: "rgba(6,182,212,0.05)",
+                filter: "brightness(1.2) blur(0px) grayscale(0)",
+                duration: 0.8,
+              },
+              "<"
+            )
+            // Show Cloud Card (Enter from Top-Left or Top-Center)
+            .fromTo(
+              cloudCard.current,
+              {
+                autoAlpha: 0,
+                x: isMobile ? 0 : -50,
+                y: isMobile ? 50 : -20, // Slightly from top on desktop
+                scale: 0.95,
+              },
+              {
+                autoAlpha: 1,
+                x: 0,
+                y: 0,
+                scale: 1,
+                duration: 1.2, // Slowed down
+                ease: "power3.out", // Smoother ease
+              },
+              "<+=0.1"
+            )
+            .to({}, { duration: 1 }); // READ TIME
+
+          // --- PHASE 5: EXIT (80% - 100%) ---
+          tl.to(cloudCard.current, {
+            autoAlpha: 0,
+            scale: 0.95,
+            duration: 0.5,
+          })
+            .to(
+              [
+                hardwareLayer.current,
+                middlewareLayer.current,
+                cloudLayer.current,
+              ],
+              {
+                y: 0,
+                z: 0,
+                scale: 0.5,
+                opacity: 0,
+                duration: 1.5,
+                ease: "power2.in",
               }
             )
-              .to(
-                hardwareLayer.current,
-                { z: 0, y: 150, duration: 2, ease: "power2.inOut" },
-                "<"
-              )
-              .to(
-                middlewareLayer.current,
-                { z: 50, y: 0, duration: 2, ease: "power2.inOut" },
-                "<"
-              )
-              .to(
-                cloudLayer.current,
-                { z: 100, y: -150, duration: 2, ease: "power2.inOut" },
-                "<"
-              )
-              // Show pipes
-              .to(pipesRef.current, { opacity: 1, duration: 1 }, "-=1");
-
-            // 2. FOCUS: HARDWARE (20% - 40%)
-            tl.to(hardwareLayer.current, {
-              scale: 1.1,
-              filter: "brightness(1.5)",
-              boxShadow: "0 0 50px rgba(251,191,36,0.3)", // Amber glow
-              borderColor: "var(--color-secondary)",
-              duration: 0.5,
-            })
-              .to(
-                [middlewareLayer.current, cloudLayer.current],
-                {
-                  opacity: 0.3,
-                  scale: 1,
-                  filter: "brightness(1)",
-                  duration: 0.5,
-                },
-                "<"
-              )
-              .to(
-                hardwareText.current,
-                { opacity: 1, x: 0, pointerEvents: "auto", duration: 0.5 },
-                "<"
-              );
-
-            // Hold Hardware Focus
-            tl.to({}, { duration: 1 });
-
-            // 3. FOCUS: MIDDLEWARE (40% - 60%)
-            // Reset Hardware, Focus Middleware
-            tl.to(hardwareText.current, { opacity: 0, x: -20, duration: 0.5 })
-              .to(hardwareLayer.current, {
-                scale: 1,
-                filter: "brightness(1)",
-                boxShadow: "none",
-                borderColor: "rgba(255,255,255,0.1)",
-                duration: 0.5,
-              })
-              .to(middlewareLayer.current, {
+            .to(pipesRef.current, { opacity: 0, duration: 0.5 }, "<")
+            .to(
+              contentWrapper.current,
+              {
+                opacity: 0,
                 scale: 1.1,
-                opacity: 1,
-                filter: "brightness(1.5)",
-                boxShadow: "0 0 50px rgba(34,197,94,0.3)", // Green glow
-                borderColor: "var(--color-accent)",
-                duration: 0.5,
-              })
-              .to(
-                middlewareText.current,
-                { opacity: 1, x: 0, pointerEvents: "auto", duration: 0.5 },
-                "<"
-              );
-
-            // Hold Middleware Focus
-            tl.to({}, { duration: 1 });
-
-            // 4. FOCUS: CLOUD (60% - 80%)
-            // Reset Middleware, Focus Cloud
-            tl.to(middlewareText.current, { opacity: 0, x: -20, duration: 0.5 })
-              .to(middlewareLayer.current, {
-                scale: 1,
-                opacity: 0.3,
-                filter: "brightness(1)",
-                boxShadow: "none",
-                borderColor: "rgba(255,255,255,0.1)",
-                duration: 0.5,
-              })
-              .to(cloudLayer.current, {
-                scale: 1.1,
-                opacity: 1,
-                filter: "brightness(1.5)",
-                boxShadow: "0 0 50px rgba(6,182,212,0.3)", // Cyan glow
-                borderColor: "var(--color-primary)",
-                duration: 0.5,
-              })
-              .to(
-                cloudText.current,
-                { opacity: 1, x: 0, pointerEvents: "auto", duration: 0.5 },
-                "<"
-              );
-
-            // Hold Cloud Focus
-            tl.to({}, { duration: 1 });
-
-            // 5. EXIT PHASE (80% - 90%)
-            // All connect/pulse together
-            tl.to(cloudText.current, { opacity: 0, x: -20, duration: 0.5 })
-              .to(
-                [
-                  hardwareLayer.current,
-                  middlewareLayer.current,
-                  cloudLayer.current,
-                ],
-                {
-                  y: 0,
-                  z: 0,
-                  scale: 0.8,
-                  opacity: 0,
-                  duration: 1,
-                  ease: "power2.in",
-                }
-              )
-              .to(pipesRef.current, { opacity: 0, duration: 0.5 }, "<");
-
-            // --- GLOBAL SECTION EXIT (90% - 100%) ---
-            // This replicates the "Fly Through" effect manually at the end of the pin
-            tl.to(contentWrapper.current, {
-              opacity: 0,
-              scale: 1.2,
-              filter: "blur(10px)",
-              duration: 2, // Use remaining timeline duration
-              ease: "power1.in",
-            });
-          }
+                filter: "blur(10px)",
+                duration: 1.5,
+              },
+              "<"
+            );
         }
       );
     },
@@ -324,100 +410,81 @@ export default function AboutArchitecture() {
     <section
       ref={container}
       id="about"
-      className="bg-deep-void relative z-20 flex min-h-screen w-full items-center justify-center overflow-hidden py-20 [perspective:2000px]"
+      className="bg-deep-void relative z-20 flex min-h-screen w-full items-center justify-center overflow-hidden py-10 [perspective:2000px] md:py-20"
       style={{ contain: "layout style paint" }}
     >
       <div
         ref={contentWrapper}
-        className="relative flex h-full w-full items-center justify-center will-change-[opacity,transform,filter]"
+        className="relative flex h-full w-full flex-col items-center justify-center will-change-[opacity,transform,filter] md:flex-row"
       >
         {/* Background Ambience */}
         <div className="cyber-grid absolute inset-0 opacity-20" />
         <div className="from-deep-void/0 via-primary/5 to-deep-void/0 bg-radial-gradient absolute inset-0 opacity-30" />
 
-        {/* --- TEXT CONTENT PANELS (Left Side) --- */}
-        {/* These are absolutely positioned but controlled by GSAP to appear in sequence */}
-        <div className="pointer-events-none absolute top-1/2 left-4 z-50 w-full max-w-sm -translate-y-1/2 px-4 md:left-20">
-          {/* Hardware Info */}
-          <div ref={hardwareText} className="absolute top-1/2 -translate-y-1/2">
-            <h3 className="font-space text-secondary mb-2 text-4xl font-bold tracking-tighter">
-              HARDWARE
-            </h3>
-            <p className="text-secondary/80 mb-4 font-mono text-sm tracking-widest uppercase">
-              Embedded Linux & BSP
-            </p>
-            <ul className="text-foreground/80 space-y-2 font-light">
-              <li className="flex items-center gap-3">
-                <Cpu className="text-secondary h-4 w-4" />
-                <span>Kernel & Device Drivers</span>
-              </li>
-              <li className="flex items-center gap-3">
-                <Server className="text-secondary h-4 w-4" />
-                <span>CAN Protocol & Networking</span>
-              </li>
-              <li className="flex items-center gap-3">
-                <Zap className="text-secondary h-4 w-4" />
-                <span>Real-time System Control</span>
-              </li>
-            </ul>
-          </div>
-
-          {/* Middleware Info */}
+        {/* --- TEXT CONTENT (GLASS HUD) --- */}
+        <div className="pointer-events-none absolute inset-0 z-50">
+          {/* Hardware Card (Bottom Left Desktop / Bottom Mobile) */}
           <div
-            ref={middlewareText}
-            className="absolute top-1/2 -translate-y-1/2"
+            ref={hardwareCard}
+            className="absolute bottom-10 left-1/2 -translate-x-1/2 md:bottom-20 md:left-20 md:translate-x-0"
           >
-            <h3 className="font-space text-accent mb-2 text-4xl font-bold tracking-tighter">
-              MIDDLEWARE
-            </h3>
-            <p className="text-accent/80 mb-4 font-mono text-sm tracking-widest uppercase">
-              Android Native & HAL
-            </p>
-            <ul className="text-foreground/80 space-y-2 font-light">
-              <li className="flex items-center gap-3">
-                <Smartphone className="text-accent h-4 w-4" />
-                <span>Android System Architecture</span>
-              </li>
-              <li className="flex items-center gap-3">
-                <Code className="text-accent h-4 w-4" />
-                <span>JNI & C++ Bridges</span>
-              </li>
-              <li className="flex items-center gap-3">
-                <Layers className="text-accent h-4 w-4" />
-                <span>Service Daemons (ZMQ)</span>
-              </li>
-            </ul>
+            <InfoCard
+              title="HARDWARE"
+              subtitle="Embedded Linux & BSP"
+              colorClass="text-secondary"
+              glowClass="shadow-secondary/10"
+              align="left"
+              items={[
+                { icon: Cpu, text: "Kernel & Device Drivers" },
+                { icon: Server, text: "CAN Protocol & Networking" },
+                { icon: Zap, text: "Real-time System Control" },
+              ]}
+            />
           </div>
 
-          {/* Cloud Info */}
-          <div ref={cloudText} className="absolute top-1/2 -translate-y-1/2">
-            <h3 className="font-space text-primary mb-2 text-4xl font-bold tracking-tighter">
-              APPLICATION
-            </h3>
-            <p className="text-primary/80 mb-4 font-mono text-sm tracking-widest uppercase">
-              Cloud & Front-End
-            </p>
-            <ul className="text-foreground/80 space-y-2 font-light">
-              <li className="flex items-center gap-3">
-                <Cloud className="text-primary h-4 w-4" />
-                <span>Next.js & React Ecosystem</span>
-              </li>
-              <li className="flex items-center gap-3">
-                <Database className="text-primary h-4 w-4" />
-                <span>Scalable Backend APIs</span>
-              </li>
-              <li className="flex items-center gap-3">
-                <Globe className="text-primary h-4 w-4" />
-                <span>Immersive Web Experiences</span>
-              </li>
-            </ul>
+          {/* Middleware Card (Center Right Desktop / Bottom Mobile) */}
+          <div
+            ref={middlewareCard}
+            className="absolute bottom-10 left-1/2 -translate-x-1/2 md:top-1/2 md:right-20 md:bottom-auto md:left-auto md:translate-x-0 md:-translate-y-1/2"
+          >
+            <InfoCard
+              title="MIDDLEWARE"
+              subtitle="Android Native & HAL"
+              colorClass="text-accent"
+              glowClass="shadow-accent/10"
+              align="right"
+              items={[
+                { icon: Smartphone, text: "Android System Architecture" },
+                { icon: Code, text: "JNI & C++ Bridges" },
+                { icon: Layers, text: "Service Daemons (ZMQ)" },
+              ]}
+            />
+          </div>
+
+          {/* Cloud Card (Top Left Desktop / Bottom Mobile) */}
+          <div
+            ref={cloudCard}
+            className="absolute bottom-10 left-1/2 -translate-x-1/2 md:top-32 md:bottom-auto md:left-32 md:translate-x-0"
+          >
+            <InfoCard
+              title="APPLICATION"
+              subtitle="Cloud & Front-End"
+              colorClass="text-primary"
+              glowClass="shadow-primary/10"
+              align="left"
+              items={[
+                { icon: Cloud, text: "Next.js & React Ecosystem" },
+                { icon: Database, text: "Scalable Backend APIs" },
+                { icon: Globe, text: "Immersive Web Experiences" },
+              ]}
+            />
           </div>
         </div>
 
-        {/* --- THE ISOMETRIC STACK (Center/Right) --- */}
+        {/* --- THE ISOMETRIC STACK (Center) --- */}
         <div
           ref={stackRef}
-          className="relative flex h-150 w-75 transform-[rotateX(60deg)_rotateZ(-45deg)] items-center justify-center transform-3d md:w-100"
+          className="relative flex h-[300px] w-[300px] transform-[rotateX(60deg)_rotateZ(-45deg)] items-center justify-center transform-3d md:h-[450px] md:w-[450px]"
         >
           {/* 
           Data Pipes (SVG) 
@@ -442,7 +509,7 @@ export default function AboutArchitecture() {
               </mask>
             </defs>
 
-            {/* Vertical Data Lines */}
+            {/* Vertical Data Lines - Responsive Stroke Width */}
             <path
               d="M 100 600 L 100 0"
               stroke="url(#pipe-gradient)"
@@ -474,9 +541,9 @@ export default function AboutArchitecture() {
 
             {/* Data Particles */}
             <circle
-              r="3"
+              r="4"
               fill="var(--color-primary)"
-              className="blur-[1px] filter"
+              className="blur-[2px] filter"
             >
               <animateMotion
                 dur="4s"
@@ -485,9 +552,9 @@ export default function AboutArchitecture() {
               />
             </circle>
             <circle
-              r="2"
+              r="3"
               fill="var(--color-secondary)"
-              className="blur-[1px] filter"
+              className="blur-[2px] filter"
             >
               <animateMotion
                 dur="6s"
@@ -497,10 +564,10 @@ export default function AboutArchitecture() {
               />
             </circle>
             <circle
-              r="4"
+              r="5"
               fill="var(--color-accent)"
-              opacity="0.4"
-              className="blur-[2px] filter"
+              opacity="0.6"
+              className="blur-[3px] filter"
             >
               <animateMotion
                 dur="8s"
@@ -514,13 +581,24 @@ export default function AboutArchitecture() {
           {/* --- LAYER 3: CLOUD (Top) --- */}
           <div
             ref={cloudLayer}
-            className="bg-primary/5 border-primary/30 absolute z-30 flex h-75 w-full items-center justify-center rounded-2xl border backdrop-blur-sm transition-all will-change-[transform,opacity,filter]"
+            className="bg-primary/5 border-primary/30 absolute z-30 flex h-full w-full items-center justify-center rounded-2xl border backdrop-blur-sm transition-all will-change-[transform,opacity,filter]"
           >
             <div className="animate-background-shine absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(6,182,212,0.05)_50%,transparent_75%,transparent_100%)] bg-size-[250%_250%,100%_100%]" />
 
+            {/* Cloud Network Mesh Decoration */}
+            <div className="absolute inset-0">
+              <div className="border-primary/20 absolute top-0 right-0 h-16 w-16 rounded-tr-xl border-t-2 border-r-2" />
+              <div className="border-primary/20 absolute bottom-0 left-0 h-16 w-16 rounded-bl-xl border-b-2 border-l-2" />
+
+              {/* Floating Data Nodes */}
+              <div className="bg-primary/40 absolute top-1/4 left-1/4 h-2 w-2 animate-pulse rounded-full" />
+              <div className="bg-primary/40 absolute right-1/4 bottom-1/4 h-2 w-2 animate-pulse rounded-full delay-700" />
+              <div className="bg-primary/30 absolute top-1/3 right-1/3 h-1.5 w-1.5 animate-pulse rounded-full delay-300" />
+            </div>
+
             {/* Top Surface Decoration */}
             <div className="absolute inset-0 flex items-center justify-center">
-              <Cloud className="text-primary/20 h-32 w-32 -rotate-45" />
+              <Cloud className="text-primary/20 h-24 w-24 -rotate-45 md:h-32 md:w-32" />
             </div>
             <div className="border-primary/20 absolute inset-4 rounded-xl border border-dashed" />
           </div>
@@ -528,7 +606,7 @@ export default function AboutArchitecture() {
           {/* --- LAYER 2: MIDDLEWARE (Middle) --- */}
           <div
             ref={middlewareLayer}
-            className="bg-accent/5 border-accent/30 absolute z-20 flex h-75 w-full items-center justify-center rounded-2xl border backdrop-blur-sm transition-all will-change-[transform,opacity,filter]"
+            className="bg-accent/5 border-accent/30 absolute z-20 flex h-full w-full items-center justify-center rounded-2xl border backdrop-blur-sm transition-all will-change-[transform,opacity,filter]"
           >
             {/* Matrix / Code Rain Effect Texture */}
             <div
@@ -538,8 +616,21 @@ export default function AboutArchitecture() {
                   "url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCI+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGR5PSIuMzVlbSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iIzIyYzU1ZSIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSIxMCI+MTA8L3RleHQ+PC9zdmc+')",
               }}
             />
+
+            {/* Middleware Ports/Connectors */}
+            <div className="absolute top-1/2 -left-1 flex h-32 -translate-y-1/2 flex-col justify-around">
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="bg-accent/30 h-4 w-2 rounded-r" />
+              ))}
+            </div>
+            <div className="absolute top-1/2 -right-1 flex h-32 -translate-y-1/2 flex-col justify-around">
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="bg-accent/30 h-4 w-2 rounded-l" />
+              ))}
+            </div>
+
             <div className="absolute inset-0 flex items-center justify-center">
-              <Layers className="text-accent/20 h-32 w-32 -rotate-45" />
+              <Layers className="text-accent/20 h-24 w-24 -rotate-45 md:h-32 md:w-32" />
             </div>
             <div className="border-accent/20 absolute inset-4 rounded-xl border border-dotted" />
           </div>
@@ -547,7 +638,7 @@ export default function AboutArchitecture() {
           {/* --- LAYER 1: HARDWARE (Bottom) --- */}
           <div
             ref={hardwareLayer}
-            className="bg-secondary/5 border-secondary/30 absolute z-10 flex h-75 w-full items-center justify-center rounded-2xl border backdrop-blur-sm transition-all will-change-[transform,opacity,filter]"
+            className="bg-secondary/5 border-secondary/30 absolute z-10 flex h-full w-full items-center justify-center rounded-2xl border backdrop-blur-sm transition-all will-change-[transform,opacity,filter]"
           >
             {/* PCB Pattern */}
             <div
@@ -576,7 +667,7 @@ export default function AboutArchitecture() {
             </div>
 
             <div className="absolute inset-0 flex items-center justify-center">
-              <Cpu className="text-secondary/20 h-32 w-32 -rotate-45" />
+              <Cpu className="text-secondary/20 h-24 w-24 -rotate-45 md:h-32 md:w-32" />
             </div>
             <div className="border-secondary/20 absolute inset-4 rounded-xl border" />
           </div>

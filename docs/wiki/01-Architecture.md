@@ -15,7 +15,10 @@ The **Rajesh Kanakamedala Portfolio** is a concept-driven application designed t
 - **State Management**: React Context (`LoaderContext`, `ScrollContext`) for global UI states.
 - **Animation Orchestration**:
   - **Lenis**: Provides smooth, momentum-based scrolling to normalize the experience across devices.
-  - **GSAP**: Handles complex scroll-linked animations (pinning, scrubbing) in the "About" and "Experience" sections.
+  - **GSAP**: The primary engine for scroll-driven choreography. It handles:
+    - **Pinning**: In Hero and About sections.
+    - **Scrubbing**: For frame-by-frame animation control in About, Experience, and Contact sections.
+    - **Parallax**: Managing the differential scrolling speeds of layers.
   - **Framer Motion**: Manages component-level transitions, layout animations (Shared Layout), and gesture interactions (3D tilt, magnetic hover).
 
 ## Directory Structure

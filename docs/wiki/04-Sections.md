@@ -10,7 +10,7 @@ The Hero section visualizes the bridge between Hardware and Cloud.
 
 - **Visual Structure**:
   - **Top Half**: Represents "Cloud/Application" (Cyan theme, floating code, cloud icons).
-  - **Bottom Half**: Represents "Hardware/Kernel" (Amber theme, PCB patterns, C++ code).
+  - **Bottom Half**: Represents "Hardware/Kernel" (Amber theme, PCB patterns, C++ code). **Note**: The bottom border and shadow have been removed to ensure a seamless visual blend with the subsequent "About" section's deep-void background.
   - **Connection**: A 3D SVG spline connects the two halves.
 - **Animation (GSAP)**:
   - **Trigger**: Scroll.
@@ -25,18 +25,21 @@ The Hero section visualizes the bridge between Hardware and Cloud.
 
 **File**: `src/components/sections/AboutArchitecture.tsx`
 
-An isometric representation of Rajesh's full-stack expertise.
+An isometric representation of Rajesh's full-stack expertise, updated with a "Glass HUD" aesthetic.
 
-- **Visual Structure**: Three 3D planes stacked vertically in an isometric view.
-  1. **Bottom**: Hardware (Embedded Linux).
-  2. **Middle**: Middleware (Android/HAL).
-  3. **Top**: Cloud (React/Next.js).
+- **Visual Structure**:
+  - **3D Stack**: Three isometric layers with distinct visual themes:
+    1.  **Bottom (Hardware)**: Amber theme with PCB pattern.
+    2.  **Middle (Middleware)**: Green theme with digital rain texture and side connector ports.
+    3.  **Top (Cloud)**: Cyan theme with a network mesh overlay and floating data nodes.
+  - **Text Content**: Replaced plain text with **Glassmorphic Info Cards** (`backdrop-blur-xl`, `bg-deep-void/60`) for better readability and a premium feel.
+- **Layout Strategy**:
+  - **Desktop**: A dynamic "Zig-Zag" pattern (Hardware: Bottom-Left -> Middleware: Center-Right -> Cloud: Top-Left) to guide the eye.
+  - **Mobile**: A unified "Bottom Sheet" approach where cards slide up from the bottom while the stack remains centered.
 - **Animation (GSAP)**:
-  - **Trigger**: Scroll (Pinned for 300% viewport height).
-  - **Sequence**:
-    1. **Explosion**: Layers expand vertically from a compressed state.
-    2. **Focus Steps**: Scroll progress highlights each layer sequentially (Hardware -> Middleware -> Cloud) while dimming the others. Text panels on the left fade in/out to match the active layer.
-    3. **Exit**: Layers collapse and fade out.
+  - **Trigger**: Scroll (Pinned for 350% viewport height).
+  - **Timing**: Text card reveals are slowed to `1.2s` with `power3.out` easing for a "buttery smooth" entrance.
+  - **Logic**: Uses `gsap.matchMedia` to execute distinct timeline logic for Mobile vs. Desktop.
 
 ## 3. Experience Section ("The Tunnel")
 
@@ -59,32 +62,30 @@ A chronological timeline of professional experience.
 
 A visually rich, interactive representation of technical skills.
 
+- **Visual Updates**:
+  - Removed shadow artifacts from category nodes for cleaner blending.
+  - Added **Vertical HUD Sidebars**: Fixed bracket-style indicators on the left and right edges (Desktop) to guide interaction (e.g., "HOVER TO DECRYPT").
 - **Desktop Layout ("Curated Constellation")**:
-  - **Deterministic Generation**: Unlike a live simulation, nodes are placed based on pre-calculated centers (`CATEGORY_CENTERS`) with a slight random offset for an organic look. This ensures layout stability.
-  - **Parallax**: Uses `framer-motion` `useSpring` and `useTransform` to create a 3D depth effect where categories (background) and skills (foreground) move at different rates based on cursor position.
-  - **Interaction**:
-    - **Hover**: Highlights the node and its connections (via SVG lines).
-    - **Click**: "Locks" the focus on a node.
+  - **Deterministic Generation**: Nodes placed based on pre-calculated centers (`CATEGORY_CENTERS`).
+  - **Parallax**:
+    - **Mouse**: `framer-motion` `useSpring` creates a 3D depth effect.
+    - **Scroll**: Added `useScroll` transforms. The Background Title ("SKILLS") moves slower than the scroll (`y` transform), and the main graph scales/fades on entry/exit.
 - **Mobile Layout ("The Data Centrifuge")**:
-  - **Concept**: A "Scrolly-telling" experience where scrolling triggers a rotation of a central "Neural HUD".
-  - **Mechanism**: `framer-motion` `whileInView` triggers state updates (`setActiveCategoryIndex`) which rotates the fixed background HUD to match the active skill category.
+  - **Concept**: "Scrolly-telling" with a sticky background layer.
+  - **Layout**: The "Neural HUD" stays fixed (sticky) while content cards scroll over it.
 
 ## 5. Contact Section ("The Terminal")
 
 **File**: `src/components/sections/ContactTerminal.tsx`
 
-A functional, retro-futuristic CLI terminal that doubles as the site footer.
+A functional, retro-futuristic CLI terminal.
 
-- **Placement**:
-  - Standard vertical section at the end of the page flow (previous "footer reveal" effect has been removed for seamless integration).
+- **Visual Updates**:
+  - Removed the top gradient overlay to eliminate the visible seam between the Skills and Contact sections.
+- **Animation (GSAP Parallax)**:
+  - **Trigger**: `ScrollTrigger` with `scrub: 1`.
+  - **Effect**:
+    - **Left Column (Text)**: Scrubs `y` from `100` to `0`.
+    - **Right Column (Terminal)**: Scrubs `y` from `200` to `0` with a slight delay. This difference in speed creates a "heavy," cinematic parallax reveal as the section enters the viewport.
 - **Terminal Logic**:
-  - **State**: Tracks `input` and `history` (array of commands/outputs).
-  - **Commands**:
-    - `help`: Lists commands.
-    - `email`: Opens `mailto`.
-    - `linkedin`, `resume`: Opens external links.
-    - `clear`: Resets history.
-    - `whoami`: Returns user identity.
-- **Visuals**:
-  - Uses `scrollRef` to auto-scroll to the bottom of the terminal on new output.
-  - Styled with a "Cyber Grid" background and glassmorphic panels.
+  - Functional CLI (help, email, linkedin, resume, clear, whoami).

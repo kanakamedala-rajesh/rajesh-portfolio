@@ -342,7 +342,7 @@ export default function Hero() {
       {/* --- BOTTOM HALF: HARDWARE / KERNEL --- */}
       <div
         ref={bottomHalf}
-        className="bg-deep-void border-secondary/50 gpu-accelerated absolute bottom-0 left-0 z-20 flex h-1/2 w-full items-start justify-center overflow-hidden border-t shadow-[0_-4px_30px_rgba(251,191,36,0.1)] will-change-transform"
+        className="bg-deep-void gpu-accelerated absolute bottom-0 left-0 z-20 flex h-1/2 w-full items-start justify-center overflow-hidden shadow-none will-change-transform"
         style={{ contain: "layout style paint" }}
       >
         {/* Background Effects */}

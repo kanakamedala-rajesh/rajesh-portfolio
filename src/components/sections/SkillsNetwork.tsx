@@ -8,6 +8,7 @@ import {
   useSpring,
   useTransform,
   useInView,
+  useScroll,
   MotionValue,
   useReducedMotion,
 } from "framer-motion";
@@ -163,6 +164,25 @@ export default function SkillsNetwork() {
   const shouldReduceMotion = useReducedMotion();
   const { registerSection, updateSectionStatus } = useSectionContext();
 
+  // Scroll Parallax Hooks
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "end start"],
+  });
+
+  // Parallax Values
+  const yBg = useTransform(scrollYProgress, [0, 1], ["-20%", "20%"]); // Background moves slower/inverted
+  const opacityGraph = useTransform(
+    scrollYProgress,
+    [0, 0.2, 0.8, 1],
+    [0, 1, 1, 0]
+  ); // Fade in/out
+  const scaleGraph = useTransform(
+    scrollYProgress,
+    [0, 0.2, 0.8, 1],
+    [0.8, 1, 1, 0.8]
+  ); // Zoom in/out
+
   useGSAP(
     () => {
       registerSection("skills");
@@ -225,10 +245,105 @@ export default function SkillsNetwork() {
       ref={containerRef}
       onMouseMove={handleMouseMove}
       onClick={handleBackgroundClick} // Unlock on background click
-      className="bg-deep-void relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden py-20"
+      className="bg-deep-void relative flex min-h-screen w-full flex-col items-center justify-center overflow-x-clip py-20 md:overflow-hidden"
       id="skills"
-      style={{ contain: "layout style paint" }}
     >
+      {/* 
+        HUD INTERFACE (VERTICAL SIDEBARS)
+        Symmetrical "Bracket" Design with Line Indicators
+      */}
+
+      {/* LEFT SIDEBAR (Desktop Only) */}
+      <motion.div
+        initial={{ opacity: 0, x: -30 }}
+        animate={{
+          opacity: isInView ? 1 : 0,
+          x: isInView ? 0 : -30,
+        }}
+        transition={{ duration: 0.6, ease: "circOut" }}
+        className="pointer-events-none fixed top-1/2 left-4 z-40 hidden -translate-y-1/2 flex-col items-center justify-center gap-2 md:flex lg:left-8"
+      >
+        {/* Top Line */}
+        <div
+          className={`h-32 w-[1px] bg-gradient-to-b from-transparent transition-all duration-300 ${
+            focusNode
+              ? "via-secondary/50 to-secondary/80"
+              : "via-primary/50 to-primary/80"
+          }`}
+        />
+
+        {/* Text */}
+        <div className="rotate-180 py-4 [writing-mode:vertical-lr]">
+          <span
+            className={`font-mono text-xs font-bold tracking-[0.3em] uppercase transition-all duration-300 ${
+              focusNode
+                ? "text-2xl text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]"
+                : "text-gray-500"
+            }`}
+          >
+            {focusNode
+              ? data.nodes.find((n) => n.id === focusNode)?.label
+              : "HOVER TO DECRYPT"}
+          </span>
+        </div>
+
+        {/* Bottom Line */}
+        <div
+          className={`h-32 w-[1px] bg-gradient-to-t from-transparent transition-all duration-300 ${
+            focusNode
+              ? "via-secondary/50 to-secondary/80"
+              : "via-primary/50 to-primary/80"
+          }`}
+        />
+      </motion.div>
+
+      {/* RIGHT SIDEBAR */}
+      <motion.div
+        initial={{ opacity: 0, x: 30 }}
+        animate={{
+          opacity: isInView ? 1 : 0,
+          x: isInView ? 0 : 30,
+        }}
+        transition={{ duration: 0.6, ease: "circOut" }}
+        className="pointer-events-none fixed top-1/2 right-4 z-40 flex -translate-y-1/2 flex-col items-center justify-center gap-2 lg:right-8"
+      >
+        {/* Top Line */}
+        <div
+          className={`h-32 w-[1px] bg-gradient-to-b from-transparent transition-all duration-300 ${
+            focusNode
+              ? "via-secondary/50 to-secondary/80"
+              : "via-primary/50 to-primary/80"
+          }`}
+        />
+
+        {/* Text */}
+        <div className="py-4 [writing-mode:vertical-rl]">
+          <span
+            className={`font-mono text-xs font-bold tracking-[0.3em] uppercase transition-all duration-300 ${
+              focusNode ? "text-accent animate-pulse" : "text-gray-500"
+            }`}
+          >
+            {focusNode ? (
+              "CLICK BACKGROUND TO RESET"
+            ) : (
+              <>
+                {/* Mobile Text Removed per request */}
+                <span className="hidden md:inline">HOVER TO DECRYPT</span>
+              </>
+            )}
+          </span>
+        </div>
+
+        {/* Bottom Line */}
+        <div
+          className={`h-32 w-[1px] bg-gradient-to-t from-transparent transition-all duration-300 ${
+            focusNode
+              ? "via-secondary/50 to-secondary/80"
+              : "via-primary/50 to-primary/80"
+          }`}
+        />
+      </motion.div>
+
       {/* Background Decor */}
       <div className="cyber-grid absolute inset-0 opacity-20" />
       <div className="pointer-events-none absolute inset-0 bg-radial-[circle_at_center_var(--color-deep-void)_0%,transparent_100%]" />
@@ -238,36 +353,35 @@ export default function SkillsNetwork() {
       </div>
 
       {/* Desktop Large Background Heading */}
-      <div className="pointer-events-none absolute top-1/2 left-1/2 z-0 hidden -translate-x-1/2 -translate-y-1/2 opacity-10 select-none md:block">
+      <motion.div
+        style={{ y: yBg }}
+        className="pointer-events-none absolute top-1/2 left-1/2 z-0 hidden -translate-x-1/2 -translate-y-1/2 opacity-10 select-none md:block"
+      >
         <h2 className="font-heading text-gradient text-[12rem] leading-none font-bold whitespace-nowrap">
           SKILLS
         </h2>
-      </div>
+      </motion.div>
 
-      <div className="pointer-events-none relative z-10 mb-8 w-full text-center">
-        {/* Mobile Left-Aligned Heading */}
-        <div className="relative z-10 w-full pt-20 pb-10 pl-10 text-left md:hidden">
-          <h2 className="font-heading text-primary mb-2 text-3xl font-bold">
-            SKILLS NETWORK
+      <div className="pointer-events-none relative z-10 mt-4 w-full text-center md:hidden">
+        {/* Mobile "SKILLS" Header with Cyber Effect */}
+        <div className="relative z-10 flex w-full flex-col items-center justify-center">
+          <h2 className="font-heading from-primary to-secondary animate-background-shine bg-gradient-to-r via-white bg-[length:200%_auto] bg-clip-text text-6xl font-black tracking-tighter text-transparent drop-shadow-[0_0_10px_rgba(6,182,212,0.3)]">
+            SKILLS
           </h2>
-          <p className="font-mono text-sm text-gray-400">
-            {/* SYSTEM DATA STREAM :: SCROLL TO SCAN */}
-            {`// SYSTEM DATA STREAM :: SCROLL TO SCAN`}
-          </p>
-        </div>
-
-        {/* Desktop Subtext (Keep existing logic but styled/positioned) */}
-        <div className="relative z-10 mt-[-10vh] hidden text-center md:block">
-          <p className="font-mono text-sm text-gray-400">
-            {activeNode
-              ? "// LINK LOCKED :: CLICK BACKGROUND TO RESET"
-              : "// INTERACTIVE SKILL MATRIX :: HOVER TO DECRYPT"}
-          </p>
+          {/* Cyber Underline */}
+          <div className="mt-2 flex items-center gap-2 opacity-80">
+            <div className="to-primary h-[1px] w-8 bg-gradient-to-r from-transparent" />
+            <div className="bg-accent h-1.5 w-1.5 animate-pulse rounded-full" />
+            <div className="to-primary h-[1px] w-8 bg-gradient-to-l from-transparent" />
+          </div>
         </div>
       </div>
 
       {/* Graph Container (Desktop Only) */}
-      <div className="relative mx-auto hidden aspect-video w-full max-w-7xl md:block">
+      <motion.div
+        style={{ opacity: opacityGraph, scale: scaleGraph }}
+        className="relative mx-auto hidden aspect-video w-full max-w-7xl md:block"
+      >
         {/* SVG Layer for Links */}
         <svg className="pointer-events-none absolute inset-0 z-0 h-full w-full">
           {data.links.map((link, i) => {
@@ -313,84 +427,114 @@ export default function SkillsNetwork() {
             />
           );
         })}
-      </div>
+      </motion.div>
 
       {/* 
         MOBILE SCROLLY-TELLING: THE DATA CENTRIFUGE 
-        - Layout: Fixed HUD + Scrollable Content
+        - Layout: Sticky HUD Background + Scrollable Overlay
       */}
       <div className="relative min-h-screen w-full md:hidden">
-        {/* 1. The Neural HUD (Fixed Visual Anchor) - Background Layer */}
-        <motion.div
-          animate={{ opacity: isInView ? 1 : 0 }}
-          transition={{ duration: 0.5 }}
-          className="pointer-events-none fixed inset-0 z-0 flex h-full w-full items-center justify-center overflow-hidden"
-        >
-          {/* Ambient Background Glow */}
+        {/* Sticky Background Layer (HUD + Indicators) */}
+        <div className="sticky top-0 h-screen w-full overflow-hidden">
+          {/* 1. The Neural HUD (Fixed Visual Anchor) */}
           <motion.div
-            animate={{
-              backgroundColor: COLORS[activeCategoryIndex % COLORS.length],
-            }}
-            className="absolute h-[150vw] w-[150vw] rounded-full opacity-10 blur-[100px] transition-colors duration-1000"
-          />
-
-          {/* The Core Interface */}
-          <div className="relative mt-[-20vh] flex h-[300px] w-[300px] items-center justify-center">
-            {/* Ring 1: Outer Data Track (Slow Spin) */}
-            <motion.div
-              animate={{ rotate: shouldReduceMotion ? 0 : 360 }}
-              transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-              className="absolute inset-0 rounded-full border border-dashed border-white/10"
-            />
-
-            {/* Ring 2: Active Sector Ring (Reacts to Index) */}
+            animate={{ opacity: isInView ? 1 : 0 }}
+            transition={{ duration: 0.5 }}
+            className="absolute inset-0 z-0 flex h-full w-full items-center justify-center overflow-hidden"
+          >
+            {/* Ambient Background Glow */}
             <motion.div
               animate={{
-                rotate: activeCategoryIndex * 72, // 5 categories * 72deg
-                borderColor: COLORS[activeCategoryIndex % COLORS.length],
+                backgroundColor: COLORS[activeCategoryIndex % COLORS.length],
               }}
-              className="absolute inset-4 rounded-full border-t-2 border-r-2 border-transparent transition-colors duration-500"
-              style={{
-                borderTopColor: "currentColor",
-                borderRightColor: "currentColor",
-              }}
+              className="absolute h-[150vw] w-[150vw] rounded-full opacity-10 blur-[100px] transition-colors duration-1000"
             />
 
-            {/* Ring 3: Counter-Rotating Tech Ring */}
-            <motion.div
-              animate={{ rotate: shouldReduceMotion ? 0 : -360 }}
-              transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-              className="absolute inset-12 rounded-full border border-white/5"
-            >
-              <div className="absolute top-0 left-1/2 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/20" />
-            </motion.div>
+            {/* The Core Interface */}
+            <div className="relative mt-[-20vh] flex h-[300px] w-[300px] items-center justify-center">
+              {/* Ring 1: Outer Data Track (Slow Spin) */}
+              <motion.div
+                animate={{ rotate: shouldReduceMotion ? 0 : 360 }}
+                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                className="absolute inset-0 rounded-full border border-dashed border-white/10"
+              />
 
-            {/* Central Processor */}
-            <div className="bg-deep-void/80 absolute inset-0 z-10 m-20 flex flex-col items-center justify-center rounded-full border border-white/10 backdrop-blur-sm">
-              <motion.span
-                key={activeCategoryIndex}
-                initial={{ opacity: 0, scale: 0.8, filter: "blur(10px)" }}
-                animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
-                className="mb-1 font-mono text-xs text-gray-500"
+              {/* Ring 2: Active Sector Ring (Reacts to Index) */}
+              <motion.div
+                animate={{
+                  rotate: activeCategoryIndex * 72, // 5 categories * 72deg
+                  borderColor: COLORS[activeCategoryIndex % COLORS.length],
+                }}
+                className="absolute inset-4 rounded-full border-t-2 border-r-2 border-transparent transition-colors duration-500"
+                style={{
+                  borderTopColor: "currentColor",
+                  borderRightColor: "currentColor",
+                }}
+              />
+
+              {/* Ring 3: Counter-Rotating Tech Ring */}
+              <motion.div
+                animate={{ rotate: shouldReduceMotion ? 0 : -360 }}
+                transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+                className="absolute inset-12 rounded-full border border-white/5"
               >
-                0{activeCategoryIndex + 1} {/* // LOADED */}
-                {` // LOADED`}
-              </motion.span>
-              <motion.h3
-                key={`title-${activeCategoryIndex}`}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="font-space px-2 text-center text-lg leading-none font-bold"
-                style={{ color: COLORS[activeCategoryIndex % COLORS.length] }}
-              >
-                {resumeData.skills[activeCategoryIndex].category.split("/")[0]}
-              </motion.h3>
+                <div className="absolute top-0 left-1/2 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/20" />
+              </motion.div>
+
+              {/* Central Processor */}
+              <div className="bg-deep-void/80 absolute inset-0 z-10 m-20 flex flex-col items-center justify-center rounded-full border border-white/10 backdrop-blur-sm">
+                <motion.span
+                  key={activeCategoryIndex}
+                  initial={{ opacity: 0, scale: 0.8, filter: "blur(10px)" }}
+                  animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+                  className="mb-1 font-mono text-xs text-gray-500"
+                >
+                  0{activeCategoryIndex + 1} {/* // LOADED */}
+                  {` // LOADED`}
+                </motion.span>
+                <motion.h3
+                  key={`title-${activeCategoryIndex}`}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="font-space px-2 text-center text-lg leading-none font-bold"
+                  style={{ color: COLORS[activeCategoryIndex % COLORS.length] }}
+                >
+                  {
+                    resumeData.skills[activeCategoryIndex].category.split(
+                      "/"
+                    )[0]
+                  }
+                </motion.h3>
+              </div>
             </div>
-          </div>
-        </motion.div>
+          </motion.div>
+
+          {/* 3. Progress Track (Right Edge) - Now inside Sticky Container */}
+          <motion.div
+            animate={{ opacity: isInView ? 1 : 0 }}
+            transition={{ duration: 0.5 }}
+            className="absolute top-1/2 right-2 z-50 flex -translate-y-1/2 flex-col gap-2 mix-blend-difference"
+          >
+            {resumeData.skills.map((_, i) => (
+              <motion.div
+                key={i}
+                animate={{
+                  height: activeCategoryIndex === i ? 24 : 4,
+                  opacity: activeCategoryIndex === i ? 1 : 0.3,
+                  backgroundColor:
+                    activeCategoryIndex === i
+                      ? COLORS[i % COLORS.length]
+                      : "#ffffff",
+                }}
+                className="w-1 rounded-full transition-all duration-300"
+              />
+            ))}
+          </motion.div>
+        </div>
 
         {/* 2. Scrollable Data Streams (The Trigger Zones) - Foreground Layer */}
-        <div className="relative z-10 w-full pt-[10vh] pb-[20vh]">
+        {/* Negative margin pulls this up to overlap the sticky background */}
+        <div className="relative z-10 -mt-[100vh] w-full pt-[10vh] pb-[20vh]">
           {resumeData.skills.map((cat, i) => {
             const color = COLORS[i % COLORS.length];
 
@@ -399,24 +543,32 @@ export default function SkillsNetwork() {
                 key={cat.category}
                 className="pointer-events-none relative flex min-h-[70vh] flex-col items-center justify-end p-6 pb-20"
                 onViewportEnter={() => setActiveCategoryIndex(i)}
-                viewport={{ margin: "-40% 0px -40% 0px" }} // Trigger in middle 20%
+                viewport={{ margin: "-30% 0px -30% 0px" }} // Trigger in middle 40%
               >
                 {/* Only show content when active or close to active */}
                 <motion.div
-                  initial={{ opacity: 0, y: 50 }}
+                  initial={{ opacity: 0, y: 100 }} // Start lower for parallax feel
                   whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ margin: "-20% 0px" }} // Visible when in bottom 80%
-                  transition={{ staggerChildren: 0.1 }}
+                  viewport={{ margin: "-10% 0px" }} // Visible when enters bottom
+                  transition={{
+                    staggerChildren: 0.05,
+                    duration: 0.8,
+                    ease: "easeOut",
+                  }}
                   className="pointer-events-auto w-full max-w-sm"
                 >
                   {/* Glass Panel for Skills */}
                   <div className="grid grid-cols-2 gap-3">
-                    {cat.items.map((skill, idx) => (
+                    {cat.items.map((skill) => (
                       <motion.div
                         key={skill}
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        whileInView={{ opacity: 1, scale: 1 }}
-                        transition={{ delay: idx * 0.05 }}
+                        variants={{
+                          hidden: { opacity: 0, y: 20 },
+                          visible: { opacity: 1, y: 0 },
+                        }}
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{ once: true }}
                         className="group flex items-center gap-2 rounded-lg border border-white/10 bg-black/80 p-3 shadow-lg backdrop-blur-xl transition-colors hover:border-white/30"
                         style={{ borderLeftColor: color, borderLeftWidth: 2 }}
                       >
@@ -432,28 +584,6 @@ export default function SkillsNetwork() {
             );
           })}
         </div>
-
-        {/* 3. Progress Track (Right Edge) */}
-        <motion.div
-          animate={{ opacity: isInView ? 1 : 0 }}
-          transition={{ duration: 0.5 }}
-          className="pointer-events-none fixed top-1/2 right-2 z-50 flex -translate-y-1/2 flex-col gap-2 mix-blend-difference"
-        >
-          {resumeData.skills.map((_, i) => (
-            <motion.div
-              key={i}
-              animate={{
-                height: activeCategoryIndex === i ? 24 : 4,
-                opacity: activeCategoryIndex === i ? 1 : 0.3,
-                backgroundColor:
-                  activeCategoryIndex === i
-                    ? COLORS[i % COLORS.length]
-                    : "#ffffff",
-              }}
-              className="w-1 rounded-full transition-all duration-300"
-            />
-          ))}
-        </motion.div>
       </div>
     </section>
   );
@@ -611,7 +741,7 @@ const SkillNode = ({
         <div
           className={`relative flex items-center justify-center rounded-full border transition-all duration-300 ${
             node.type === "category"
-              ? "bg-deep-void/90 border-2 shadow-[0_0_30px_rgba(var(--color-primary),0.3)]"
+              ? "bg-deep-void/90 border-2"
               : "border border-white/20 bg-black/50 backdrop-blur-sm"
           } `}
           style={{

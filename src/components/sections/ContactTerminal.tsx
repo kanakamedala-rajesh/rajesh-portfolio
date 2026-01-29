@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { motion } from "framer-motion";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
@@ -32,24 +31,42 @@ const ContactTerminal = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLElement>(null);
+  const infoRef = useRef<HTMLDivElement>(null);
+  const terminalRef = useRef<HTMLDivElement>(null);
   const { registerSection, updateSectionStatus } = useSectionContext();
 
   useGSAP(
     () => {
       registerSection("contact-terminal");
 
-      ScrollTrigger.create({
-        trigger: containerRef.current,
-        start: "top 80%",
-        end: "bottom bottom",
-        onToggle: (self) => {
-          updateSectionStatus(
-            "contact-terminal",
-            self.isActive ? "active" : "idle",
-            self.progress
-          );
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: "top bottom", // Start when top of section hits bottom of viewport
+          end: "center center", // End when center of section hits center of viewport
+          scrub: 1, // Smooth scrub
+          onToggle: (self) => {
+            updateSectionStatus(
+              "contact-terminal",
+              self.isActive ? "active" : "idle",
+              self.progress
+            );
+          },
         },
       });
+
+      // Parallax Reveal
+      tl.fromTo(
+        infoRef.current,
+        { y: 100, opacity: 0 },
+        { y: 0, opacity: 1, duration: 1, ease: "power2.out" },
+        0
+      ).fromTo(
+        terminalRef.current,
+        { y: 200, opacity: 0 }, // Terminal comes from further down (heavier)
+        { y: 0, opacity: 1, duration: 1.2, ease: "power2.out" },
+        0.1 // Slight delay/offset
+      );
     },
     {
       scope: containerRef,
@@ -165,17 +182,14 @@ const ContactTerminal = () => {
     >
       {/* Background Effects */}
       <div className="cyber-grid pointer-events-none absolute inset-0 opacity-20" />
-      <div className="pointer-events-none absolute top-0 left-0 h-32 w-full bg-gradient-to-b from-black/50 to-transparent" />
 
       <div className="relative mx-auto grid w-full max-w-7xl grid-cols-1 items-center gap-10 pt-20 lg:grid-cols-2 lg:gap-16 lg:pt-0">
         {/* Left Column: Contact Info */}
-        <div className="order-2 space-y-8 lg:order-1 lg:space-y-10">
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
-            className="space-y-4"
-          >
+        <div
+          ref={infoRef}
+          className="order-2 space-y-8 opacity-0 will-change-[transform,opacity] lg:order-1 lg:space-y-10"
+        >
+          <div className="space-y-4">
             <div className="text-secondary flex items-center gap-2 font-mono text-sm tracking-wider uppercase opacity-80">
               <TerminalIcon className="h-4 w-4" />
               <span>End of Line</span>
@@ -190,7 +204,7 @@ const ContactTerminal = () => {
               Ready to architect the next generation of embedded systems or
               immersive digital experiences? Initialize the handshake protocol.
             </p>
-          </motion.div>
+          </div>
 
           <div className="space-y-4 lg:space-y-6">
             <a
@@ -254,17 +268,9 @@ const ContactTerminal = () => {
         </div>
 
         {/* Right Column: Interactive Terminal */}
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          onViewportEnter={() => {
-            // Only autofocus on desktop to prevent keyboard popping up on mobile
-            if (typeof window !== "undefined" && window.innerWidth >= 1024) {
-              inputRef.current?.focus({ preventScroll: true });
-            }
-          }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="order-1 w-full lg:order-2"
+        <div
+          ref={terminalRef}
+          className="order-1 w-full opacity-0 will-change-[transform,opacity] lg:order-2"
         >
           <div
             className="border-primary/20 flex h-[400px] w-full flex-col overflow-hidden rounded-lg border bg-black/80 font-mono text-sm shadow-[0_0_50px_rgba(6,182,212,0.1)] backdrop-blur-xl md:text-base lg:h-[500px]"
@@ -346,7 +352,7 @@ const ContactTerminal = () => {
               </div>
             </div>
           </div>
-        </motion.div>
+        </div>
       </div>
 
       {/* Footer copyright */}
