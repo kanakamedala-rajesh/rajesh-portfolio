@@ -14,6 +14,8 @@ test.describe("Skills Network Section", () => {
     await page.setViewportSize({ width: 1920, height: 1080 });
 
     const skillsSection = page.locator("#skills");
+    await skillsSection.waitFor({ state: "attached" });
+    await page.waitForTimeout(1000);
     await skillsSection.scrollIntoViewIfNeeded();
     await expect(skillsSection).toBeVisible();
 
@@ -34,6 +36,8 @@ test.describe("Skills Network Section", () => {
   }) => {
     await page.setViewportSize({ width: 1920, height: 1080 });
     const skillsSection = page.locator("#skills");
+    await skillsSection.waitFor({ state: "attached" });
+    await page.waitForTimeout(1000);
     await skillsSection.scrollIntoViewIfNeeded();
 
     // Wait for nodes to animate in
@@ -68,6 +72,8 @@ test.describe("Skills Network Section", () => {
   }) => {
     await page.setViewportSize({ width: 1920, height: 1080 });
     const skillsSection = page.locator("#skills");
+    await skillsSection.waitFor({ state: "attached" });
+    await page.waitForTimeout(1000);
     await skillsSection.scrollIntoViewIfNeeded();
 
     // Wait for animation
@@ -99,6 +105,8 @@ test.describe("Skills Network Section", () => {
     await page.setViewportSize({ width: 375, height: 667 });
 
     const skillsSection = page.locator("#skills");
+    await skillsSection.waitFor({ state: "attached" });
+    await page.waitForTimeout(1000);
     await skillsSection.scrollIntoViewIfNeeded();
 
     // Check for Mobile Heading (specifically the one in md:hidden container)

@@ -50,11 +50,11 @@ const CATEGORY_CENTERS = [
 ];
 
 const COLORS = [
-  "var(--color-primary)", // Cyan
-  "var(--color-secondary)", // Amber
-  "var(--color-accent)", // Green
-  "#a855f7", // Purple (Extra pop)
-  "#ef4444", // Red (Extra pop)
+  "var(--color-primary)",
+  "var(--color-secondary)",
+  "var(--color-accent)",
+  "#a855f7",
+  "#ef4444",
 ];
 
 // --- Helper: Generate Graph Data Deterministically ---
@@ -245,7 +245,7 @@ export default function SkillsNetwork() {
       ref={containerRef}
       onMouseMove={handleMouseMove}
       onClick={handleBackgroundClick} // Unlock on background click
-      className="bg-deep-void relative flex min-h-screen w-full flex-col items-center justify-center overflow-x-clip py-20 md:overflow-hidden"
+      className="bg-deep-void relative z-20 flex min-h-screen w-full flex-col items-center justify-center overflow-x-clip py-20 md:overflow-hidden"
       id="skills"
     >
       {/* 

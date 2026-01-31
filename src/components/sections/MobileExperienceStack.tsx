@@ -169,7 +169,7 @@ export default function MobileExperienceStack() {
           // CARD i > 0:
           tl.fromTo(
             card,
-            { y: "110vh", shadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5)" }, // Start off screen
+            { y: "110vh", boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5)" }, // Start off screen
             { y: "0vh", duration: duration, ease: "none" },
             i - 1
           );

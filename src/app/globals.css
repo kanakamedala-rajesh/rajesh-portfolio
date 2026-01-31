@@ -76,6 +76,30 @@
   .animate-background-shine {
     animation: background-shine 8s linear infinite;
   }
+
+  /* Content Visibility for Off-screen Performance */
+  .content-auto {
+    content-visibility: auto;
+    contain-intrinsic-size: 1px 500px; /* Approximate height to prevent scrollbar jumping */
+  }
+
+  @media (max-width: 768px) {
+    .cyber-grid {
+      background-image: none;
+    }
+
+    .moving-border-overlay::after {
+      display: none;
+    }
+
+    .animate-background-shine {
+      animation: none;
+    }
+
+    .texture-overlay {
+      display: none;
+    }
+  }
 }
 
 /* Global Styles */

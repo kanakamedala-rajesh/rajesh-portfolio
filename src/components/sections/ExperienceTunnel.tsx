@@ -1,11 +1,17 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import MobileExperienceStack from "./MobileExperienceStack";
-import DesktopExperience from "./DesktopExperience";
+import dynamic from "next/dynamic";
+
+const MobileExperienceStack = dynamic(() => import("./MobileExperienceStack"), {
+  ssr: false,
+});
+const DesktopExperience = dynamic(() => import("./DesktopExperience"), {
+  ssr: false,
+});
 
 export default function ExperienceTunnel() {
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState<boolean | null>(null);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -16,6 +22,12 @@ export default function ExperienceTunnel() {
     window.addEventListener("resize", checkMobile);
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
+
+  // Return null or a lightweight placeholder until we know the device type
+  // This prevents hydration mismatch and loading unnecessary bundles
+  if (isMobile === null) {
+    return <div className="bg-deep-void content-auto min-h-screen w-full" />;
+  }
 
   if (isMobile) {
     return <MobileExperienceStack />;

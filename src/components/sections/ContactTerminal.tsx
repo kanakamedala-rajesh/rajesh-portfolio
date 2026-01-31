@@ -177,7 +177,7 @@ const ContactTerminal = () => {
     <section
       ref={containerRef}
       id="contact-terminal"
-      className="bg-deep-void text-foreground relative z-10 flex min-h-screen w-full flex-col justify-end overflow-hidden p-6 lg:min-h-[80vh] lg:p-20"
+      className="bg-deep-void text-foreground relative z-20 flex min-h-screen w-full flex-col justify-end overflow-hidden p-6 lg:min-h-[80vh] lg:p-20"
       style={{ contain: "layout style paint" }}
     >
       {/* Background Effects */}

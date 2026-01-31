@@ -66,14 +66,18 @@ export default function Hero() {
 
       mm.add(
         {
+          isMobile: "(max-width: 768px)",
           reduce: "(prefers-reduced-motion: reduce)",
-          noReduce: "(prefers-reduced-motion: no-preference)",
+          isDesktop: "(min-width: 769px)",
         },
         (context) => {
-          const { reduce } = context.conditions as { reduce: boolean };
+          const { isMobile, reduce } = context.conditions as {
+            isMobile: boolean;
+            reduce: boolean;
+          };
 
-          if (reduce) {
-            // Simplified state for reduced motion
+          if (isMobile || reduce) {
+            // Simplified state for reduced motion OR mobile
             // Batch all gsap.set calls to minimize layout thrashing
             gsap.set([topHalf.current, bottomHalf.current, content.current], {
               clearProps: "all",
@@ -85,19 +89,25 @@ export default function Hero() {
               scale: 1,
               filter: "blur(0px)",
             });
+            // Hide heavy spline on mobile
             gsap.set([spline.current, splineGlow.current], { opacity: 0 });
 
-            // Simple scroll trigger to track status
-            ScrollTrigger.create({
-              trigger: container.current,
-              start: "top top",
-              end: "bottom top",
-              onUpdate: (self) => {
-                updateSectionStatus("hero", "active", self.progress);
+            // Simple scroll trigger to track status and fade out on exit (Mobile/Reduce)
+            gsap.to([content.current, bgRef.current], {
+              opacity: 0,
+              ease: "none",
+              scrollTrigger: {
+                trigger: container.current,
+                start: "top top",
+                end: "bottom top",
+                scrub: true,
+                onUpdate: (self) => {
+                  updateSectionStatus("hero", "active", self.progress);
+                },
               },
             });
           } else {
-            // Full Animation Sequence
+            // Full Animation Sequence (Desktop only)
             // Batch initial setup to prevent forced reflows
             // Set all initial states in a single GSAP context
             gsap.set([spline.current, splineGlow.current], {
@@ -141,15 +151,9 @@ export default function Hero() {
                 "<"
               )
               // 2. Reveal Content (Dramatic Zoom In)
-              .fromTo(
+              .to(
                 content.current,
                 {
-                  opacity: 0,
-                  scale: 0.5,
-                  filter: "blur(10px)",
-                },
-                {
-                  opacity: 1,
                   scale: 1,
                   filter: "blur(0px)",
                   duration: 1.5,
@@ -206,7 +210,7 @@ export default function Hero() {
     <section
       ref={container}
       id="hero"
-      className="bg-deep-void sticky top-0 z-10 h-screen w-full overflow-hidden"
+      className="bg-deep-void relative top-0 z-10 h-screen w-full overflow-hidden md:sticky"
       aria-label="Hero Section"
       style={{
         backgroundColor: "var(--color-deep-void)",
@@ -224,7 +228,8 @@ export default function Hero() {
           aria-hidden="true"
           fill
           priority
-          sizes="100vw"
+          quality={60}
+          sizes="(max-width: 768px) 100vw, 100vw"
           className="object-cover object-center opacity-60"
         />
         {/* Overlay for text readability */}
@@ -235,7 +240,7 @@ export default function Hero() {
       <div
         id="hero-title"
         ref={content}
-        className="absolute inset-0 z-10 flex flex-col items-center justify-center p-4 text-center opacity-0 will-change-[opacity,transform,filter]"
+        className="absolute inset-0 z-10 flex flex-col items-center justify-center p-4 text-center will-change-transform"
         style={{ contain: "layout style" }}
       >
         <div className="relative w-full max-w-[90vw]">
@@ -420,7 +425,7 @@ export default function Hero() {
 
       {/* --- CONNECTING SPLINE --- */}
       <svg
-        className="pointer-events-none absolute inset-0 z-30 h-full w-full mix-blend-screen"
+        className="pointer-events-none absolute inset-0 z-30 hidden h-full w-full mix-blend-screen md:block"
         viewBox="0 0 100 100"
         preserveAspectRatio="none"
       >

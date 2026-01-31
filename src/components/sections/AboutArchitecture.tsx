@@ -181,14 +181,14 @@ export default function AboutArchitecture() {
             : { x: -50, autoAlpha: 0 };
 
           // --- INITIAL STATES ---
-          // Stack
+          // Stack (Start hidden for fade-in effect)
           gsap.set(
             [
               hardwareLayer.current,
               middlewareLayer.current,
               cloudLayer.current,
             ],
-            { z: 0, opacity: 1, scale: 0.85, filter: "blur(0px)" } // Visible start
+            { z: 0, opacity: 0, scale: 0.85, filter: "blur(0px)" }
           );
 
           // Cards (Hidden)
@@ -203,6 +203,20 @@ export default function AboutArchitecture() {
             // Simplified Fade Logic could go here
             // For now, let's just make the standard timeline gentle enough
           }
+
+          // --- PHASE 0: FADE IN ---
+          tl.to(
+            [
+              hardwareLayer.current,
+              middlewareLayer.current,
+              cloudLayer.current,
+            ],
+            {
+              opacity: 1,
+              duration: 0.5,
+              ease: "power1.inOut",
+            }
+          );
 
           // --- PHASE 1: EXPANSION (0% - 20%) ---
           tl.to(
@@ -410,7 +424,7 @@ export default function AboutArchitecture() {
     <section
       ref={container}
       id="about"
-      className="bg-deep-void relative z-20 flex min-h-screen w-full items-center justify-center overflow-hidden py-10 [perspective:2000px] md:py-20"
+      className="bg-deep-void content-auto relative z-20 flex min-h-screen w-full items-center justify-center overflow-hidden py-10 [perspective:2000px] md:py-20"
       style={{ contain: "layout style paint" }}
     >
       <div
