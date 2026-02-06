@@ -1,9 +1,23 @@
 "use client";
 
 import { ReactNode } from "react";
+import { useLoader } from "@/context/LoaderContext";
 
-// Content sits behind the Loader (z-50) and is revealed when Loader curtains open.
-// Removed Framer Motion wrapper to prevent artificial LCP delay.
+/**
+ * PageWrapper
+ * - Content sits behind the Loader (z-50) and is revealed when Loader curtains open.
+ * - Uses isLoading from LoaderContext to manage visibility and prevent flash of content.
+ */
 export default function PageWrapper({ children }: { children: ReactNode }) {
-  return <main className="relative z-0">{children}</main>;
+  const { isLoading } = useLoader();
+
+  return (
+    <main
+      className={`relative z-0 transition-opacity duration-700 ${
+        isLoading ? "opacity-0" : "opacity-100"
+      }`}
+    >
+      {children}
+    </main>
+  );
 }

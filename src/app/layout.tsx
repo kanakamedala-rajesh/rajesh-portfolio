@@ -42,6 +42,20 @@ export default function RootLayout({
       className={`${inter.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable}`}
       suppressHydrationWarning
     >
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{if(sessionStorage.getItem('rk_portfolio_visited')==='true')document.documentElement.classList.add('visited-mode')}catch(e){}})()`,
+          }}
+        />
+        <noscript>
+          <style>{`
+            #initial-loader { display: none !important; }
+            main { opacity: 1 !important; }
+            header { transform: translateY(0) !important; opacity: 1 !important; }
+          `}</style>
+        </noscript>
+      </head>
       <body className="antialiased">
         <LoaderProvider>
           <ScrollProvider>

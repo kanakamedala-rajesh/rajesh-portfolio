@@ -44,7 +44,7 @@ export default function Loader() {
     };
   }, [lenis]);
 
-  const shouldShow = hasHydrated && !animationComplete;
+  const shouldShow = !animationComplete;
 
   useEffect(() => {
     if (!hasHydrated || !isLoading || sequenceStarted.current) return;
