@@ -378,7 +378,7 @@ const ContactTerminal = () => {
         </a>
 
         <span className="flex items-center gap-2">
-          <span className="h-2 w-2 animate-pulse rounded-full bg-green-500" />
+          <span className="animate-composited-pulse h-2 w-2 rounded-full bg-green-500" />
           All systems nominal
         </span>
       </div>

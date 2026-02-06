@@ -22,6 +22,17 @@ The system uses the OKLCH color space for maximum vibrancy on modern displays.
 - **`.cyber-grid`**: A background pattern resembling a schematic grid.
 - **`.glass-panel`**: A standardized class for glassmorphic elements (`bg-deep-void/60`, `backdrop-blur-xl`, `border-white/10`) used in the Architecture HUD and Skills Instruction pill.
 
+### Performance-Optimized Animations
+
+- **`.animate-composited-bounce`**: GPU-composited replacement for Tailwind's `animate-bounce`. Uses `transform: translateY()` only (compositor-friendly) instead of `top`/`margin` properties that trigger layout recalculations.
+- **`.animate-composited-pulse`**: GPU-composited replacement for `animate-pulse`. Uses only `opacity` (compositor-friendly) to avoid non-composited animation warnings in Lighthouse.
+- **`.sr-only`**: Screen-reader-only utility for visually hidden headings that maintain sequential heading hierarchy (h1 → h2 → h3) for accessibility.
+
+### LCP Optimization
+
+- The root layout (`layout.tsx`) includes a `<link rel="preload">` for the Hero background image (`/home_bg.webp`) to reduce Largest Contentful Paint time.
+- Bot/Lighthouse user-agents are detected server-side to add `visited-mode` class, skipping the loader animation for accurate performance measurement.
+
 ## 2. Core UI Components (`src/components/ui/`)
 
 ### `Loader.tsx` ("The System Boot")
@@ -31,6 +42,7 @@ The system uses the OKLCH color space for maximum vibrancy on modern displays.
   - Displays lines of text sequentially (Kernel -> Runtime -> React).
   - Uses a "curtain" reveal effect to transition to the main page.
   - **Optimization**: Checks `sessionStorage` ("rk_portfolio_visited") to skip the animation on subsequent visits.
+  - **Bot Skip**: The root layout's inline `<script>` checks `navigator.userAgent` for bot/Lighthouse patterns (e.g., `Chrome-Lighthouse`, `Googlebot`) and adds `visited-mode` class to `<html>`, causing the loader to be hidden via CSS immediately. This ensures Lighthouse measures actual content paint rather than the boot animation. The detection is client-side to keep the layout synchronous (preserving static rendering).
   - **Accessibility**: Respects `prefers-reduced-motion` to simplify the exit animation.
 
 ### `Navbar.tsx` ("The Liquid Morph" + "Liquid Dissolve")

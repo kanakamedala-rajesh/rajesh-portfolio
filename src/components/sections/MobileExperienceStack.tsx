@@ -195,6 +195,8 @@ export default function MobileExperienceStack() {
 
   return (
     <div ref={wrapperRef} id="experience" className="relative z-20 md:hidden">
+      {/* Accessible section heading (visually hidden) for sequential heading hierarchy */}
+      <h2 className="sr-only">Experience</h2>
       <div
         ref={containerRef}
         className="relative h-screen w-full overflow-hidden bg-[var(--color-background)] text-[var(--color-foreground)]"

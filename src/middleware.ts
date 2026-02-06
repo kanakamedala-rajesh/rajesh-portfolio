@@ -40,6 +40,13 @@ export function middleware(request: NextRequest) {
     "Permissions-Policy",
     "camera=(), microphone=(), geolocation=()"
   );
+  // HSTS: Enforce HTTPS for 1 year, include subdomains
+  response.headers.set(
+    "Strict-Transport-Security",
+    "max-age=31536000; includeSubDomains; preload"
+  );
+  // COOP: Ensure proper origin isolation
+  response.headers.set("Cross-Origin-Opener-Policy", "same-origin");
 
   return response;
 }
