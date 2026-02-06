@@ -1,0 +1,8 @@
+# robots.txt for portfolio.rajesh.venkatasudha.com
+# Allow all crawlers to access all content
+
+User-agent: *
+Allow: /
+
+# Sitemap (uncomment when available)
+# Sitemap: https://portfolio.rajesh.venkatasudha.com/sitemap.xml

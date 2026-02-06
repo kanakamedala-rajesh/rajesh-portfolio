@@ -282,7 +282,7 @@ export default function Hero() {
         <div className="cyber-grid absolute inset-0 opacity-20" />
 
         {/* Decorative Icons - marked as decorative for containment */}
-        <Cloud className="text-primary/5 animate-pulse-slow decorative-icon absolute top-[15%] left-[10%] h-16 w-16 sm:h-24 sm:w-24" />
+        <Cloud className="text-primary/5 animate-composited-pulse decorative-icon absolute top-[15%] left-[10%] h-16 w-16 sm:h-24 sm:w-24" />
         <Server className="text-primary/5 decorative-icon absolute top-[25%] right-[15%] h-12 w-12 sm:h-16 sm:w-16" />
         <Database className="text-primary/10 decorative-icon absolute bottom-[20%] left-[20%] h-8 w-8 sm:h-10 sm:w-10" />
         <Globe className="text-primary/5 decorative-icon absolute top-[10%] right-[30%] hidden h-10 w-10 md:block" />
@@ -308,7 +308,7 @@ export default function Hero() {
           </span>
 
           {/* Arrow Indicator (Points Down) */}
-          <div className="mb-1 flex animate-bounce flex-col items-center gap-1 opacity-50">
+          <div className="animate-composited-bounce mb-1 flex flex-col items-center gap-1 opacity-50">
             <div className="bg-primary/50 h-3 w-px" />
             <div className="border-primary/50 h-2 w-2 rotate-45 border-r border-b" />
           </div>
@@ -321,7 +321,7 @@ export default function Hero() {
               <div className="bg-grid-white/[0.05] absolute inset-0" />
               {/* Icon Identity */}
               <Cloud
-                className="text-primary/80 h-4 w-4 animate-pulse sm:h-6 sm:w-6"
+                className="text-primary/80 animate-composited-pulse h-4 w-4 sm:h-6 sm:w-6"
                 strokeWidth={2}
               />
               <span className="text-primary/60 font-mono text-[8px] tracking-[0.2em] sm:text-xs">
@@ -356,7 +356,7 @@ export default function Hero() {
 
         {/* Decorative Icons - marked as decorative for containment */}
         <CircuitBoard className="text-secondary/5 decorative-icon absolute right-[8%] bottom-[10%] h-20 w-20 sm:h-32 sm:w-32" />
-        <Cpu className="text-secondary/5 animate-pulse-slow decorative-icon absolute bottom-[20%] left-[12%] h-12 w-12 sm:h-20 sm:w-20" />
+        <Cpu className="text-secondary/5 animate-composited-pulse decorative-icon absolute bottom-[20%] left-[12%] h-12 w-12 sm:h-20 sm:w-20" />
         <Code className="text-secondary/10 decorative-icon absolute top-[15%] right-[25%] h-8 w-8 sm:h-12 sm:w-12" />
         <Layers className="text-secondary/5 decorative-icon absolute bottom-[30%] left-[5%] hidden h-10 w-10 md:block" />
         <Radio className="text-secondary/5 decorative-icon absolute top-[25%] left-[25%] hidden h-14 w-14 opacity-40 lg:block" />
@@ -401,7 +401,7 @@ export default function Hero() {
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,var(--color-secondary)_1px,transparent_1px)] bg-size-[4px_4px] opacity-10" />
               {/* Icon Identity */}
               <Cpu
-                className="text-secondary/80 h-4 w-4 animate-pulse sm:h-6 sm:w-6"
+                className="text-secondary/80 animate-composited-pulse h-4 w-4 sm:h-6 sm:w-6"
                 strokeWidth={2}
               />
               <span className="text-secondary/60 font-mono text-[8px] tracking-[0.2em] sm:text-xs">
@@ -411,7 +411,7 @@ export default function Hero() {
           </div>
 
           {/* Arrow Indicator (Points Up) */}
-          <div className="mt-3 flex animate-bounce flex-col items-center gap-1 opacity-50">
+          <div className="animate-composited-bounce mt-3 flex flex-col items-center gap-1 opacity-50">
             <div className="border-secondary/50 h-2 w-2 rotate-45 border-t border-l" />
             <div className="bg-secondary/50 h-3 w-px" />
           </div>

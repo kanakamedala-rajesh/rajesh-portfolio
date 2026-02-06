@@ -427,6 +427,8 @@ export default function AboutArchitecture() {
       className="bg-deep-void content-auto relative z-20 flex min-h-screen w-full items-center justify-center overflow-hidden py-10 [perspective:2000px] md:py-20"
       style={{ contain: "layout style paint" }}
     >
+      {/* Accessible section heading (visually hidden) for sequential heading hierarchy */}
+      <h2 className="sr-only">Architecture</h2>
       <div
         ref={contentWrapper}
         className="relative flex h-full w-full flex-col items-center justify-center will-change-[opacity,transform,filter] md:flex-row"
@@ -605,9 +607,9 @@ export default function AboutArchitecture() {
               <div className="border-primary/20 absolute bottom-0 left-0 h-16 w-16 rounded-bl-xl border-b-2 border-l-2" />
 
               {/* Floating Data Nodes */}
-              <div className="bg-primary/40 absolute top-1/4 left-1/4 h-2 w-2 animate-pulse rounded-full" />
-              <div className="bg-primary/40 absolute right-1/4 bottom-1/4 h-2 w-2 animate-pulse rounded-full delay-700" />
-              <div className="bg-primary/30 absolute top-1/3 right-1/3 h-1.5 w-1.5 animate-pulse rounded-full delay-300" />
+              <div className="bg-primary/40 animate-composited-pulse absolute top-1/4 left-1/4 h-2 w-2 rounded-full" />
+              <div className="bg-primary/40 animate-composited-pulse absolute right-1/4 bottom-1/4 h-2 w-2 rounded-full delay-700" />
+              <div className="bg-primary/30 animate-composited-pulse absolute top-1/3 right-1/3 h-1.5 w-1.5 rounded-full delay-300" />
             </div>
 
             {/* Top Surface Decoration */}

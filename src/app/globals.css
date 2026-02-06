@@ -211,6 +211,62 @@ h1,
   font-display: swap;
 }
 
+/**
+ * GPU-composited bounce animation.
+ * Replaces Tailwind's animate-bounce which uses top/margin properties
+ * that trigger layout recalculations. This version uses only transform
+ * (compositor-friendly) to avoid non-composited animation warnings.
+ */
+@keyframes composited-bounce {
+  0%,
+  100% {
+    transform: translateY(-25%);
+    animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+  }
+  50% {
+    transform: translateY(0);
+    animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+  }
+}
+
+.animate-composited-bounce {
+  animation: composited-bounce 1s infinite;
+  will-change: transform;
+}
+
+/**
+ * GPU-composited pulse animation.
+ * Uses only opacity (compositor-friendly) instead of box-shadow/scale
+ * that may trigger paint in some browsers.
+ */
+@keyframes composited-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-composited-pulse {
+  animation: composited-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  will-change: opacity;
+}
+
+/* Screen-reader only utility for accessible hidden headings */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
 /* Optimize background patterns for better performance */
 .cyber-grid {
   background-size: 40px 40px;
