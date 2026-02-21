@@ -8,6 +8,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useLoader } from "@/context/LoaderContext";
 import { useScroll } from "@/context/ScrollContext";
 import { cn } from "@/lib/utils";
+import Logo from "@/components/ui/Logo";
 
 const NAV_LINKS = [
   { name: "About", href: "#about", sectionId: "about-architecture" },
@@ -186,16 +187,10 @@ export default function Navbar() {
 
           <Link
             href="/"
-            className="text-foreground group relative z-50 col-start-2 justify-self-center font-mono text-xl font-bold tracking-tighter md:col-auto md:justify-self-start"
+            className="group relative z-50 col-start-2 justify-self-center md:col-auto md:justify-self-start"
             onClick={(e) => handleLinkClick(e, "#hero-title")}
           >
-            <span className="text-primary group-hover:text-accent transition-colors">
-              &lt;
-            </span>
-            RK
-            <span className="text-primary group-hover:text-accent transition-colors">
-              /&gt;
-            </span>
+            <Logo className="h-8 w-auto" animateEntrance={!isLoading} />
           </Link>
 
           <nav

@@ -1,0 +1,74 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="630" fill="#0a0a0c"/>
+  
+  <!-- Cyber Grid Background -->
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#06b6d4" stroke-width="0.5" stroke-opacity="0.1"/>
+    </pattern>
+    <linearGradient id="overlay-grad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#06b6d4" stop-opacity="0.05"/>
+      <stop offset="100%" stop-color="#fbbf24" stop-opacity="0.05"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#grid)"/>
+  <rect width="1200" height="630" fill="url(#overlay-grad)"/>
+
+  <!-- Left Side: Silicon -->
+  <path d="M0 630L400 630L500 400L0 400Z" fill="#fbbf24" fill-opacity="0.05"/>
+  <path d="M50 500H150M100 450V550" stroke="#fbbf24" stroke-opacity="0.2" stroke-width="2"/>
+  
+  <!-- Right Side: Cloud -->
+  <path d="M1200 0L800 0L700 230L1200 230Z" fill="#06b6d4" fill-opacity="0.05"/>
+  <circle cx="1100" cy="100" r="50" stroke="#06b6d4" stroke-opacity="0.2" stroke-width="2"/>
+
+  <!-- Center Branding -->
+  <g transform="translate(600, 315)">
+    <!-- New Logo -->
+    <g transform="scale(0.25) translate(-461.5, -251)">
+      <g id="R">
+        <path d="M10.889,454.348l0,-399.573l290.092,0l71.729,71.729l0,122.088l-28.921,28.921l-208.149,0l0,-43.618l179.119,0c0,0 15.399,-11.347 15.399,-15.399l0,-80.239l-40.119,-40.119l-230.585,0l0,356.212l-21.349,21.349" fill="none" stroke="#06b6d4" stroke-width="11.11"/>
+        <path d="M99.796,126.503l-1.571,327.844" fill="none" stroke="#06b6d4" stroke-width="11.11"/>
+        <path d="M25.229,16.421l283.596,0l100.321,91.119l0,149.4l-30.925,31.517" fill="none" stroke="#06b6d4" stroke-width="11.11"/>
+        <path d="M152.66,320.068l142.517,142.517l155.744,0" fill="none" stroke="#06b6d4" stroke-width="11.11"/>
+        <path d="M169.694,303.708l132.649,132.649l137.245,0" fill="none" stroke="#06b6d4" stroke-width="11.11"/>
+        <path d="M228.299,321.708l86.046,86.046l60.653,0l-89.355,-89.355" fill="none" stroke="#06b6d4" stroke-width="11.11"/>
+        <circle cx="30.023" cy="483.895" r="8.199" fill="none" stroke="#06b6d4" stroke-width="11.11"/>
+        <circle cx="13.754" cy="15.754" r="8.199" fill="none" stroke="#06b6d4" stroke-width="11.11"/>
+      </g>
+      <g id="k">
+        <path d="M479.587,13.088l0,475.004" fill="none" stroke="#fbbf24" stroke-width="11.11"/>
+        <path d="M512.013,13.088l0,475.004l0,-475.004" fill="none" stroke="#fbbf24" stroke-width="11.11"/>
+        <path d="M543.906,13.088l0,475.004" fill="none" stroke="#fbbf24" stroke-width="11.11"/>
+        <path d="M581.796,251.801l238.658,-238.658l43.979,0" fill="none" stroke="#fbbf24" stroke-width="11.11"/>
+        <path d="M554.146,336.687l296.974,-296.974" fill="none" stroke="#fbbf24" stroke-width="11.11"/>
+        <path d="M884.653,67.218l-202.25,202.25l169.002,167.55c19.653,19.093 2.153,38.867 -17.222,19.492l-171.846,-167.489" fill="none" stroke="#fbbf24" stroke-width="11.11"/>
+        <path d="M670.342,344.02l150.894,144.738l54.531,0" fill="none" stroke="#fbbf24" stroke-width="11.11"/>
+        <path d="M753.206,292.513l164.11,153.823" fill="none" stroke="#fbbf24" stroke-width="11.11"/>
+        <circle cx="892.712" cy="487.919" r="8.199" fill="none" stroke="#fbbf24" stroke-width="11.11"/>
+        <circle cx="879.378" cy="13.754" r="8.199" fill="none" stroke="#fbbf24" stroke-width="11.11"/>
+      </g>
+    </g>
+    
+    <!-- Name and Title -->
+    <text text-anchor="middle" dy="120" fill="#fff" style="font-family: 'Inter', sans-serif; font-weight: 800; font-size: 48px; text-transform: uppercase; letter-spacing: 4px;">
+      RAJESH KANAKAMEDALA
+    </text>
+    <text text-anchor="middle" dy="170" fill="#06b6d4" style="font-family: 'JetBrains Mono', monospace; font-size: 24px; letter-spacing: 2px;">
+      SENIOR SOFTWARE ENGINEER
+    </text>
+    <text text-anchor="middle" dy="210" fill="#fbbf24" style="font-family: 'JetBrains Mono', monospace; font-size: 18px; letter-spacing: 1px; opacity: 0.8;">
+      SILICON ➔ KERNEL ➔ CLOUD
+    </text>
+  </g>
+  
+  <!-- Bottom Accent Border -->
+  <rect y="620" width="1200" height="10" fill="url(#rk-grad-horiz)"/>
+  <defs>
+    <linearGradient id="rk-grad-horiz" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#fbbf24"/>
+      <stop offset="50%" stop-color="#fff"/>
+      <stop offset="100%" stop-color="#06b6d4"/>
+    </linearGradient>
+  </defs>
+</svg>

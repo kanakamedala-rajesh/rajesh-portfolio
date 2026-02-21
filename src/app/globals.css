@@ -171,6 +171,38 @@ html.visited-mode header {
   }
 }
 
+/* --- Logo Animations --- */
+@keyframes logo-draw {
+  from {
+    stroke-dashoffset: 1;
+    opacity: 0;
+  }
+  to {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+}
+
+@keyframes logo-pulse-glow {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 2px var(--color-primary));
+  }
+  50% {
+    filter: drop-shadow(0 0 8px var(--color-primary));
+  }
+}
+
+.animate-logo-draw {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: logo-draw 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-logo-pulse {
+  animation: logo-pulse-glow 3s ease-in-out infinite;
+}
+
 /* --- Performance Optimizations --- */
 
 /* CSS Containment for major sections - improves rendering performance */

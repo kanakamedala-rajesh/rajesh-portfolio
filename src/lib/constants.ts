@@ -25,3 +25,12 @@ export const MOTION_CONSTANTS = {
     SCRUB: 1,
   },
 } as const;
+
+/**
+ * Site configuration constants
+ */
+export const SITE_CONFIG = {
+  baseUrl:
+    process.env.NEXT_PUBLIC_BASE_URL ||
+    "https://portfolio.rajesh.venkatasudha.com",
+} as const;

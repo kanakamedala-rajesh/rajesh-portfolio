@@ -248,6 +248,7 @@ export default function SkillsNetwork() {
       className="bg-deep-void relative z-20 flex min-h-screen w-full flex-col items-center justify-center overflow-x-clip py-20 md:overflow-hidden"
       id="skills"
     >
+      <h2 className="sr-only">Technical Skills Network</h2>
       {/* 
         HUD INTERFACE (VERTICAL SIDEBARS)
         Symmetrical "Bracket" Design with Line Indicators

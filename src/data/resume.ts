@@ -211,6 +211,13 @@ export const resumeData: ResumeData = {
       })(),
     linkedin:
       process.env.NEXT_PUBLIC_CONTACT_LINKEDIN ||
-      "www.linkedin.com/in/kanakamedala-rajesh",
+      (() => {
+        if (process.env.NODE_ENV === "production") {
+          console.error(
+            "CRITICAL: NEXT_PUBLIC_CONTACT_LINKEDIN is missing in production!"
+          );
+        }
+        return "https://www.linkedin.com/in/kanakamedala-rajesh";
+      })(),
   },
 };

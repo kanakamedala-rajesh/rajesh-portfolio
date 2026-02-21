@@ -180,6 +180,7 @@ const ContactTerminal = () => {
       className="bg-deep-void text-foreground relative z-20 flex min-h-screen w-full flex-col justify-end overflow-hidden p-6 lg:min-h-[80vh] lg:p-20"
       style={{ contain: "layout style paint" }}
     >
+      <h2 className="sr-only">Contact Rajesh Kanakamedala</h2>
       {/* Background Effects */}
       <div className="cyber-grid pointer-events-none absolute inset-0 opacity-20" />
 
