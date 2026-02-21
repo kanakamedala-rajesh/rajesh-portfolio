@@ -25,6 +25,14 @@ test.describe("Remediation Verification - SEO & Accessibility", () => {
   });
 });
 
+test.describe("Remediation Verification - Accessibility", () => {
+  test("Navbar logo link should have accessible name", async ({ page }) => {
+    await page.goto("/");
+    const logoLink = page.locator('header a[aria-label="Home"]');
+    await expect(logoLink).toBeVisible();
+  });
+});
+
 test.describe("Remediation Verification - Security", () => {
   test("Inline scripts should execute (CSP Nonce applied correctly)", async ({
     page,

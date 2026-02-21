@@ -42,83 +42,99 @@ export const viewport = {
   themeColor: "#06b6d4",
 };
 
-export const metadata: Metadata = {
-  metadataBase: new URL(SITE_CONFIG.baseUrl),
-  title: {
-    default: "Rajesh Kanakamedala | Senior Software Engineer Portfolio",
-    template: "%s | Rajesh Kanakamedala",
-  },
-  description:
-    "Official portfolio of Rajesh Kanakamedala, a Senior Software Engineer with 10+ years of experience in Full Stack, Android, and Embedded Linux. Expert in architecting 'Silicon to Cloud' solutions.",
-  keywords: [
-    "Rajesh Kanakamedala",
-    "Kanakamedala Rajesh",
-    "Rajesh K.",
-    "Rajesh Kanakamedala Portfolio",
-    "Senior Software Engineer",
-    "Full Stack Developer",
-    "Android Developer",
-    "Embedded Systems Engineer",
-    "Embedded Linux Expert",
-    "Next.js Developer Portfolio",
-    "India",
-  ],
-  authors: [{ name: "Rajesh Kanakamedala" }],
-  creator: "Rajesh Kanakamedala",
-  publisher: "Rajesh Kanakamedala",
-  formatDetection: {
-    email: false,
-    address: false,
-    telephone: false,
-  },
-  alternates: {
-    canonical: "/",
-  },
-  openGraph: {
-    type: "website",
-    locale: "en_US",
-    url: SITE_CONFIG.baseUrl,
-    siteName: "Rajesh Kanakamedala Portfolio",
-    title: "Rajesh Kanakamedala | Senior Software Engineer Portfolio",
+export async function generateMetadata(): Promise<Metadata> {
+  const headersList = await headers();
+  // Allow env var to override (e.g. for prod strictness)
+  let baseUrl = SITE_CONFIG.baseUrl;
+
+  if (!process.env.NEXT_PUBLIC_BASE_URL) {
+    const host = headersList.get("host");
+    if (host) {
+      const protocol = host.includes("localhost") ? "http" : "https";
+      baseUrl = `${protocol}://${host}`;
+    }
+  }
+
+  const metadataBase = new URL(baseUrl);
+
+  return {
+    metadataBase,
+    title: {
+      default: "Rajesh Kanakamedala | Senior Software Engineer Portfolio",
+      template: "%s | Rajesh Kanakamedala",
+    },
     description:
-      "Architecting Robust Full Stack, Android, and Embedded Systems. Over 10 years of experience from Silicon to Cloud.",
-    images: [
-      {
-        url: "/og-image.svg",
-        width: 1200,
-        height: 630,
-        alt: "Rajesh Kanakamedala - Senior Software Engineer Portfolio",
-      },
+      "Official portfolio of Rajesh Kanakamedala, a Senior Software Engineer with 10+ years of experience in Full Stack, Android, and Embedded Linux. Expert in architecting 'Silicon to Cloud' solutions.",
+    keywords: [
+      "Rajesh Kanakamedala",
+      "Kanakamedala Rajesh",
+      "Rajesh K.",
+      "Rajesh Kanakamedala Portfolio",
+      "Senior Software Engineer",
+      "Full Stack Developer",
+      "Android Developer",
+      "Embedded Systems Engineer",
+      "Embedded Linux Expert",
+      "Next.js Developer Portfolio",
+      "India",
     ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Rajesh Kanakamedala | Senior Software Engineer Portfolio",
-    description:
-      "Architecting Robust Full Stack, Android, and Embedded Systems. Over 10 years of experience from Silicon to Cloud.",
-    images: ["/og-image.svg"],
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
+    authors: [{ name: "Rajesh Kanakamedala" }],
+    creator: "Rajesh Kanakamedala",
+    publisher: "Rajesh Kanakamedala",
+    formatDetection: {
+      email: false,
+      address: false,
+      telephone: false,
+    },
+    alternates: {
+      canonical: "/",
+    },
+    openGraph: {
+      type: "website",
+      locale: "en_US",
+      url: baseUrl,
+      siteName: "Rajesh Kanakamedala Portfolio",
+      title: "Rajesh Kanakamedala | Senior Software Engineer Portfolio",
+      description:
+        "Architecting Robust Full Stack, Android, and Embedded Systems. Over 10 years of experience from Silicon to Cloud.",
+      images: [
+        {
+          url: "/og-image.svg",
+          width: 1200,
+          height: 630,
+          alt: "Rajesh Kanakamedala - Senior Software Engineer Portfolio",
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: "Rajesh Kanakamedala | Senior Software Engineer Portfolio",
+      description:
+        "Architecting Robust Full Stack, Android, and Embedded Systems. Over 10 years of experience from Silicon to Cloud.",
+      images: ["/og-image.svg"],
+    },
+    robots: {
       index: true,
       follow: true,
-      "max-video-preview": -1,
-      "max-image-preview": "large",
-      "max-snippet": -1,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-video-preview": -1,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+      },
     },
-  },
-  manifest: "/manifest.json",
-  icons: {
-    icon: [
-      { url: "/logo.svg", type: "image/svg+xml" },
-      { url: "/favicon.ico", sizes: "any" },
-    ],
-    shortcut: "/favicon.ico",
-    apple: "/apple-touch-icon.png",
-  },
-};
+    manifest: "/manifest.json",
+    icons: {
+      icon: [
+        { url: "/logo.svg", type: "image/svg+xml" },
+        { url: "/favicon.ico", sizes: "any" },
+      ],
+      shortcut: "/favicon.ico",
+      apple: "/apple-touch-icon.png",
+    },
+  };
+}
 
 export default async function RootLayout({
   children,

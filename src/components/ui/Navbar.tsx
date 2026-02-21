@@ -188,6 +188,7 @@ export default function Navbar() {
           <Link
             href="/"
             className="group relative z-50 col-start-2 justify-self-center md:col-auto md:justify-self-start"
+            aria-label="Home"
             onClick={(e) => handleLinkClick(e, "#hero-title")}
           >
             <Logo className="h-8 w-auto" animateEntrance={!isLoading} />
