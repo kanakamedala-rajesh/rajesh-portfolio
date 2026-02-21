@@ -23,9 +23,9 @@ test.describe("Skills Network Section", () => {
     const sidebars = page.locator("div.fixed.top-1\\/2");
     await expect(sidebars.getByText("HOVER TO DECRYPT").first()).toBeVisible();
 
-    // Check for large background watermark
+    // Check for large background watermark (decorative span on desktop)
     const watermark = page
-      .locator("h2.font-heading")
+      .locator("span.font-heading, h2.font-heading")
       .filter({ hasText: "SKILLS" })
       .first();
     await expect(watermark).toBeVisible();

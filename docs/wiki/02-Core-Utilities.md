@@ -80,6 +80,8 @@ This file runs before every request and is responsible for:
    - `X-Frame-Options: SAMEORIGIN`
    - `Referrer-Policy: strict-origin-when-cross-origin`
    - `Permissions-Policy`: Disables camera, mic, geolocation.
+   - `Strict-Transport-Security`: HSTS with 1-year max-age, includeSubDomains, preload.
+   - `Cross-Origin-Opener-Policy: same-origin`: Ensures proper origin isolation (COOP).
 
 ## 4. Utilities (`src/lib/`)
 

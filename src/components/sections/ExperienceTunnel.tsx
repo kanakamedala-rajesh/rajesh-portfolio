@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
+import { resumeData } from "@/data/resume";
 
 const MobileExperienceStack = dynamic(() => import("./MobileExperienceStack"), {
   ssr: false,
@@ -26,7 +27,31 @@ export default function ExperienceTunnel() {
   // Return null or a lightweight placeholder until we know the device type
   // This prevents hydration mismatch and loading unnecessary bundles
   if (isMobile === null) {
-    return <div className="bg-deep-void content-auto min-h-screen w-full" />;
+    return (
+      <section
+        id="experience"
+        className="bg-deep-void content-auto relative min-h-screen w-full"
+      >
+        <h2 className="sr-only">Professional Experience</h2>
+        <div className="sr-only">
+          {resumeData.experience.map((exp) => (
+            <article key={exp.company + exp.role}>
+              <h3>
+                {exp.role} at {exp.company}
+              </h3>
+              <p>{exp.period}</p>
+              <p>{exp.type} Development</p>
+              <ul>
+                {exp.description.map((desc, i) => (
+                  <li key={i}>{desc}</li>
+                ))}
+              </ul>
+              <p>Tech Stack: {exp.techStack.join(", ")}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+    );
   }
 
   if (isMobile) {

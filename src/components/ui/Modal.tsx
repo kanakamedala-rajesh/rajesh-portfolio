@@ -86,6 +86,7 @@ export function Modal({
               </div>
               <button
                 onClick={onClose}
+                aria-label="Close modal"
                 className="text-white/60 transition-colors hover:text-white"
               >
                 <X className="h-5 w-5" />

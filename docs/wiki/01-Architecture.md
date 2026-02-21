@@ -41,8 +41,12 @@ src/
 
 ## Deployment Architecture
 
-The application is designed to be deployed on **Cloudflare Pages** via **OpenNext**.
+The application is designed to be deployed on **Cloudflare Workers** via **OpenNext**.
 
 - **`wrangler.toml`**: Configures the Cloudflare worker environment.
+  - `preview_urls = true`: Enables preview URLs for non-production branch deployments.
+  - `[build]` section: Declares the build command (`pnpm cf:build`) for Workers Builds.
+  - **Preview Deployments**: Pushing to any non-`main` branch triggers a preview build. Preview URLs follow the format `<version-hash>.rajesh-portfolio.<subdomain>.workers.dev`. Requires "Builds for non-production branches" to be enabled in the Cloudflare dashboard (Settings > Builds > Branch control).
 - **`open-next.config.ts`**: Configures the build process to adapt Next.js output for the Cloudflare runtime.
-- **Edge Compatibility**: The `middleware.ts` ensures all headers (CSP, Security) are set at the edge, and `next.config.ts` is tuned for this environment.
+- **Edge Compatibility**: The `middleware.ts` ensures all headers (CSP, HSTS, COOP, Security) are set at the edge, and `next.config.ts` is tuned for this environment.
+- **`public/robots.txt`**: Allows all crawlers access to the site for SEO.
