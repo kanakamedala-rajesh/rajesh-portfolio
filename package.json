@@ -17,23 +17,16 @@
     "cf:preview": "pnpm cf:build && opennextjs-cloudflare preview",
     "cf:typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
     "cf:deploy": "pnpm cf:typegen && pnpm cf:build && opennextjs-cloudflare deploy",
-    "test": "playwright test --reporter=list"
+    "test": "playwright test --reporter=list",
+    "clean": "rm -rf node_modules .open-next .next .wrangler test-results cloudflare-env.d.ts next-env.d.ts tsconfig.tsbuildinfo"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",
     "@opennextjs/cloudflare": "^1.14.7",
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.4.2",
-    "@types/d3-drag": "^3.0.7",
-    "@types/d3-force": "^3.0.10",
-    "@types/d3-selection": "^3.0.11",
-    "@types/d3-transition": "^3.0.9",
     "@types/three": "^0.182.0",
     "clsx": "^2.1.1",
-    "d3-drag": "^3.0.0",
-    "d3-force": "^3.0.0",
-    "d3-selection": "^3.0.0",
-    "d3-transition": "^3.0.1",
     "framer-motion": "^12.23.26",
     "gsap": "^3.14.2",
     "lenis": "^1.3.16",
@@ -49,14 +42,13 @@
     "@commitlint/config-conventional": "^20.2.0",
     "@playwright/test": "^1.57.0",
     "@tailwindcss/postcss": "^4",
-    "@types/d3": "^7.4.3",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "babel-plugin-react-compiler": "1.0.0",
+    "baseline-browser-mapping": "^2.10.0",
     "commitizen": "^4.3.1",
     "cz-conventional-changelog": "^3.3.0",
-    "d3": "^7.9.0",
     "eslint": "^9",
     "eslint-config-next": "16.0.10",
     "husky": "^9.1.7",
@@ -76,6 +68,9 @@
       "prettier --write"
     ]
   },
+  "browserslist": [
+    "defaults and fully supports es6-module"
+  ],
   "config": {
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"

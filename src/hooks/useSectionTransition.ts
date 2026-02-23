@@ -40,12 +40,10 @@ export const useSectionTransition = ({
           {
             opacity: 0,
             scale: 0.8,
-            filter: "blur(10px)",
           },
           {
             opacity: 1,
             scale: 1,
-            filter: "blur(0px)",
             ease: "power1.out",
             scrollTrigger: {
               trigger: section,
@@ -76,12 +74,10 @@ export const useSectionTransition = ({
           {
             opacity: 1,
             scale: 1,
-            filter: "blur(0px)",
           },
           {
             opacity: 0,
             scale: 1.2,
-            filter: "blur(10px)",
             ease: "power1.in",
             scrollTrigger: {
               trigger: section,

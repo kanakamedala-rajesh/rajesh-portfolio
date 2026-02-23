@@ -114,6 +114,7 @@ const ExperienceCard = ({
       onClick={() => onSelect(exp, index)}
       role="button"
       tabIndex={0}
+      aria-label={`View details for ${exp.role} at ${exp.company}`}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
@@ -404,14 +405,18 @@ export default function DesktopExperience() {
         >
           {/* Dynamic Parallax Background Layer */}
           <div className="pointer-events-none absolute inset-0 z-0 flex h-full w-full items-center justify-center select-none">
-            <h2
+            <span
               ref={activePeriodRef}
+              aria-hidden="true"
               className="font-heading max-w-[90vw] text-center leading-none font-bold whitespace-nowrap text-white opacity-5 will-change-[opacity,filter,transform]"
               style={{ fontSize: "5vw" }} // Initial fallback
             >
               {resumeData.experience[0]?.period}
-            </h2>
+            </span>
           </div>
+
+          {/* Accessible section heading (visually hidden) for sequential heading hierarchy */}
+          <h2 className="sr-only">Experience</h2>
 
           <div className="relative z-10 flex h-full items-center">
             {/* Horizontal Track */}

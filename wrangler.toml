@@ -2,7 +2,24 @@ main = ".open-next/worker.js"
 name = "rajesh-portfolio"
 compatibility_date = "2025-12-26"
 compatibility_flags = ["nodejs_compat"]
+
+# Enable preview URLs for non-production branch deployments.
+# When code is pushed to a non-main branch (e.g., perf/pagespeed-optimizations),
+# Cloudflare Workers Builds will generate a preview URL automatically.
+# Preview URLs format: <version-hash>.rajesh-portfolio.<subdomain>.workers.dev
+#
+# REQUIRED DASHBOARD SETUP for preview deployments:
+#   1. Navigate to Workers & Pages > rajesh-portfolio > Settings > Builds > Branch control
+#   2. Ensure "Builds for non-production branches" checkbox is ENABLED
+#   3. Production branch should be set to "main"
+#   4. Non-production deploy command should be: npx wrangler versions upload
+#      (this creates a version with a preview URL, without promoting to production)
 preview_urls = true
+
+# Build configuration for Workers Builds (Git integration)
+# This command runs during CI when Cloudflare detects a push to the repository.
+[build]
+command = "pnpm cf:build"
 
 [assets]
 directory = ".open-next/assets"

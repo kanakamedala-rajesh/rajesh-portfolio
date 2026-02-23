@@ -32,6 +32,8 @@
     position: absolute;
     inset: 0;
     pointer-events: none;
+    overflow: hidden;
+    border-radius: inherit;
   }
 
   .moving-border-overlay::after {
@@ -48,8 +50,8 @@
       rgba(6, 182, 212, 0.1) 75%,
       transparent 100%
     );
-    background-size: 200% 100%;
     animation: border-beam 4s ease-in-out infinite alternate;
+    will-change: transform;
 
     /* Mask logic to restrict gradient to border only */
     -webkit-mask:
@@ -72,9 +74,25 @@
       linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
   }
 
-  /* Animation Utility */
+  /* Animation Utility — uses transform-based pseudo-element for GPU compositing */
   .animate-background-shine {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .animate-background-shine::before {
+    content: "";
+    position: absolute;
+    inset: -50%;
+    background: linear-gradient(
+      135deg,
+      transparent 30%,
+      rgba(6, 182, 212, 0.08) 50%,
+      transparent 70%
+    );
     animation: background-shine 8s linear infinite;
+    will-change: transform;
+    pointer-events: none;
   }
 
   /* Content Visibility for Off-screen Performance */
@@ -92,8 +110,9 @@
       display: none;
     }
 
-    .animate-background-shine {
+    .animate-background-shine::before {
       animation: none;
+      display: none;
     }
 
     .texture-overlay {
@@ -145,13 +164,25 @@ html.visited-mode header {
   opacity: 1 !important;
 }
 
+/* Skip non-composited logo animations for bots and returning visitors */
+html.visited-mode .animate-logo-draw {
+  animation: none !important;
+  stroke-dashoffset: 0 !important;
+  opacity: 1 !important;
+}
+
+html.visited-mode .animate-logo-pulse {
+  animation: none !important;
+}
+
 /* --- Moving Border Animation Support --- */
+/* Uses transform (compositor-friendly) instead of background-position */
 @keyframes border-beam {
   0% {
-    background-position: 200% 0;
+    transform: translateX(-100%);
   }
   100% {
-    background-position: -200% 0;
+    transform: translateX(100%);
   }
 }
 
@@ -162,13 +193,51 @@ html.visited-mode header {
   }
 }
 
+/* --- Shine Animation (compositor-friendly transform) --- */
 @keyframes background-shine {
   0% {
-    background-position: 0% 0%;
+    transform: translateX(-100%) translateY(-100%);
   }
   100% {
-    background-position: 200% 200%;
+    transform: translateX(100%) translateY(100%);
   }
+}
+
+/* --- Logo Animations --- */
+@keyframes logo-draw {
+  from {
+    stroke-dashoffset: 1;
+    opacity: 0;
+  }
+  to {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+}
+
+/**
+ * GPU-composited logo pulse.
+ * Uses only opacity (compositor-friendly) instead of filter: drop-shadow
+ * which triggers expensive paint operations.
+ */
+@keyframes logo-pulse-glow {
+  0%,
+  100% {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.animate-logo-draw {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: logo-draw 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-logo-pulse {
+  animation: logo-pulse-glow 3s ease-in-out infinite;
 }
 
 /* --- Performance Optimizations --- */
@@ -209,6 +278,62 @@ h1,
 .hero-title {
   text-rendering: optimizeSpeed;
   font-display: swap;
+}
+
+/**
+ * GPU-composited bounce animation.
+ * Replaces Tailwind's animate-bounce which uses top/margin properties
+ * that trigger layout recalculations. This version uses only transform
+ * (compositor-friendly) to avoid non-composited animation warnings.
+ */
+@keyframes composited-bounce {
+  0%,
+  100% {
+    transform: translateY(-25%);
+    animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+  }
+  50% {
+    transform: translateY(0);
+    animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+  }
+}
+
+.animate-composited-bounce {
+  animation: composited-bounce 1s infinite;
+  will-change: transform;
+}
+
+/**
+ * GPU-composited pulse animation.
+ * Uses only opacity (compositor-friendly) instead of box-shadow/scale
+ * that may trigger paint in some browsers.
+ */
+@keyframes composited-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-composited-pulse {
+  animation: composited-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  will-change: opacity;
+}
+
+/* Screen-reader only utility for accessible hidden headings */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
 }
 
 /* Optimize background patterns for better performance */

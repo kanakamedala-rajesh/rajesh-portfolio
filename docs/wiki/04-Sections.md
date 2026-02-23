@@ -20,6 +20,7 @@ The Hero section visualizes the bridge between Hardware and Cloud.
     3. The central content (Name, Title) "pops" in with a blur reveal.
     4. The connecting spline straightens and "snaps" as if transferring data.
 - **Parallax**: Background and content move at different speeds during exit.
+- **Performance**: `useLayoutEffect` removed; all GSAP setup is consolidated into the `useGSAP` callback. Exit blur tweens (`filter: blur`) removed — transitions use only compositor-friendly `opacity` + `scale`. The `<Image>` `sizes` attribute is set to `(min-width: 1400px) 1400px, 100vw` to match the new `images.deviceSizes` breakpoint.
 
 ## 2. About Section ("The Architecture Stack")
 
@@ -40,6 +41,7 @@ An isometric representation of Rajesh's full-stack expertise, updated with a "Gl
   - **Trigger**: Scroll (Pinned for 350% viewport height).
   - **Timing**: Text card reveals are slowed to `1.2s` with `power3.out` easing for a "buttery smooth" entrance.
   - **Logic**: Uses `gsap.matchMedia` to execute distinct timeline logic for Mobile vs. Desktop.
+  - **Performance**: Paint-heavy properties (`boxShadow`, `backgroundColor`, `borderColor`, `filter`) removed from the GSAP timeline. Layer animations now use only `scale` + `opacity` (compositor-only) to eliminate layout thrashing and repaint costs.
 
 ## 3. Experience Section ("The Tunnel")
 

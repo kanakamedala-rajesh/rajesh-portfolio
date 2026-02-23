@@ -248,6 +248,7 @@ export default function SkillsNetwork() {
       className="bg-deep-void relative z-20 flex min-h-screen w-full flex-col items-center justify-center overflow-x-clip py-20 md:overflow-hidden"
       id="skills"
     >
+      <h2 className="sr-only">Technical Skills Network</h2>
       {/* 
         HUD INTERFACE (VERTICAL SIDEBARS)
         Symmetrical "Bracket" Design with Line Indicators
@@ -352,14 +353,17 @@ export default function SkillsNetwork() {
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,var(--tw-gradient-stops))] from-white/10 to-transparent" />
       </div>
 
-      {/* Desktop Large Background Heading */}
+      {/* Desktop Large Background Heading (decorative, uses aria-hidden) */}
       <motion.div
         style={{ y: yBg }}
         className="pointer-events-none absolute top-1/2 left-1/2 z-0 hidden -translate-x-1/2 -translate-y-1/2 opacity-10 select-none md:block"
       >
-        <h2 className="font-heading text-gradient text-[12rem] leading-none font-bold whitespace-nowrap">
+        <span
+          aria-hidden="true"
+          className="font-heading text-gradient text-[12rem] leading-none font-bold whitespace-nowrap"
+        >
           SKILLS
-        </h2>
+        </span>
       </motion.div>
 
       <div className="pointer-events-none relative z-10 mt-4 w-full text-center md:hidden">
@@ -371,7 +375,7 @@ export default function SkillsNetwork() {
           {/* Cyber Underline */}
           <div className="mt-2 flex items-center gap-2 opacity-80">
             <div className="to-primary h-[1px] w-8 bg-gradient-to-r from-transparent" />
-            <div className="bg-accent h-1.5 w-1.5 animate-pulse rounded-full" />
+            <div className="bg-accent animate-composited-pulse h-1.5 w-1.5 rounded-full" />
             <div className="to-primary h-[1px] w-8 bg-gradient-to-l from-transparent" />
           </div>
         </div>
@@ -703,6 +707,7 @@ const SkillNode = ({
       onClick={(e) => onNodeClick(node.id, e)}
       role="button"
       tabIndex={0}
+      aria-label={`${node.type === "category" ? "Category" : "Skill"}: ${node.label}`}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();

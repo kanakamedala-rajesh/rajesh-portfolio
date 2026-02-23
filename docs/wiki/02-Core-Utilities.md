@@ -63,6 +63,8 @@ Tracks the status of each major section (Hero, About, etc.) for high-level coord
 
 _(Inferred functionality)_: A hook designed to handle smooth transitions or intersection observing for specific sections, triggering animations when they enter the viewport.
 
+- **Performance Note**: Entry/exit tweens use only `opacity` + `scale` (compositor-friendly properties). `filter: blur()` has been removed to avoid paint-heavy operations and non-composited animation warnings.
+
 ## 3. Middleware & Security
 
 ### `middleware.ts`
@@ -80,6 +82,10 @@ This file runs before every request and is responsible for:
    - `X-Frame-Options: SAMEORIGIN`
    - `Referrer-Policy: strict-origin-when-cross-origin`
    - `Permissions-Policy`: Disables camera, mic, geolocation.
+   - `Strict-Transport-Security`: HSTS with 1-year max-age, includeSubDomains, preload.
+   - `Cross-Origin-Opener-Policy: same-origin`: Ensures proper origin isolation (COOP).
+   - `Cache-Control`: Sets caching directives for static assets and pages.
+   - `Content-Signal`: Provides content signal hints for edge optimization.
 
 ## 4. Utilities (`src/lib/`)
 
