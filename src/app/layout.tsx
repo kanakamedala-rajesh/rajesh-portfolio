@@ -36,7 +36,7 @@ const jetbrainsMono = JetBrains_Mono({
 
 /** Known bot/lighthouse user-agent patterns for loader-skip optimization */
 const BOT_UA_PATTERN =
-  /lighthouse|pagespeed|googlebot|bingbot|baiduspider|yandex|slurp|duckduckbot|facebot|ia_archiver|semrush|ahrefs|mj12bot|dotbot|petalbot|bytespider|gptbot|chatgpt/i;
+  /lighthouse|pagespeed|headlesschromium|googlebot|bingbot|baiduspider|yandex|slurp|duckduckbot|facebot|ia_archiver|semrush|ahrefs|mj12bot|dotbot|petalbot|bytespider|gptbot|chatgpt/i;
 
 export const viewport = {
   themeColor: "#06b6d4",
@@ -151,15 +151,13 @@ export default async function RootLayout({
       suppressHydrationWarning
     >
       <head>
-        {/* Preload LCP image to reduce Largest Contentful Paint time */}
-        <link rel="preload" href="/home_bg.webp" as="image" type="image/webp" />
         {/**
          * Inline script runs before any React hydration to:
          * 1. Skip loader for returning visitors (sessionStorage check)
          * 2. Skip loader for bots/Lighthouse (navigator.userAgent check)
          *    This prevents the boot animation from delaying LCP measurement
-         *    in performance audits. The BOT_UA_PATTERN regex is duplicated
-         *    here to keep the script self-contained and blocking-free.
+         *    in performance audits. The BOT_UA_PATTERN regex is injected
+         *    here via template literal to keep the script self-contained.
          */}
         <script
           nonce={nonce}

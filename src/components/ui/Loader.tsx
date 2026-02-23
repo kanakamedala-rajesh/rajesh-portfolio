@@ -53,19 +53,19 @@ export default function Loader() {
     const runSequence = async () => {
       if (!isMounted.current) return;
       setStep(0);
-      await new Promise((r) => setTimeout(r, 200));
+      await new Promise((r) => setTimeout(r, 100));
 
       if (!isMounted.current) return;
       setStep(1);
-      await new Promise((r) => setTimeout(r, 300));
+      await new Promise((r) => setTimeout(r, 150));
 
       if (!isMounted.current) return;
       setStep(2);
-      await new Promise((r) => setTimeout(r, 200));
+      await new Promise((r) => setTimeout(r, 100));
 
       if (!isMounted.current) return;
       setTextVisible(false);
-      await new Promise((r) => setTimeout(r, 200));
+      await new Promise((r) => setTimeout(r, 100));
 
       try {
         sessionStorage.setItem("rk_portfolio_visited", "true");
@@ -76,7 +76,7 @@ export default function Loader() {
       setIsLoading(false);
 
       // Allow CSS transition to finish before unmounting
-      await new Promise((r) => setTimeout(r, 800));
+      await new Promise((r) => setTimeout(r, 350));
       if (isMounted.current) {
         setAnimationComplete(true);
       }
@@ -90,33 +90,33 @@ export default function Loader() {
   return (
     <div
       id="initial-loader"
-      className={`pointer-events-none fixed inset-0 z-50 flex items-center justify-center font-mono text-xl transition-opacity duration-500 md:text-2xl ${
-        !isLoading ? "opacity-0 delay-500" : "opacity-100"
+      className={`pointer-events-none fixed inset-0 z-50 flex items-center justify-center font-mono text-xl transition-opacity duration-300 md:text-2xl ${
+        !isLoading ? "opacity-0 delay-200" : "opacity-100"
       }`}
     >
       {/* Left Curtain */}
       <div
-        className={`bg-background absolute inset-y-0 left-0 w-1/2 transition-transform duration-700 ease-[cubic-bezier(0.76,0,0.24,1)] ${
+        className={`bg-background absolute inset-y-0 left-0 w-1/2 transition-transform duration-400 ease-[cubic-bezier(0.76,0,0.24,1)] ${
           !isLoading ? "-translate-x-full" : "translate-x-0"
         }`}
       />
       {/* Right Curtain */}
       <div
-        className={`bg-background absolute inset-y-0 right-0 w-1/2 transition-transform duration-700 ease-[cubic-bezier(0.76,0,0.24,1)] ${
+        className={`bg-background absolute inset-y-0 right-0 w-1/2 transition-transform duration-400 ease-[cubic-bezier(0.76,0,0.24,1)] ${
           !isLoading ? "translate-x-full" : "translate-x-0"
         }`}
       />
 
       {/* Text Container */}
       <div
-        className={`relative z-10 flex flex-col items-start gap-2 p-8 transition-opacity duration-500 ${
+        className={`relative z-10 flex flex-col items-start gap-2 p-8 transition-opacity duration-300 ${
           textVisible ? "opacity-100" : "opacity-0"
         }`}
       >
         {BOOT_SEQUENCE.map((line, index) => (
           <div
             key={index}
-            className={`${line.color} transition-all duration-300 ${
+            className={`${line.color} transition-all duration-200 ${
               index <= step
                 ? "translate-y-0 opacity-100"
                 : "translate-y-2 opacity-0"

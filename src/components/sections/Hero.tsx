@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useLayoutEffect } from "react";
+import { useRef } from "react";
 import Image from "next/image";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
@@ -48,19 +48,11 @@ export default function Hero() {
   const bgRef = useRef<HTMLDivElement>(null);
   const { registerSection, updateSectionStatus } = useSectionContext();
 
-  // Pre-calculate path length on mount to avoid layout thrashing during scroll
-  const pathLengthRef = useRef<number>(100);
-
-  // Use useLayoutEffect to batch initial DOM reads before paint
-  useLayoutEffect(() => {
-    if (spline.current) {
-      pathLengthRef.current = spline.current.getTotalLength() || 100;
-    }
-  }, []);
-
   useGSAP(
     () => {
-      const pathLength = pathLengthRef.current;
+      // Read path length inside useGSAP (which uses useLayoutEffect internally)
+      // to consolidate forced reflow into a single synchronous pass
+      const pathLength = spline.current?.getTotalLength() || 100;
 
       const mm = gsap.matchMedia();
 
@@ -179,7 +171,6 @@ export default function Hero() {
                 {
                   opacity: 0,
                   scale: 1.5, // Faster foreground zoom
-                  filter: "blur(10px)",
                   duration: MOTION_CONSTANTS.DURATIONS.NORMAL,
                   ease: MOTION_CONSTANTS.EASE.IN,
                 },
@@ -190,7 +181,6 @@ export default function Hero() {
                 {
                   opacity: 0,
                   scale: 1.1, // Slower background zoom (Parallax)
-                  filter: "blur(5px)",
                   duration: MOTION_CONSTANTS.DURATIONS.NORMAL,
                   ease: MOTION_CONSTANTS.EASE.IN,
                 },
@@ -229,7 +219,7 @@ export default function Hero() {
           fill
           priority
           quality={60}
-          sizes="(max-width: 768px) 100vw, 100vw"
+          sizes="(min-width: 1400px) 1400px, 100vw"
           className="object-cover object-center opacity-60"
         />
         {/* Overlay for text readability */}

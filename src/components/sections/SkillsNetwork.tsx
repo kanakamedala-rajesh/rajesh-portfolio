@@ -707,6 +707,7 @@ const SkillNode = ({
       onClick={(e) => onNodeClick(node.id, e)}
       role="button"
       tabIndex={0}
+      aria-label={`${node.type === "category" ? "Category" : "Skill"}: ${node.label}`}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();

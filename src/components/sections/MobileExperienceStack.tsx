@@ -258,6 +258,7 @@ export default function MobileExperienceStack() {
                 onClick={() => handleSelect(exp, index)}
                 role="button"
                 tabIndex={0}
+                aria-label={`View details for ${exp.role} at ${exp.company}`}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" || e.key === " ") {
                     e.preventDefault();

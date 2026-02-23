@@ -188,7 +188,7 @@ export default function AboutArchitecture() {
               middlewareLayer.current,
               cloudLayer.current,
             ],
-            { z: 0, opacity: 0, scale: 0.85, filter: "blur(0px)" }
+            { z: 0, opacity: 0, scale: 0.85 }
           );
 
           // Cards (Hidden)
@@ -244,13 +244,9 @@ export default function AboutArchitecture() {
             .to(pipesRef.current, { opacity: 1, duration: 1 }, "-=1");
 
           // --- PHASE 2: HARDWARE FOCUS (20% - 40%) ---
-          // Highlight Layer
+          // Highlight Layer (compositor-friendly: scale + opacity only)
           tl.to(hardwareLayer.current, {
             scale: 1.05,
-            borderColor: "var(--color-secondary)",
-            boxShadow: "0 0 40px rgba(251,191,36,0.15)",
-            backgroundColor: "rgba(251,191,36,0.05)",
-            filter: "brightness(1.2)",
             duration: 0.8,
           })
             // Dim others
@@ -258,7 +254,6 @@ export default function AboutArchitecture() {
               [middlewareLayer.current, cloudLayer.current],
               {
                 opacity: 0.15,
-                filter: "blur(4px) grayscale(0.5)",
                 duration: 0.8,
               },
               "<"
@@ -289,10 +284,6 @@ export default function AboutArchitecture() {
             .to(hardwareLayer.current, {
               scale: 0.95,
               opacity: 0.15,
-              filter: "blur(4px) grayscale(0.5)",
-              boxShadow: "none",
-              borderColor: "rgba(255,255,255,0.1)",
-              backgroundColor: "transparent",
               duration: 0.8,
             })
             // Show MW Layer
@@ -301,10 +292,6 @@ export default function AboutArchitecture() {
               {
                 opacity: 1,
                 scale: 1.05,
-                borderColor: "var(--color-accent)",
-                boxShadow: "0 0 40px rgba(34,197,94,0.15)",
-                backgroundColor: "rgba(34,197,94,0.05)",
-                filter: "brightness(1.2) blur(0px) grayscale(0)",
                 duration: 0.8,
               },
               "<"
@@ -341,10 +328,6 @@ export default function AboutArchitecture() {
             .to(middlewareLayer.current, {
               scale: 0.95,
               opacity: 0.15,
-              filter: "blur(4px) grayscale(0.5)",
-              boxShadow: "none",
-              borderColor: "rgba(255,255,255,0.1)",
-              backgroundColor: "transparent",
               duration: 0.8,
             })
             // Show Cloud Layer
@@ -353,10 +336,6 @@ export default function AboutArchitecture() {
               {
                 opacity: 1,
                 scale: 1.05,
-                borderColor: "var(--color-primary)",
-                boxShadow: "0 0 40px rgba(6,182,212,0.15)",
-                backgroundColor: "rgba(6,182,212,0.05)",
-                filter: "brightness(1.2) blur(0px) grayscale(0)",
                 duration: 0.8,
               },
               "<"
@@ -409,7 +388,6 @@ export default function AboutArchitecture() {
               {
                 opacity: 0,
                 scale: 1.1,
-                filter: "blur(10px)",
                 duration: 1.5,
               },
               "<"

@@ -49,4 +49,6 @@ The application is designed to be deployed on **Cloudflare Workers** via **OpenN
   - **Preview Deployments**: Pushing to any non-`main` branch triggers a preview build. Preview URLs follow the format `<version-hash>.rajesh-portfolio.<subdomain>.workers.dev`. Requires "Builds for non-production branches" to be enabled in the Cloudflare dashboard (Settings > Builds > Branch control).
 - **`open-next.config.ts`**: Configures the build process to adapt Next.js output for the Cloudflare runtime.
 - **Edge Compatibility**: The `middleware.ts` ensures all headers (CSP, HSTS, COOP, Security) are set at the edge, and `next.config.ts` is tuned for this environment.
+- **Image Optimization**: `next.config.ts` includes `1400` in `images.deviceSizes` to serve correctly-sized images for large viewports (matches the Hero `sizes` attribute breakpoint).
+- **Browser Targets**: A `browserslist` field is defined in `package.json` to align CSS/JS output with supported browsers. D3 dependencies have been removed (unused).
 - **`public/robots.txt`**: Allows all crawlers access to the site for SEO.

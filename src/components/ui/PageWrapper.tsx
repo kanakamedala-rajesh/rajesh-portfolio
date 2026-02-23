@@ -13,7 +13,7 @@ export default function PageWrapper({ children }: { children: ReactNode }) {
 
   return (
     <main
-      className={`relative z-0 transition-opacity duration-700 ${
+      className={`relative z-0 transition-opacity duration-400 ${
         isLoading ? "opacity-0" : "opacity-100"
       }`}
     >

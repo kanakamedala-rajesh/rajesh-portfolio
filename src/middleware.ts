@@ -47,6 +47,12 @@ export function middleware(request: NextRequest) {
   );
   // COOP: Ensure proper origin isolation
   response.headers.set("Cross-Origin-Opener-Policy", "same-origin");
+  // Allow bfcache: Use no-cache instead of no-store so browsers can use
+  // back/forward cache while still revalidating on navigation.
+  response.headers.set("Cache-Control", "no-cache, max-age=0, must-revalidate");
+  // Content Signal: Express content usage permissions via HTTP header
+  // (moved from robots.txt where it was flagged as an invalid directive)
+  response.headers.set("Content-Signal", "search=yes, ai-train=no");
 
   return response;
 }
